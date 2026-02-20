@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: #1a1a1a;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
+
+a:hover {
+  border-color: #1a1a1a;
+}
+
+/* Layout */
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+/* Home Page */
+.site-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+
+.site-description {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 48px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #888;
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  border-radius: 100px;
+  margin-bottom: 48px;
+}
+
+/* Footer */
+.site-footer {
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.site-footer a {
+  color: #888;
+  border-bottom-color: #ddd;
+}
+
+.site-footer a:hover {
+  color: #1a1a1a;
+  border-bottom-color: #1a1a1a;
+}
+
+/* Privacy Page */
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+
+.page-intro {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+
+.policy-text {
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.policy-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.policy-list li {
+  color: #444;
+  padding-left: 16px;
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.policy-list li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: #bbb;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 48px;
+  font-size: 0.95rem;
+  color: #888;
+  border-bottom-color: #ddd;
+}
+
+.back-link:hover {
+  color: #1a1a1a;
+  border-bottom-color: #1a1a1a;
+}
