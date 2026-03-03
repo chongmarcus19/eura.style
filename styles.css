@@ -1,104 +1,350 @@
+/* ============================================
+   Eura — Landing Page Styles
+   ============================================ */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  --black: #0a0a0a;
+  --dark: #1a1a1a;
+  --gray-700: #333;
+  --gray-500: #666;
+  --gray-400: #888;
+  --gray-300: #aaa;
+  --gray-200: #ccc;
+  --gray-100: #eee;
+  --gray-50: #f7f7f7;
+  --white: #ffffff;
+  --success: #2d7d46;
+  --error: #c0392b;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-color: #ffffff;
-  color: #1a1a1a;
-  line-height: 1.7;
+  font-family: var(--font-sans);
+  background-color: var(--white);
+  color: var(--dark);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  color: #1a1a1a;
+  color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid #ccc;
-  transition: border-color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 a:hover {
-  border-color: #1a1a1a;
+  opacity: 0.7;
 }
 
-/* Layout */
-.container {
+/* ============================================
+   Navigation
+   ============================================ */
+
+.nav {
+  padding: 32px 0;
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================
+   Hero
+   ============================================ */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 120px;
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  color: var(--black);
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--gray-500);
+  max-width: 520px;
+  margin-bottom: 40px;
+}
+
+/* ============================================
+   Waitlist Form
+   ============================================ */
+
+.waitlist-section {
+  max-width: 480px;
+}
+
+.waitlist-form {
+  display: flex;
+  gap: 10px;
+}
+
+.waitlist-input {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 14px 20px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  color: var(--dark);
+  background: var(--white);
+}
+
+.waitlist-input:focus {
+  border-color: var(--dark);
+}
+
+.waitlist-input::placeholder {
+  color: var(--gray-300);
+}
+
+.waitlist-button {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--white);
+  background: var(--black);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.waitlist-button:hover {
+  background: var(--gray-700);
+}
+
+.waitlist-button:disabled {
+  background: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.waitlist-status {
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
+
+.waitlist-status.success {
+  color: var(--success);
+}
+
+.waitlist-status.info {
+  color: var(--gray-500);
+}
+
+.waitlist-status.error {
+  color: var(--error);
+}
+
+/* ============================================
+   Features
+   ============================================ */
+
+.features {
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--gray-100);
+  padding: 96px 24px;
+}
+
+.features-inner {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.features-heading {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 56px;
+  text-align: center;
+  color: var(--black);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 48px;
+}
+
+.feature-card {
+  padding: 0;
+}
+
+.feature-icon {
+  color: var(--gray-400);
+  margin-bottom: 16px;
+}
+
+.feature-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+
+.feature-desc {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--gray-500);
+}
+
+/* ============================================
+   Bottom CTA
+   ============================================ */
+
+.bottom-cta {
+  padding: 96px 24px;
+  text-align: center;
+}
+
+.bottom-cta-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.bottom-cta-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  color: var(--black);
+}
+
+.bottom-cta-subtitle {
+  font-size: 1rem;
+  color: var(--gray-400);
+  margin-bottom: 32px;
+}
+
+.bottom-cta .waitlist-form {
+  justify-content: center;
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+
+.site-footer {
+  border-top: 1px solid var(--gray-100);
+  padding: 32px 24px;
+}
+
+.footer-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+}
+
+.footer-links a:hover {
+  color: var(--dark);
+  opacity: 1;
+}
+
+/* ============================================
+   Privacy Page
+   ============================================ */
+
+.page-container {
   max-width: 640px;
   margin: 0 auto;
   padding: 80px 24px;
 }
 
-/* Home Page */
-.site-title {
-  font-size: 2.5rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin-bottom: 32px;
-}
-
-.site-description {
-  font-size: 1.05rem;
-  color: #444;
-  margin-bottom: 48px;
-}
-
-.badge {
-  display: inline-block;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #888;
-  border: 1px solid #ddd;
-  padding: 8px 20px;
-  border-radius: 100px;
-  margin-bottom: 48px;
-}
-
-/* Footer */
-.site-footer {
-  padding-top: 32px;
-  border-top: 1px solid #eee;
-  font-size: 0.9rem;
-  color: #888;
-}
-
-.site-footer a {
-  color: #888;
-  border-bottom-color: #ddd;
-}
-
-.site-footer a:hover {
-  color: #1a1a1a;
-  border-bottom-color: #1a1a1a;
-}
-
-/* Privacy Page */
 .page-title {
-  font-size: 2rem;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   margin-bottom: 32px;
+  color: var(--black);
 }
 
 .page-intro {
   font-size: 1.05rem;
-  color: #444;
+  color: var(--gray-500);
   margin-bottom: 40px;
+  line-height: 1.7;
 }
 
 .section-title {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin-top: 36px;
   margin-bottom: 12px;
+  color: var(--dark);
 }
 
 .policy-text {
-  color: #444;
+  color: var(--gray-500);
   margin-bottom: 16px;
+  line-height: 1.7;
 }
 
 .policy-list {
@@ -108,28 +354,94 @@ a:hover {
 }
 
 .policy-list li {
-  color: #444;
-  padding-left: 16px;
+  color: var(--gray-500);
+  padding-left: 20px;
   position: relative;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 
 .policy-list li::before {
-  content: "–";
+  content: "";
   position: absolute;
   left: 0;
-  color: #bbb;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gray-200);
 }
 
 .back-link {
   display: inline-block;
   margin-top: 48px;
-  font-size: 0.95rem;
-  color: #888;
-  border-bottom-color: #ddd;
+  font-size: 0.9rem;
+  color: var(--gray-400);
 }
 
 .back-link:hover {
-  color: #1a1a1a;
-  border-bottom-color: #1a1a1a;
+  color: var(--dark);
+  opacity: 1;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-content {
+    padding-bottom: 80px;
+  }
+
+  .waitlist-form {
+    flex-direction: column;
+  }
+
+  .waitlist-button {
+    width: 100%;
+    padding: 16px 28px;
+    text-align: center;
+  }
+
+  .features {
+    padding: 64px 24px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .features-heading {
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+  }
+
+  .bottom-cta {
+    padding: 64px 24px;
+  }
+
+  .bottom-cta-title {
+    font-size: 1.6rem;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 2rem;
+  }
 }
