@@ -4,16 +4,114 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms of Service — Eura</title>
-  <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Mono', monospace;
+      background: #E8E4DA;
+      color: #1A1A1A;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+    .page-container {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .back-link {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: #888;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #1A1A1A; }
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(28px, 7vw, 40px);
+      font-weight: 900;
+      color: #1A1A1A;
+      letter-spacing: -0.02em;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+    .page-brand {
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 28px;
+    }
+    .page-intro {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 32px;
+      margin-bottom: 10px;
+    }
+    .policy-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: #555;
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+    .policy-text a {
+      color: #1A1A1A;
+      text-decoration: none;
+      border-bottom: 1px solid #D0CCC4;
+      transition: border-color 0.2s;
+    }
+    .policy-text a:hover { border-color: #1A1A1A; }
+    .site-footer {
+      border-top: 1px solid #D0CCC4;
+      margin-top: 48px;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-brand {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #888;
+    }
+    .footer-links { display: flex; gap: 16px; }
+    .footer-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      color: #bbb;
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: #555; }
+    @media (max-width: 480px) {
+      .page-container { padding: 40px 16px 60px; }
+      .site-footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
   <div class="page-container">
     <a href="index.html" class="back-link">&larr; Back to home</a>
 
-    <h1 class="page-title" style="margin-top: 32px;">Terms of Service</h1>
+    <h1 class="page-title">Terms of Service</h1>
+    <p class="page-brand">EURA — STYLE NETWORK — 2026</p>
+
     <p class="page-intro">
       These terms govern your use of Eura, an AI-powered personal stylist and closet management app. By using Eura, you agree to these terms.
     </p>
@@ -45,7 +143,7 @@
 
     <h2 class="section-title">6. Account Termination</h2>
     <p class="policy-text">
-      You may delete your account at any time by contacting us. We reserve the right to suspend or terminate accounts that violate these terms. Upon termination, your data will be deleted in accordance with our <a href="privacy.html" style="border-bottom: 1px solid var(--gray-200);">Privacy Policy</a>.
+      You may delete your account at any time by contacting us. We reserve the right to suspend or terminate accounts that violate these terms. Upon termination, your data will be deleted in accordance with our <a href="privacy.html">Privacy Policy</a>.
     </p>
 
     <h2 class="section-title">7. Limitation of Liability</h2>
@@ -60,8 +158,17 @@
 
     <h2 class="section-title">Contact</h2>
     <p class="policy-text">
-      Questions about these terms? Contact us at <a href="mailto:mirafashionai@gmail.com" style="border-bottom: 1px solid var(--gray-200);">mirafashionai@gmail.com</a>.
+      Questions about these terms? Contact us at <a href="mailto:mirafashionai@gmail.com">mirafashionai@gmail.com</a>.
     </p>
+
+    <div class="site-footer">
+      <span class="footer-brand">EURA</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="mailto:mirafashionai@gmail.com">Contact</a>
+      </div>
+    </div>
   </div>
 </body>
 </html>
