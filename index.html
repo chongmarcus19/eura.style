@@ -3,8 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EURA — Your AI Stylist</title>
-<meta name="description" content="Eura is an AI-powered personal stylist that learns your taste, manages your closet, and generates outfits you'll actually wear.">
+<title>EURA — A stylist you talk to while getting dressed</title>
+<meta name="description" content="Eura is a stylist you talk to while getting dressed. She sees your outfit through the camera, coaches you out loud, and remembers everything for next time.">
+<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -16,7 +24,7 @@ body{font-family:var(--fm);background:var(--bg);color:#1A1A1A;-webkit-font-smoot
 .d{position:fixed;z-index:0;pointer-events:none;opacity:0.08}
 .dd{display:block}
 .page{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 12px}
-.tv{width:min(620px,96vw);background:var(--tv-body);border-radius:16px;padding:14px 14px 12px;box-shadow:0 20px 60px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);margin-bottom:24px}
+.tv{width:min(620px,96vw);background:var(--tv-body);border-radius:16px;padding:14px 14px 12px;box-shadow:0 20px 60px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);margin-bottom:44px}
 .tv-top{display:flex;justify-content:space-between;align-items:center;padding:0 4px 10px}
 .tv-b{font-family:var(--fd);font-size:clamp(.55rem,1.5vw,.7rem);font-weight:800;color:#666;letter-spacing:.1em}
 .tv-m{font-family:var(--fm);font-size:clamp(.35rem,1vw,.45rem);color:#555}
@@ -124,8 +132,8 @@ body{font-family:var(--fm);background:var(--bg);color:#1A1A1A;-webkit-font-smoot
 <div class="sc">
 <div class="st" id="st"></div>
 <div class="net-bug">EURA</div>
-<div class="ch on" id="ch1"><span class="chn">CH 01</span><div class="c1t">EURA</div><div class="c1s">your new stylist</div><div class="c1k"><span class="c1ki">BREAKING: AI STYLIST GOES LIVE — SEES YOUR CLOSET — KNOWS YOUR COLORS — REMEMBERS EVERYTHING — DOORS OPEN SPRING 2026 — LIMITED ACCESS —</span></div><div class="c1b">&#9654; PRESS CH+ TO BEGIN</div><div class="c1sh">or swipe to browse</div></div>
-<div class="ch" id="ch2"><span class="chn">CH 02</span><div class="c2h">// YOUR CLOSET AUDIT</div><div class="c2r"><span>Items owned</span><span class="c2v">147</span></div><div class="c2r"><span>Items you wear</span><span class="c2vb">23</span></div><div class="c2r"><span>Outfit repeats</span><span class="c2vb">12</span></div><div class="c2r"><span>Unworn (60+ days)</span><span class="c2vb">121</span></div><div class="c2r"><span>Possible combos</span><span class="c2v">2,847</span></div></div>
+<div class="ch on" id="ch1"><span class="chn">CH 01</span><div class="c1t">EURA</div><div class="c1s">your new stylist</div><div class="c1k"><span class="c1ki">BREAKING: AI STYLIST GOES LIVE — SEES YOU THROUGH THE CAMERA — COACHES YOUR OUTFIT OUT LOUD — REMEMBERS EVERYTHING — OPENS SUMMER 2026 — LIMITED ACCESS —</span></div><div class="c1b">&#9654; PRESS CH+ TO BEGIN</div><div class="c1sh">or swipe to browse</div></div>
+<div class="ch" id="ch2"><span class="chn">CH 02</span><div class="c2h">// EURA REMEMBERS</div><div class="c2r"><span>Sessions together</span><span class="c2v">23</span></div><div class="c2r"><span>Closet items learned</span><span class="c2v">47</span></div><div class="c2r"><span>Outfits coached</span><span class="c2v">31</span></div><div class="c2r"><span>Style profile</span><span class="c2v">warm minimalist</span></div><div class="c2r"><span>Getting sharper</span><span class="c2v">every session</span></div></div>
 <div class="ch" id="ch3"><span class="chn">CH 03</span><div class="c3l">// OUTFIT SCORE</div><div class="c3r"><div class="c3i"><div class="c3sv"><svg viewBox="0 0 28 28" fill="none" stroke="#22AA44" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 L3 8 L5 13 L8 11 L8 25 L20 25 L20 11 L23 13 L25 8 L20 4"/><path d="M8 4 C10 7 12 8 14 8 C16 8 18 7 20 4"/></svg></div><div class="c3n">T-SHIRT</div></div><div class="c3i"><div class="c3sv"><svg viewBox="0 0 28 28" fill="none" stroke="#22AA44" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3 L4 7 L7 10 L7 25 L21 25 L21 10 L24 7 L21 3"/><path d="M7 3 C9 6 12 8 14 8 C16 8 19 6 21 3"/><path d="M7 14 L21 14" stroke-dasharray="2 2"/></svg></div><div class="c3n">KNIT</div></div><div class="c3i"><div class="c3sv"><svg viewBox="0 0 28 28" fill="none" stroke="#22AA44" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3 L22 3 L22 8 L20 26 L16 26 L14 14 L12 26 L8 26 L6 8 Z"/><path d="M6 8 L22 8"/></svg></div><div class="c3n">JEANS</div></div><div class="c3i"><div class="c3sv"><svg viewBox="0 0 28 28" fill="none" stroke="#22AA44" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5 L8 14 C8 14 4 16 4 20 L4 22 L24 22 L26 20 C26 16 22 14 18 13 L18 5 Z"/></svg></div><div class="c3n">BOOTS</div></div></div><div class="c3bg"><div class="c3f" style="width:87%"></div></div><div class="c3st">8.7 / 10</div><div class="c3re">Color harmony: excellent. Proportions balanced. Occasion: dinner ready.</div></div>
 <div class="ch" id="ch4"><span class="chn">CH 04</span><div class="c4c"><div class="c4l"><div class="c4sp">YOU:</div><div class="c4t">I have a dinner tonight, casual but nice</div></div><div class="c4l"><div class="c4sp">EURA:</div><div class="c4t">The olive blazer over your cream knit. Dark wash jeans, pointed mules. The green is perfect for your warm undertone.</div></div><div class="c4l"><div class="c4sp">YOU:</div><div class="c4t c4td">Jewelry?</div></div><div class="c4l"><div class="c4sp">EURA:</div><div class="c4t">The gold hoops. They catch light without competing with the blazer's structure.</div></div></div></div>
 <div class="ch" id="ch5"><span class="chn">CH 05</span><div class="c5p">GET IN</div><div class="c5s">Early access — limited spots</div><form class="c5f" id="tf"><input type="email" class="c5i" id="te" placeholder="your@email.com" required autocomplete="email"><button type="submit" class="c5b" id="tb">TRANSMIT</button></form><p id="ts" class="c5st"></p></div>
@@ -134,10 +142,24 @@ body{font-family:var(--fm);background:var(--bg);color:#1A1A1A;-webkit-font-smoot
 <div class="ctrl"><div class="knobs"><div class="knob"></div><div class="knob knob-g"></div></div><div class="chb"><button class="chbn" id="cp">CH-</button><span class="chi" id="cd">01</span><button class="chbn" id="cn">CH+</button></div><div class="knobs"><div class="knob"></div><div class="knob"></div></div></div>
 <div class="spk"><div class="spkg"></div></div>
 </div>
-<div class="ew"><p class="ewh">Be first in line.</p><p class="ews">Limited spots — Spring 2026.</p><form id="ef" class="ewf"><input type="email" id="ee" class="ewi" placeholder="your email" required autocomplete="email"><button type="submit" class="ewb" id="eb">RSVP</button></form><p id="es" class="ewst"></p></div>
+<div style="max-width:620px;width:100%;padding:0 16px;margin-bottom:24px;margin-top:20px">
+<h2 style="font-family:var(--fd);font-size:clamp(22px,5.5vw,32px);font-weight:900;color:#1A1A1A;text-align:center;line-height:1.2;letter-spacing:-.02em;margin-bottom:12px">Eura is a stylist you talk to<br>while getting dressed.</h2>
+<p style="font-family:var(--fm);font-size:clamp(.65rem,1.8vw,.8rem);color:#777;text-align:center;line-height:1.9;max-width:480px;margin:0 auto 32px">She sees your outfit through the camera, coaches you out loud, and remembers everything for next time.</p>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:36px">
+<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:.5px solid #D0CCC4;border-radius:4px"><span style="font-family:var(--fm);font-size:.65rem;color:#bbb;min-width:18px;padding-top:2px">01</span><div><div style="font-family:var(--fd);font-size:clamp(.8rem,2vw,.9rem);font-weight:700;color:#1A1A1A;margin-bottom:3px">Open the app, start talking.</div><div style="font-family:var(--fm);font-size:clamp(.6rem,1.6vw,.7rem);color:#888;line-height:1.7">She sees your outfit through the camera and gives you a styling read in seconds. No uploading, no typing, no setup.</div></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:.5px solid #D0CCC4;border-radius:4px"><span style="font-family:var(--fm);font-size:.65rem;color:#bbb;min-width:18px;padding-top:2px">02</span><div><div style="font-family:var(--fd);font-size:clamp(.8rem,2vw,.9rem);font-weight:700;color:#1A1A1A;margin-bottom:3px">Your closet builds itself.</div><div style="font-family:var(--fm);font-size:clamp(.6rem,1.6vw,.7rem);color:#888;line-height:1.7">Eura remembers what you wear, what you mention, and what worked. No photos to tag. She learns by listening and looking.</div></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:.5px solid #D0CCC4;border-radius:4px"><span style="font-family:var(--fm);font-size:.65rem;color:#bbb;min-width:18px;padding-top:2px">03</span><div><div style="font-family:var(--fd);font-size:clamp(.8rem,2vw,.9rem);font-weight:700;color:#1A1A1A;margin-bottom:3px">A stylist who actually knows you.</div><div style="font-family:var(--fm);font-size:clamp(.6rem,1.6vw,.7rem);color:#888;line-height:1.7">"The olive blazer with your cream knit, the green plays with your warm undertone." Not a chatbot guessing. A stylist who's seen your closet a hundred times.</div></div></div>
+</div>
+<div style="text-align:center;padding:28px 0;border-top:.5px solid #D0CCC4;border-bottom:.5px solid #D0CCC4;margin-bottom:20px">
+<div style="font-family:var(--fd);font-size:clamp(18px,4.5vw,24px);font-weight:900;color:#1A1A1A;margin-bottom:5px">Get in early.</div>
+<div style="font-family:var(--fp);font-size:clamp(11px,2.5vw,14px);color:#aaa;letter-spacing:.15em;margin-bottom:16px">LIMITED SPOTS — SUMMER 2026</div>
+<form id="ef" class="ewf" style="max-width:380px;margin:0 auto"><input type="email" id="ee" class="ewi" placeholder="your@email.com" required autocomplete="email"><button type="submit" class="ewb" id="eb">RSVP</button></form>
+<p id="es" class="ewst"></p>
+</div>
+</div>
 <div class="ft"><p class="ftt">EURA INDUSTRIES — STYLE NETWORK — 2026</p><div class="ftl"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="mailto:mirafashionai@gmail.com">Contact</a></div></div>
 </div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var chs=['ch1','ch2','ch3','ch4','ch5'],cur=0,disp=document.getElementById('cd'),stat=document.getElementById('st');
 function go(i){stat.classList.add('flash');for(var j=0;j<chs.length;j++)document.getElementById(chs[j]).classList.remove('on');setTimeout(function(){cur=((i%chs.length)+chs.length)%chs.length;document.getElementById(chs[cur]).classList.add('on');disp.textContent=('0'+(cur+1)).slice(-2);stat.classList.remove('flash')},150)}
 document.getElementById('cn').addEventListener('click',function(){go(cur+1)});
@@ -150,8 +172,8 @@ sw.addEventListener('touchend',function(e){if(!si)return;si=false;var dx=e.chang
 function anim(){if(stat.classList.contains('flash'))stat.style.backgroundPosition=(Math.random()*256)+'px '+(Math.random()*256)+'px';requestAnimationFrame(anim)}anim();
 var API='https://api.eura.style/waitlist';
 function sf(fid,eid,sid,bid,ok,dup){var f=document.getElementById(fid),ei=document.getElementById(eid),se=document.getElementById(sid),b=document.getElementById(bid),ot=b.textContent;f.addEventListener('submit',function(e){e.preventDefault();var em=ei.value.trim();if(!em)return;b.disabled=true;b.textContent='Sending...';se.textContent='';se.className=se.className.split(' ')[0];fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})}).then(function(r){return r.json().then(function(d){return{s:r.status,d:d}})}).then(function(r){if(r.s>=200&&r.s<300){se.textContent=ok;se.classList.add('success');ei.value=''}else if(r.s===409){se.textContent=dup;se.classList.add('info')}else if(r.s===429){se.textContent='Too many attempts. Try again shortly.';se.classList.add('error')}else{se.textContent=r.d.detail||'Something went wrong.';se.classList.add('error')}b.disabled=false;b.textContent=ot}).catch(function(){se.textContent='Could not connect. Try again.';se.classList.add('error');b.disabled=false;b.textContent=ot})})}
-sf('tf','te','ts','tb',"> SIGNAL RECEIVED. YOU'RE IN.",'> ALREADY IN THE SYSTEM.');
-sf('ef','ee','es','eb',"You're on the list. We'll be in touch.","You're already on the list.");
+sf('tf','te','ts','tb',"> SIGNAL RECEIVED. YOU'RE IN","Already on the list — you're good.");
+sf('ef','ee','es','eb',"You're in. We'll be in touch.","Already on the list.");
 </script>
 </body>
 </html>
