@@ -155,7 +155,9 @@
     <h2 class="section-title">What we collect</h2>
     <p class="policy-text"><strong>Account details.</strong> Your email address, and your name if you provide one. If you sign in with Apple or Google we receive an identifier from them, plus whatever address you choose to share — including Apple's private relay address if you use Hide My Email. Passwords are stored as one-way hashes, never as text we can read.</p>
     <p class="policy-text"><strong>Voice.</strong> While you hold the orb, audio from your microphone is streamed to our voice provider so Eura can hear you and reply. Transcripts of what you say become part of your conversation history.</p>
-    <p class="policy-text"><strong>Photographs.</strong> When you invite Eura to look, the camera captures a short window of frames. When you attach a photo to a message, we receive that photo. Images are sent to an AI provider so Eura can describe and assess what you are wearing. We keep cropped images of individual garments and a numeric representation of each one; we do not keep the original full frames from a camera invitation.</p>
+    <p class="policy-text"><strong>Photographs, and what we keep out of them.</strong> When you invite Eura to look, the camera captures a short window of frames. When you attach a photo to a message, we receive that photo. Either way the image goes to an AI provider so Eura can describe and assess what you are wearing.</p>
+    <p class="policy-text">From that image we then automatically cut out the individual garments we can make out, and keep each cutting along with a numeric fingerprint of it. This happens in the background every time she looks, without a separate approval each time — inviting the camera is the moment you agree to it. The original full frame is discarded; the cuttings are what we keep.</p>
+    <p class="policy-text">We keep them so that Eura can recognise your clothes later and stop asking you what you own. They are not a feature you can see or use: there is no wardrobe screen, no inventory, nothing to upload to and nothing to tidy up. It is a record she keeps in order to be useful to you, and deleting your account deletes it.</p>
     <p class="policy-text"><strong>What you tell her.</strong> Your conversations, and the taste profile Eura builds from them — the styles you like, the things you have said you own, what you have asked her to avoid.</p>
     <p class="policy-text"><strong>Location, only if you set it.</strong> You may choose a city in settings so Eura can factor in the weather. That is the only location information we hold. <strong>The app never asks your device where you are</strong> and has no ability to read your device&rsquo;s location.</p>
     <p class="policy-text"><strong>Use of the app.</strong> Which products you are shown and interact with, and records of your sessions, so we can tell whether Eura&rsquo;s advice is any good.</p>
@@ -175,23 +177,45 @@
     <p class="policy-text">We do not use your data for advertising, and we do not build profiles of you for anyone else.</p>
 
     <h2 class="section-title">Who else processes your data</h2>
-    <p class="policy-text">Eura is built on other companies&rsquo; AI models, and using it means your data reaches them. We think you should know which, by name:</p>
+    <p class="policy-text">Eura is built on other companies&rsquo; AI models and infrastructure, and using it means your data reaches them. We think you should know which, by name. This is the complete list:</p>
     <ul class="policy-list">
       <li><strong>Hume AI</strong> — receives your microphone audio to transcribe your speech and generate Eura&rsquo;s voice.</li>
       <li><strong>OpenAI</strong> — receives photographs from camera invitations and attachments so Eura can describe and assess what you are wearing, and receives conversation content for parts of her reasoning.</li>
-      <li><strong>Anthropic</strong> — receives conversation content to generate Eura&rsquo;s coaching responses.</li>
-      <li><strong>Google</strong> — receives conversation content and images for parts of her reasoning and for generating visuals.</li>
+      <li><strong>Anthropic</strong> — receives conversation content, and the images you show her, to generate Eura&rsquo;s coaching responses.</li>
+      <li><strong>Google (Gemini)</strong> — receives conversation content and images for parts of her reasoning, for filtering product results, and for generating visuals. This is Google&rsquo;s AI service, and is separate from Google search results, which reach us through the two providers below.</li>
       <li><strong>Tavily and SerpAPI</strong> — receive search terms derived from your conversation, in order to look up brands and products. They do not receive your transcripts wholesale.</li>
-      <li><strong>Amazon Web Services and Railway</strong> — store our database and images on our behalf.</li>
+      <li><strong>Amazon Web Services</strong> — stores the garment images described above, in our own account there.</li>
+      <li><strong>Railway</strong> — hosts our servers and our database. Everything you send to Eura passes through, and is stored on, infrastructure they operate.</li>
+      <li><strong>Tomorrow.io</strong> — receives the coordinates of the city you chose in settings, so it can tell us the weather there. It receives nothing else, and nothing that identifies you.</li>
+      <li><strong>Apple and Google</strong> — if you sign in with them, they confirm who you are to us, and we receive an identifier plus whatever address you chose to share.</li>
       <li><strong>Pinterest</strong> — only if you connect it, and only as their own policies describe.</li>
     </ul>
-    <p class="policy-text">These companies process data so that we can provide the service. They are not permitted to use it for their own purposes beyond what their terms allow, and we do not sell your data to anyone.</p>
-    <p class="policy-text">[[LEGAL REVIEW — confirm each provider&rsquo;s data-processing terms, whether any train on submitted data, and add sub-processor links if required.]]</p>
+    <p class="policy-text">One change is coming that we would rather tell you about now than after the fact: we intend to move the step that cuts garments out of a photograph onto <strong>Modal</strong>, a company that runs computing on demand. When that happens, images from a camera invitation will be processed on their machines rather than ours. We will update this page on the day it changes, not afterwards.</p>
+    <p class="policy-text">These companies process data so that we can provide the service, and we do not sell your data to anyone.</p>
+
+    <h2 class="section-title">Whether any of them train on what you send</h2>
+    <p class="policy-text">This is usually the real question, so here is what each provider&rsquo;s own terms say today. Where the answer is not clean we have said so, rather than rounding it up.</p>
+    <ul class="policy-list">
+      <li><strong>OpenAI — no.</strong> Their API terms state that data sent to the API is not used to train or improve their models unless the customer opts in. We have not opted in. They do keep abuse-monitoring logs for up to 30 days.</li>
+      <li><strong>Anthropic — no.</strong> In their words: &ldquo;By default, we will not use your inputs or outputs from our commercial products to train our models.&rdquo; The exception is content submitted as explicit feedback, which we do not send.</li>
+      <li><strong>Google — depends on which tier of their service we are on, and we are confirming that before this page publishes. [[VERIFY — paid vs free Gemini API tier]]</strong> On the paid tier, prompts and responses are not used to improve Google&rsquo;s products. On the free tier they are, and human reviewers may read them. We will state our answer plainly here rather than leave it ambiguous.</li>
+      <li><strong>Hume AI — we cannot tell you it is no.</strong> Their terms of use grant them a broad, perpetual licence to use submitted input for platform improvement and product development, and their published privacy policy says data from API customers is governed by separate agreements that it does not set out. Your voice is the most sensitive thing we handle, so this is the answer we are least comfortable with, and we are pursuing terms that settle it. [[FOUNDER ACTION — obtain Hume&rsquo;s API customer agreement position and state it here]]</li>
+      <li><strong>Tavily — partly yes.</strong> Their policy says that, unless a contract says otherwise, they may use portions of query data to improve their future responses. What reaches them is search terms, not your conversation.</li>
+      <li><strong>SerpAPI — unstated.</strong> Their published policy does not address model training, or how long queries are kept. The absence of a statement is not a promise, and we are not going to present it as one. What reaches them is search terms, not your conversation.</li>
+    </ul>
+    <p class="policy-text">Amazon Web Services, Railway, Modal and Tomorrow.io are infrastructure and data providers rather than model providers: they store, transmit, or answer a question, and do not train on what we send them.</p>
+    <p class="policy-text">[[LEGAL REVIEW — add sub-processor links and data-processing addenda where required.]]</p>
 
     <h2 class="section-title">How long we keep it, and deleting your account</h2>
-    <p class="policy-text">We keep your account and the taste profile Eura has built for as long as your account exists, because that history is what makes her useful to you.</p>
-    <p class="policy-text"><strong>You can delete your account from inside the app</strong>, on the profile screen. Deleting it removes your account and the data attached to it — your conversations, your session history, the garment images we stored, and the taste profile — and, if you signed in with Apple, unlinks Eura from your Apple ID.</p>
-    <p class="policy-text">One honest limitation: temporary images created while looking up a product are stored without any link to your account, so account deletion cannot find them individually. They expire automatically on a short schedule.</p>
+    <p class="policy-text">The honest answer is that we keep almost all of it for as long as your account exists. Eura&rsquo;s entire usefulness rests on remembering, so we have not built her to forget on a schedule. Specifically:</p>
+    <ul class="policy-list">
+      <li>Your conversations, and the record of the sessions they came from, are kept for the life of the account.</li>
+      <li>Garment cuttings and their fingerprints are kept for the life of the account. If you tell Eura you no longer own something, it is marked as no longer owned rather than erased — she keeps the note so she stops suggesting it.</li>
+      <li>Things she learns by being told, rather than by looking, lose confidence as they age. She trusts them less over time and eventually stops raising them, but they are not deleted on a timer.</li>
+      <li>Temporary images created while looking up a product are deleted as soon as the lookup finishes.</li>
+    </ul>
+    <p class="policy-text">We do not currently run a fixed retention window that deletes older data automatically. If that changes, this section changes with it. Until then, deleting your account is what removes your data.</p>
+    <p class="policy-text"><strong>You can delete your account from inside the app</strong>, on the profile screen. Deleting it removes your account and everything attached to it — your conversations, your session history, the garment cuttings and their fingerprints, and the taste profile — and, if you signed in with Apple, unlinks Eura from your Apple ID.</p>
     <p class="policy-text">Backups and logs may retain some information briefly after deletion before they age out. [[LEGAL REVIEW — state actual backup retention once confirmed with the hosting providers.]]</p>
 
     <h2 class="section-title">Your choices</h2>
@@ -207,7 +231,7 @@
     <p class="policy-text">Traffic between the app and our servers is encrypted in transit. Passwords are stored only as one-way hashes. Access to production systems is limited to the people who build Eura. No system is perfectly secure, and we will not pretend otherwise.</p>
 
     <h2 class="section-title">Children</h2>
-    <p class="policy-text">Eura is not intended for children. [[LEGAL REVIEW — set the minimum age and confirm the obligations that follow from it.]]</p>
+    <p class="policy-text">Eura is for people aged 16 and over. We do not knowingly collect information from anyone younger, anywhere. If you believe a child under 16 has an account, write to us and we will delete it.</p>
 
     <h2 class="section-title">Changes</h2>
     <p class="policy-text">If we change how we handle your data, we will update this page and the date at the top. If a change is significant, we will tell you in the app rather than relying on you to re-read this.</p>
