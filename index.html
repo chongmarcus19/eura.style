@@ -31,6 +31,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 @keyframes staticshift{0%{background-position:0 0}25%{background-position:9px -13px}50%{background-position:-7px 8px}75%{background-position:13px 4px}100%{background-position:-4px -9px}}
 .eura-grid-field{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(23,22,18,.34) 0 1.6px,transparent 2px);background-size:112px 112px;background-position:0 0}
 .memory-fade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(243,239,230,.98) 0%,rgba(243,239,230,.93) 36%,rgba(243,239,230,.58) 62%,rgba(243,239,230,0) 82%)}
+.crt-pointer-field{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;display:none;transition:opacity .12s linear}
+.crt-pointer-noise{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.52) 0 1px,rgba(0,0,0,.62) 1px 3px),repeating-linear-gradient(90deg,transparent 0 4px,color-mix(in srgb,var(--ph,#44DD66) 48%,transparent) 4px 5px),linear-gradient(90deg,transparent 0 44%,color-mix(in srgb,var(--ph,#44DD66) 34%,transparent) 48% 52%,transparent 56%);-webkit-mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
+.crt-pointer-dot{position:absolute;left:var(--crt-x,50%);top:var(--crt-y,50%);width:9px;height:9px;border:1px solid color-mix(in srgb,var(--ph,#44DD66) 90%,white);border-radius:1px;background:color-mix(in srgb,var(--ph,#44DD66) 82%,transparent);box-shadow:0 0 8px var(--ph,#44DD66),0 0 20px color-mix(in srgb,var(--ph,#44DD66) 72%,transparent);transform:translate(-50%,-50%)}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-screen{cursor:crosshair}.crt-pointer-field{display:block}}
 @media(max-width:999px){
   .hero-sequence{height:420svh!important}
   .rv-panel-stack{gap:clamp(48px,7vh,64px)!important}
@@ -41,6 +45,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
   [data-phone]{order:3;justify-self:center!important;margin-top:4px}
   [data-copy="2"]{justify-content:center;text-align:center}
   [data-copy="2"] h2{max-width:min(15ch,100%)!important}
+  .memory-card{width:100%!important;max-width:720px;margin-inline:auto;padding-inline:clamp(4px,1.5vw,10px)}
   .access-inner{justify-items:center;text-align:center}
   .access-form{width:min(100%,560px);margin-inline:auto}
   .access-status{justify-content:center!important}
@@ -74,7 +79,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 
     <!-- the TV -->
     <div class="eura-tv" ref="{{ tvRef }}" style="position:absolute;top:50%;left:50%;width:min(88vw,620px);background:var(--chassis,repeating-linear-gradient(92deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),linear-gradient(180deg,#5A4636,#3E2E22 60%,#2E2119));border-radius:26px 26px 22px 22px;padding:clamp(16px,2.6vw,26px) clamp(16px,2.6vw,26px) 16px;box-shadow:0 40px 100px rgba(23,22,18,.4),inset 0 2px 0 rgba(255,255,255,.12),inset 0 -3px 0 rgba(0,0,0,.45);will-change:transform">
-      <div ref="{{ screenRef }}" style="background:#000;border-radius:38px/30px;overflow:hidden;position:relative;aspect-ratio:4/3;border:6px solid var(--bezel,#1A1814);box-shadow:inset 0 0 0 3px var(--bezel2,#4a4038),inset 0 0 40px rgba(0,0,0,.9),0 0 0 2px rgba(0,0,0,.6)">
+      <div class="crt-screen" ref="{{ screenRef }}" onMouseMove="{{ screenPointerMove }}" onMouseEnter="{{ screenPointerEnter }}" onMouseLeave="{{ screenPointerLeave }}" style="background:#000;border-radius:38px/30px;overflow:hidden;position:relative;aspect-ratio:4/3;border:6px solid var(--bezel,#1A1814);box-shadow:inset 0 0 0 3px var(--bezel2,#4a4038),inset 0 0 40px rgba(0,0,0,.9),0 0 0 2px rgba(0,0,0,.6)">
         <div style="position:absolute;inset:0;background:#0A0A0A"></div>
 
         <!-- CH 1 · transition: the reel, on the set -->
@@ -108,6 +113,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
         <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ staticO }};transition:opacity .08s;background:repeating-linear-gradient(0deg,#292929 0 1px,#050505 1px 3px,#3a3a3a 3px 4px),repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 1px,transparent 1px 5px),#000;background-size:auto,17px 100%;animation:staticshift .08s steps(2) infinite;mix-blend-mode:screen"></div>
         <div style="position:absolute;inset:0;pointer-events:none;background:#030303;opacity:{{ screenOffO }};transition:opacity .07s"></div>
         <div style="position:absolute;left:10%;right:10%;top:50%;height:2px;margin-top:-1px;pointer-events:none;background:#E9E5D9;box-shadow:0 0 7px #fff,0 0 18px rgba(255,255,255,.75);opacity:{{ powerLineO }};transform:scaleX({{ powerLineScale }});transition:opacity .1s,transform .16s cubic-bezier(.6,0,1,.4)"></div>
+        <div class="crt-pointer-field" ref="{{ crtPointerRef }}" aria-hidden="true"><div class="crt-pointer-noise"></div><div class="crt-pointer-dot"></div></div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 4px 0;gap:12px">
         <button onClick="{{ power }}" aria-label="Power" style="width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#8A8378,#3A342C);border:2px solid #241C15;box-shadow:0 2px 4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.2);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ powerBg }};box-shadow:{{ powerGlow }};transition:background .3s"></span></button>
@@ -144,15 +150,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
         <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(34px,min(5vw,8.5svh),92px);line-height:.95;max-width:var(--copyMax,min(14ch,44vw));text-wrap:pretty">Chatbots give you options. <span style="color:#1E563C">Eura gives you opinions.</span></h2>
       </div>
       <!-- 3 -->
-      <div data-copy="3" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:grid;grid-template-rows:auto 1fr auto;justify-items:center;text-align:center;opacity:0">
+      <div data-copy="3" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:grid;grid-template-rows:auto 1fr;justify-items:center;text-align:center;opacity:0">
         <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(26px,min(3.6vw,6svh),60px);line-height:.98;max-width:22ch;text-wrap:balance">A feed is infinite. <span style="color:#1E563C">Eura stops at eight.</span></h2>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,16px);padding-bottom:clamp(64px,16vh,150px)">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,16px);padding-bottom:clamp(12px,3vh,30px)">
           <div class="ui-label" style="font-size:clamp(80px,min(15vw,24svh),240px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
           <div class="ui-label" ref="{{ capRef }}" style="font-size:clamp(10px,.9vw,12px);letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#1E563C">{{ numLine }}</div>
-        </div>
-        <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center">
-          <p style="font-size:clamp(14px,1.2vw,18px);font-weight:600;line-height:1.3;color:#171612">Eight picks, one reason each</p>
-          <p style="font-size:clamp(12px,1vw,14px);line-height:1.6;max-width:56ch;color:rgba(23,22,18,.8);text-wrap:pretty">Marcus told her he joined a run club and was over navy. The next day, Eura brought running shoes in his budget and nothing navy.</p>
+          <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center;margin-top:clamp(112px,14vh,150px)">
+            <p style="font-size:clamp(14px,1.2vw,18px);font-weight:600;line-height:1.3;color:#171612">Eight picks, one reason each</p>
+          </div>
         </div>
       </div>
     </div>
@@ -165,23 +170,20 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
     <div class="rv-panel-stack" style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
       <div data-rv="1" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <div class="ui-label" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#1E563C">01 / Today's edit</div>
           <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Eight things worth seeing.</h3>
         </div>
         <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-mart-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Eura's Edit: eight picks in the Mart" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
-        <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">A new edit built around your taste. Like something, reject it or tell her why it missed. Tomorrow's eight get closer.</p>
+        <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Tell Eura anything. More running shoes. Italy in October. Nothing navy. She builds your next eight around it.</p>
       </div>
       <div data-rv="2" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <div class="ui-label" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#1E563C">02 / Say it out loud</div>
-          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">No form. Just tell her.</h3>
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Talk it through. Or type it out.</h3>
         </div>
         <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-voice-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Talking to Eura" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
-        <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Where you're going. What you have on. What doesn't feel right. Eura listens and tells you what to do next.</p>
+        <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Where you're going. What you have on. What doesn't feel right. However you ask, Eura tells you what to do next.</p>
       </div>
       <div data-rv="3" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <div class="ui-label" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#1E563C">03 / She gets the reference</div>
           <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Inspiration without the impersonation.</h3>
         </div>
         <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><img src="./eura-chat.png" alt="Eura on dressing like Tyler, the Creator" style="display:block;width:100%;aspect-ratio:9/19.5;object-fit:cover;object-position:50% 0;border-radius:26px"></div>
@@ -191,20 +193,24 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
   </div>
 </section>
 
-<!-- she remembers. one ordinary question, one useful callback. -->
+<!-- she remembers. one earlier preference, one useful callback. -->
 <section class="memory-section" ref="{{ memRef }}" data-screen-label="Memory" style="position:relative;z-index:1;min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(40px,8vh,80px);padding:clamp(64px,10vh,120px) clamp(16px,4vw,40px)">
   <div class="memory-fade" aria-hidden="true"></div>
-  <div style="width:min(92vw,720px);display:grid;text-align:left;border-top:1px solid rgba(23,22,18,.28);border-bottom:1px solid rgba(23,22,18,.28)">
+  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">You said it once. <span style="color:#1E563C">Eura remembers.</span></h2>
+  <div class="memory-card" style="width:min(92vw,720px);display:grid;text-align:left;border-top:1px solid rgba(23,22,18,.28);border-bottom:1px solid rgba(23,22,18,.28)">
     <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0">
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / March 12</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Nothing with a visible logo. Ever.</div>
+    </div>
+    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
       <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / Today</div>
-      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">What should I pack for Italy?</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Find me a jacket for fall.</div>
     </div>
     <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
       <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#1E563C;font-weight:600">Eura</div>
-      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">Start with the black boots you saved in May. They're under $200, and they'll pull you out of all that navy.</div>
+      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">I skipped every logo. These three also work with the trousers you wear most.</div>
     </div>
   </div>
-  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">You said it once. <span style="color:#1E563C">Eura remembers.</span></h2>
 </section>
 
 <!-- access -->
@@ -281,6 +287,11 @@ class Component extends DCLogic {
       else v.pause();
     }
     const a = this.audio(); if (a && ps.muted !== this.state.muted) a.muted = this.state.muted;
+    if (ps.ch !== this.state.ch || ps.on !== this.state.on) {
+      const fx = this.refs.crtPointer && this.refs.crtPointer.current;
+      if (!this.state.on) this.screenPointerLeave();
+      else if (fx && this.crtInside) fx.style.opacity = this.state.ch === 2 ? '.14' : '.3';
+    }
   }
   trackScroll() {
     const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
@@ -507,6 +518,27 @@ class Component extends DCLogic {
     if (!muted && this.state.ch === 2 && this.state.on && this.state.phase === 'prompt') return this.playClip(true);
     if (!muted && this.state.ch === 2 && this.state.on && a && a.paused && this.state.phase !== 'done') this.playClip(false);
   }
+  screenPointerEnabled() {
+    return matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)').matches;
+  }
+  screenPointerEnter(e) {
+    this.crtInside = true;
+    this.screenPointerMove(e);
+  }
+  screenPointerMove(e) {
+    const fx = this.refs.crtPointer && this.refs.crtPointer.current, screen = this.refs.screen && this.refs.screen.current;
+    if (!fx || !screen || !this.state.on || !this.screenPointerEnabled()) return;
+    const r = screen.getBoundingClientRect(), x = Math.max(0, Math.min(r.width, e.clientX - r.left)), y = Math.max(0, Math.min(r.height, e.clientY - r.top)), now = performance.now(), prev = this.crtPoint;
+    const speed = prev ? Math.hypot(x - prev.x, y - prev.y) / Math.max(16, now - prev.t) : 0;
+    const quiet = this.state.ch === 2, base = quiet ? .14 : .3, peak = quiet ? .28 : .62;
+    fx.style.setProperty('--crt-x', x + 'px'); fx.style.setProperty('--crt-y', y + 'px'); fx.style.opacity = String(Math.min(peak, base + speed * .18));
+    this.crtPoint = { x, y, t: now }; this.crtInside = true;
+    clearTimeout(this.crtFade); this.crtFade = setTimeout(() => { if (this.crtInside && this.state.on && fx) fx.style.opacity = String(base); }, 90);
+  }
+  screenPointerLeave() {
+    const fx = this.refs.crtPointer && this.refs.crtPointer.current;
+    clearTimeout(this.crtFade); this.crtInside = false; this.crtPoint = null; if (fx) fx.style.opacity = '0';
+  }
   power() {
     const a = this.audio(), v = this.refs.reel && this.refs.reel.current;
     clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.staticT);
@@ -526,7 +558,7 @@ class Component extends DCLogic {
     }, 190);
   }
   componentWillUnmount() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll);
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll);
     try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
   }
@@ -534,7 +566,8 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state, ch = s.ch, on = s.on, c2 = ch === 2, eura = c2 && on, done = eura && s.phase === 'done';
     return {
-      rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), memRef: this.ref('mem'), capRef: this.ref('cap'), reelRef: this.ref('reel'), screenRef: this.ref('screen'),
+      rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), memRef: this.ref('mem'), capRef: this.ref('cap'), reelRef: this.ref('reel'), screenRef: this.ref('screen'), crtPointerRef: this.ref('crtPointer'),
+      screenPointerMove: (e) => this.screenPointerMove(e), screenPointerEnter: (e) => this.screenPointerEnter(e), screenPointerLeave: () => this.screenPointerLeave(),
       reelEnded: (e) => { const v = e.target; try { v.currentTime = 0; } catch (x) {} const p = v.play(); if (p && p.catch) p.catch(() => {}); },
       onTimeUpdate: (e) => this.onTimeUpdate(e), onEnded: () => this.finishClip(), onAudioError: () => this.armFallback(),
       grain: React.createElement('canvas', { ref: this.ref('grain'), style: { width: '100%', height: '100%', display: 'block', mixBlendMode: 'overlay', imageRendering: 'pixelated' } }),
