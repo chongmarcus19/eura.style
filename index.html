@@ -84,7 +84,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 
         <!-- CH 1 · transition: the reel, on the set -->
         <div style="position:absolute;inset:0;opacity:{{ c1O }};transition:opacity .35s;pointer-events:none">
-          <video ref="{{ reelRef }}" src="./eura-hero-reel-loop.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" onEnded="{{ reelEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))"></video>
+          <img src="./eura-hero-poster.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))">
+          <video ref="{{ reelRef }}" src="./eura-hero-reel-loop.mp4" poster="./eura-hero-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" onLoadedData="{{ reelReady }}" onCanPlay="{{ reelReady }}" onPlaying="{{ reelPlaying }}" onPause="{{ reelUnavailable }}" onStalled="{{ reelUnavailable }}" onError="{{ reelUnavailable }}" onEnded="{{ reelEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))"></video>
           <div style="position:absolute;inset:0;pointer-events:none">{{ grain }}</div>
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(36px,16cqw,96px);letter-spacing:-.02em;line-height:.9;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55)">EURA</div>
         </div>
@@ -275,15 +276,31 @@ class Component extends DCLogic {
     this.applyTweaks(); const a = this.audio(); if (a) a.muted = true;
     this.startGrain(); this.startParticles(); this.wait(0); this.kick(0);
     this.onAnalyticsScroll = () => this.trackScroll();
+    this.resumeReel = () => { if (document.visibilityState !== 'hidden') this.playReel(); };
     addEventListener('scroll', this.onAnalyticsScroll, { passive: true });
+    addEventListener('pageshow', this.resumeReel);
+    addEventListener('focus', this.resumeReel);
+    document.addEventListener('visibilitychange', this.resumeReel);
     this.trackScroll();
   }
-  kick(n) { const v = this.refs.reel && this.refs.reel.current; if (v) { v.muted = true; v.loop = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); return; } if (n < 40) setTimeout(() => this.kick(n + 1), 150); }
+  kick(n) { const v = this.refs.reel && this.refs.reel.current; if (v) return this.playReel(); if (n < 40) this.reelKick = setTimeout(() => this.kick(n + 1), 150); }
+  playReel(reset = false, attempt = 0) {
+    const v = this.refs.reel && this.refs.reel.current;
+    if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') return;
+    clearTimeout(this.reelRetry); v.muted = true; v.loop = true; v.playsInline = true;
+    if (reset || v.ended) try { v.currentTime = 0; } catch (e) {}
+    if (v.readyState === 0) try { v.load(); } catch (e) {}
+    const p = v.play();
+    if (p && p.catch) p.catch(() => { if (attempt < 6) this.reelRetry = setTimeout(() => this.playReel(false, attempt + 1), 300 + attempt * 250); });
+  }
+  reelReady(e) { if (this.state.on && this.state.ch === 1) this.playReel(); }
+  reelPlaying(e) { e.currentTarget.style.opacity = '1'; }
+  reelUnavailable(e) { e.currentTarget.style.opacity = '0'; }
   componentDidUpdate(pp, ps) {
     if (pp.phosphor !== this.props.phosphor || pp.chassis !== this.props.chassis || pp.retro !== this.props.retro) this.applyTweaks();
     const v = this.refs.reel && this.refs.reel.current;
     if (v && (ps.ch !== this.state.ch || ps.on !== this.state.on)) {
-      if (this.state.ch === 1 && this.state.on) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+      if (this.state.ch === 1 && this.state.on) this.playReel();
       else v.pause();
     }
     const a = this.audio(); if (a && ps.muted !== this.state.muted) a.muted = this.state.muted;
@@ -554,11 +571,11 @@ class Component extends DCLogic {
     this.powerT2 = setTimeout(() => {
       this.setState({ staticOn: false });
       if (this.state.ch === 2) this.beginVoiceBeat();
-      else if (this.state.ch === 1 && v) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+      else if (this.state.ch === 1 && v) this.playReel();
     }, 190);
   }
   componentWillUnmount() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll);
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
     try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
   }
@@ -568,7 +585,7 @@ class Component extends DCLogic {
     return {
       rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), memRef: this.ref('mem'), capRef: this.ref('cap'), reelRef: this.ref('reel'), screenRef: this.ref('screen'), crtPointerRef: this.ref('crtPointer'),
       screenPointerMove: (e) => this.screenPointerMove(e), screenPointerEnter: (e) => this.screenPointerEnter(e), screenPointerLeave: () => this.screenPointerLeave(),
-      reelEnded: (e) => { const v = e.target; try { v.currentTime = 0; } catch (x) {} const p = v.play(); if (p && p.catch) p.catch(() => {}); },
+      reelReady: (e) => this.reelReady(e), reelPlaying: (e) => this.reelPlaying(e), reelUnavailable: (e) => this.reelUnavailable(e), reelEnded: () => this.playReel(true),
       onTimeUpdate: (e) => this.onTimeUpdate(e), onEnded: () => this.finishClip(), onAudioError: () => this.armFallback(),
       grain: React.createElement('canvas', { ref: this.ref('grain'), style: { width: '100%', height: '100%', display: 'block', mixBlendMode: 'overlay', imageRendering: 'pixelated' } }),
       particles: React.createElement('canvas', { ref: this.ref('part'), style: { width: '100%', height: '100%', display: 'block' } }),
