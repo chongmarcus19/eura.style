@@ -156,7 +156,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
           <div class="ui-label" style="font-size:clamp(80px,min(15vw,24svh),240px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
           <div class="ui-label" ref="{{ capRef }}" style="font-size:clamp(10px,.9vw,12px);letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#1E563C">{{ numLine }}</div>
           <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center;margin-top:clamp(112px,14vh,150px)">
-            <p style="font-size:clamp(14px,1.2vw,18px);font-weight:600;line-height:1.3;color:#171612">Eight picks, one reason each</p>
+            <p class="ui-label" style="font-size:clamp(11px,.95vw,14px);font-weight:600;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#1E563C">One reason for every pick</p>
           </div>
         </div>
       </div>
@@ -587,7 +587,7 @@ class Component extends DCLogic {
       muteDisplay: c2 ? 'flex' : 'none', muteLabel: s.muted ? 'Unmute Eura' : 'Mute Eura', muteColor: s.muted ? '#C9C2B4' : 'var(--ph,#44DD66)',
       soundWaveO: s.muted ? 0 : 1, muteSlashO: s.muted ? 1 : 0,
       powerBg: on ? 'var(--ph,#44DD66)' : '#5A2A22', powerGlow: on ? '0 0 8px var(--ph,#44DD66)' : 'none',
-      bigNum: s.num >= 1000 ? s.num.toLocaleString('en-US') : String(s.num), numLine: s.num > 200 ? 'things the algorithm shows you' : 'things she picked for you',
+      bigNum: s.num >= 1000 ? s.num.toLocaleString('en-US') : String(s.num), numLine: s.num > 200 ? 'things the algorithm shows you' : 'things Eura chooses for you',
       email: s.email, status: s.status, onEmail: (e) => this.setState({ email: e.target.value }),
       submit: (e) => {
         e.preventDefault(); const email = s.email.trim(); if (!email) return;
