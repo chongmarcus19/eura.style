@@ -277,6 +277,7 @@ class Component extends DCLogic {
     this.startGrain(); this.startParticles(); this.wait(0); this.kick(0);
     this.onAnalyticsScroll = () => this.trackScroll();
     this.resumeReel = () => { if (document.visibilityState !== 'hidden') this.playReel(); };
+    this.armReelUnlock();
     addEventListener('scroll', this.onAnalyticsScroll, { passive: true });
     addEventListener('pageshow', this.resumeReel);
     addEventListener('focus', this.resumeReel);
@@ -284,6 +285,21 @@ class Component extends DCLogic {
     this.trackScroll();
   }
   kick(n) { const v = this.refs.reel && this.refs.reel.current; if (v) return this.playReel(); if (n < 40) this.reelKick = setTimeout(() => this.kick(n + 1), 150); }
+  armReelUnlock() {
+    if (this.reelUnlockArmed) return;
+    this.reelUnlockArmed = true;
+    this.unlockReel = () => { if (this.state.on && this.state.ch === 1) { this.disarmReelUnlock(); this.playReel(); } };
+    document.addEventListener('touchstart', this.unlockReel, { passive: true });
+    document.addEventListener('pointerdown', this.unlockReel, { passive: true });
+    document.addEventListener('keydown', this.unlockReel);
+  }
+  disarmReelUnlock() {
+    if (!this.reelUnlockArmed) return;
+    this.reelUnlockArmed = false;
+    document.removeEventListener('touchstart', this.unlockReel);
+    document.removeEventListener('pointerdown', this.unlockReel);
+    document.removeEventListener('keydown', this.unlockReel);
+  }
   playReel(reset = false, attempt = 0) {
     const v = this.refs.reel && this.refs.reel.current;
     if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') return;
@@ -291,11 +307,11 @@ class Component extends DCLogic {
     if (reset || v.ended) try { v.currentTime = 0; } catch (e) {}
     if (v.readyState === 0) try { v.load(); } catch (e) {}
     const p = v.play();
-    if (p && p.catch) p.catch(() => { if (attempt < 6) this.reelRetry = setTimeout(() => this.playReel(false, attempt + 1), 300 + attempt * 250); });
+    if (p && p.then) p.then(() => this.disarmReelUnlock()).catch(() => { this.armReelUnlock(); if (attempt < 6) this.reelRetry = setTimeout(() => this.playReel(false, attempt + 1), 300 + attempt * 250); });
   }
   reelReady(e) { if (this.state.on && this.state.ch === 1) this.playReel(); }
-  reelPlaying(e) { e.currentTarget.style.opacity = '1'; }
-  reelUnavailable(e) { e.currentTarget.style.opacity = '0'; }
+  reelPlaying(e) { e.currentTarget.style.opacity = '1'; this.disarmReelUnlock(); }
+  reelUnavailable(e) { e.currentTarget.style.opacity = '0'; if (this.state.on && this.state.ch === 1) this.armReelUnlock(); }
   componentDidUpdate(pp, ps) {
     if (pp.phosphor !== this.props.phosphor || pp.chassis !== this.props.chassis || pp.retro !== this.props.retro) this.applyTweaks();
     const v = this.refs.reel && this.refs.reel.current;
@@ -575,7 +591,7 @@ class Component extends DCLogic {
     }, 190);
   }
   componentWillUnmount() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
     try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
   }
