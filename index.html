@@ -32,18 +32,27 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 .eura-grid-field{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(23,22,18,.34) 0 1.6px,transparent 2px);background-size:112px 112px;background-position:0 0}
 .memory-fade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(243,239,230,.98) 0%,rgba(243,239,230,.93) 36%,rgba(243,239,230,.58) 62%,rgba(243,239,230,0) 82%)}
 @media(max-width:999px){
-  [data-rv]{justify-items:center}
-  [data-rv] [data-head],[data-rv] [data-desc]{justify-self:stretch;width:100%}
-  [data-phone]{justify-self:center!important}
+  .hero-sequence{height:420svh!important}
+  .rv-panel-stack{gap:clamp(48px,7vh,64px)!important}
+  [data-rv]{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;row-gap:clamp(16px,4vw,22px)!important}
+  [data-rv] [data-head],[data-rv] [data-desc]{justify-self:center;width:min(100%,34rem);text-align:center}
+  [data-rv] [data-head]{order:1;justify-items:center}
+  [data-rv] [data-desc]{order:2}
+  [data-phone]{order:3;justify-self:center!important;margin-top:4px}
+  [data-copy="2"]{justify-content:center;text-align:center}
+  [data-copy="2"] h2{max-width:min(15ch,100%)!important}
+  .access-inner{justify-items:center;text-align:center}
+  .access-form{width:min(100%,560px);margin-inline:auto}
+  .access-status{justify-content:center!important}
 }
 @media(max-width:640px){
   .eura-grid-field{background-size:96px 96px}
   .eura-tv{width:min(92vw,620px)!important;padding:14px 14px 12px!important;border-radius:22px 22px 18px 18px!important}
+  [data-phone]{width:min(72vw,280px)!important}
   .memory-section{min-height:auto!important;padding:72px 16px 80px!important;gap:48px!important}
   .memory-row{grid-template-columns:1fr!important;gap:7px!important;padding:18px 0!important}
   .access-section{min-height:auto!important;padding:80px 16px calc(18px + env(safe-area-inset-bottom))!important}
-  .access-status{justify-content:flex-start!important}
-  .site-footer{margin-top:64px!important}
+  .site-footer{justify-content:center!important;text-align:center;margin-top:64px!important}
 }
 @media(max-width:360px){
   .access-form{flex-direction:column}
@@ -60,7 +69,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 <div class="eura-grid-field" aria-hidden="true"></div>
 
 <!-- THE SET. the TV carries two beats, then breaks into pixels. -->
-<section ref="{{ pinRef }}" style="position:relative;z-index:1;height:500svh">
+<section class="hero-sequence" ref="{{ pinRef }}" style="position:relative;z-index:1;height:500svh">
   <div style="position:sticky;top:0;height:100svh;overflow:hidden;background:rgba(243,239,230,.18)">
 
     <!-- the TV -->
@@ -153,7 +162,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 <!-- INSIDE EURA. the app, one screen at a time. -->
 <section ref="{{ rvRef }}" data-screen-label="Inside Eura" style="position:relative;z-index:1;height:var(--rvH,330svh)">
   <div style="position:var(--rvSticky,sticky);top:0;height:var(--rvStH,100svh);overflow:hidden;padding:var(--rvPad,0);background:rgba(243,239,230,.18)">
-    <div style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
+    <div class="rv-panel-stack" style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
       <div data-rv="1" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
           <div class="ui-label" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#1E563C">01 / Today's edit</div>
@@ -200,7 +209,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 
 <!-- access -->
 <section class="access-section" id="access" style="position:relative;z-index:1;min-height:70svh;display:grid;grid-template-rows:1fr auto;padding:clamp(72px,10vh,120px) clamp(16px,4vw,40px) 20px">
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(20px,4vw,64px);align-items:center">
+  <div class="access-inner" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(20px,4vw,64px);align-items:center">
     <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(44px,7vw,120px);line-height:.95">Get early access.</h2>
     <div>
       <form class="access-form" onSubmit="{{ submit }}" style="display:flex;border:1px solid #171612;max-width:560px;background:#F3EFE6">
@@ -323,7 +332,7 @@ class Component extends DCLogic {
   }
   rvFlow(flow) {
     const r = this.refs.root.current; if (!r) return;
-    const v = flow ? { '--rvH': 'auto', '--rvSticky': 'relative', '--rvStH': 'auto', '--rvPad': 'clamp(56px,9vh,96px) clamp(16px,4vw,40px) clamp(24px,5vh,56px)', '--rvPanelPos': 'relative', '--rvInset': 'auto', '--rvPanelDisp': 'grid', '--rvPanelsDisp': 'grid', '--rvCopyPos': 'relative', '--rvCopyL': 'auto', '--rvHeadB': 'auto', '--rvDescT': 'auto', '--rvCopyMax': '56ch', '--rvPhPos': 'relative', '--rvPhL': 'auto', '--rvPhT': 'auto', '--rvPhW': 'min(76vw,300px)', '--rvPhJust': 'center' } : {};
+    const v = flow ? { '--rvH': 'auto', '--rvSticky': 'relative', '--rvStH': 'auto', '--rvPad': 'clamp(48px,7vh,72px) clamp(18px,5vw,32px) clamp(40px,6vh,64px)', '--rvPanelPos': 'relative', '--rvInset': 'auto', '--rvPanelDisp': 'grid', '--rvPanelsDisp': 'grid', '--rvCopyPos': 'relative', '--rvCopyL': 'auto', '--rvHeadB': 'auto', '--rvDescT': 'auto', '--rvCopyMax': '34rem', '--rvPhPos': 'relative', '--rvPhL': 'auto', '--rvPhT': 'auto', '--rvPhW': 'min(72vw,280px)', '--rvPhJust': 'center' } : {};
     ['--rvH','--rvSticky','--rvStH','--rvPad','--rvPanelPos','--rvInset','--rvPanelDisp','--rvPanelsDisp','--rvCopyPos','--rvCopyL','--rvHeadB','--rvDescT','--rvCopyMax','--rvPhPos','--rvPhL','--rvPhT','--rvPhW','--rvPhJust'].forEach(k => v[k] ? r.style.setProperty(k, v[k]) : r.style.removeProperty(k));
   }
   pauseDemos() { const rv = this.refs.rv.current; if (rv) rv.querySelectorAll('video').forEach(v => v.pause()); }
