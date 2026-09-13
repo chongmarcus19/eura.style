@@ -278,6 +278,7 @@ class Component extends DCLogic {
     this.onAnalyticsScroll = () => this.trackScroll();
     this.resumeReel = () => { if (document.visibilityState !== 'hidden') this.playReel(); };
     this.armReelUnlock();
+    this.startReelWatch();
     addEventListener('scroll', this.onAnalyticsScroll, { passive: true });
     addEventListener('pageshow', this.resumeReel);
     addEventListener('focus', this.resumeReel);
@@ -300,6 +301,20 @@ class Component extends DCLogic {
     document.removeEventListener('pointerdown', this.unlockReel);
     document.removeEventListener('keydown', this.unlockReel);
   }
+  startReelWatch() {
+    clearInterval(this.reelWatch); this.reelWatchTime = -1; this.reelStallTicks = 0;
+    this.reelWatch = setInterval(() => {
+      const v = this.refs.reel && this.refs.reel.current;
+      if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') { this.reelWatchTime = -1; this.reelStallTicks = 0; return; }
+      const t = Number.isFinite(v.currentTime) ? v.currentTime : 0;
+      if (v.paused || v.ended) { this.armReelUnlock(); this.playReel(v.ended); this.reelWatchTime = t; return; }
+      this.reelStallTicks = this.reelWatchTime >= 0 && Math.abs(t - this.reelWatchTime) < .04 ? this.reelStallTicks + 1 : 0;
+      this.reelWatchTime = t;
+      if (this.reelStallTicks < 2) return;
+      this.reelStallTicks = 0; v.style.opacity = '0'; try { v.pause(); v.load(); } catch (e) {}
+      this.armReelUnlock(); this.playReel();
+    }, 1500);
+  }
   playReel(reset = false, attempt = 0) {
     const v = this.refs.reel && this.refs.reel.current;
     if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') return;
@@ -310,7 +325,7 @@ class Component extends DCLogic {
     if (p && p.then) p.then(() => this.disarmReelUnlock()).catch(() => { this.armReelUnlock(); if (attempt < 6) this.reelRetry = setTimeout(() => this.playReel(false, attempt + 1), 300 + attempt * 250); });
   }
   reelReady(e) { if (this.state.on && this.state.ch === 1) this.playReel(); }
-  reelPlaying(e) { e.currentTarget.style.opacity = '1'; this.disarmReelUnlock(); }
+  reelPlaying(e) { e.currentTarget.style.opacity = '1'; this.reelWatchTime = e.currentTarget.currentTime || 0; this.reelStallTicks = 0; this.disarmReelUnlock(); }
   reelUnavailable(e) { e.currentTarget.style.opacity = '0'; if (this.state.on && this.state.ch === 1) this.armReelUnlock(); }
   componentDidUpdate(pp, ps) {
     if (pp.phosphor !== this.props.phosphor || pp.chassis !== this.props.chassis || pp.retro !== this.props.retro) this.applyTweaks();
@@ -450,10 +465,11 @@ class Component extends DCLogic {
   startGrain() {
     const c = this.refs.grain && this.refs.grain.current;
     if (!c) { if ((this.gt = (this.gt || 0) + 1) < 60) this.grainRaf = requestAnimationFrame(() => this.startGrain()); return; }
-    const ctx = c.getContext('2d'); let f = 0;
-    const draw = () => {
-      if (this.state.ch === 1 && (f++ % 2 === 0)) {
-        const w = Math.max(1, Math.floor(c.clientWidth / 2)), h = Math.max(1, Math.floor(c.clientHeight / 2));
+    const ctx = c.getContext('2d'); let last = -100;
+    const draw = (now = 0) => {
+      if (this.state.ch === 1 && now - last >= 85) {
+        last = now;
+        const w = Math.max(1, Math.floor(c.clientWidth / 3)), h = Math.max(1, Math.floor(c.clientHeight / 3));
         if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
         const img = ctx.createImageData(w, h), d = img.data;
         for (let i = 0; i < d.length; i += 4) { const v = 128 + (Math.random() - .5) * 140; d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 60 * this.retro(); }
@@ -591,7 +607,7 @@ class Component extends DCLogic {
     }, 190);
   }
   componentWillUnmount() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); clearInterval(this.reelWatch); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
     try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
   }
