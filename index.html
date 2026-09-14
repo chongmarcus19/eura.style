@@ -34,7 +34,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 .crt-pointer-field{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;display:none;transition:opacity .12s linear}
 .crt-pointer-noise{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.52) 0 1px,rgba(0,0,0,.62) 1px 3px),repeating-linear-gradient(90deg,transparent 0 4px,color-mix(in srgb,var(--ph,#44DD66) 48%,transparent) 4px 5px),linear-gradient(90deg,transparent 0 44%,color-mix(in srgb,var(--ph,#44DD66) 34%,transparent) 48% 52%,transparent 56%);-webkit-mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
 .crt-pointer-dot{position:absolute;left:var(--crt-x,50%);top:var(--crt-y,50%);width:9px;height:9px;border:1px solid color-mix(in srgb,var(--ph,#44DD66) 90%,white);border-radius:1px;background:color-mix(in srgb,var(--ph,#44DD66) 82%,transparent);box-shadow:0 0 8px var(--ph,#44DD66),0 0 20px color-mix(in srgb,var(--ph,#44DD66) 72%,transparent);transform:translate(-50%,-50%)}
-@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-screen{cursor:crosshair}.crt-pointer-field{display:block}}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-pointer-field{display:block}}
 @media(max-width:999px){
   .hero-sequence{height:420svh!important}
   .rv-panel-stack{gap:clamp(48px,7vh,64px)!important}
@@ -577,7 +577,8 @@ class Component extends DCLogic {
   screenPointerMove(e) {
     const fx = this.refs.crtPointer && this.refs.crtPointer.current, screen = this.refs.screen && this.refs.screen.current;
     if (!fx || !screen || !this.state.on || !this.screenPointerEnabled()) return;
-    const r = screen.getBoundingClientRect(), x = Math.max(0, Math.min(r.width, e.clientX - r.left)), y = Math.max(0, Math.min(r.height, e.clientY - r.top)), now = performance.now(), prev = this.crtPoint;
+    const r = screen.getBoundingClientRect(), scaleX = r.width / Math.max(1, screen.offsetWidth), scaleY = r.height / Math.max(1, screen.offsetHeight);
+    const x = Math.max(0, Math.min(screen.clientWidth, (e.clientX - r.left) / scaleX - screen.clientLeft)), y = Math.max(0, Math.min(screen.clientHeight, (e.clientY - r.top) / scaleY - screen.clientTop)), now = performance.now(), prev = this.crtPoint;
     const speed = prev ? Math.hypot(x - prev.x, y - prev.y) / Math.max(16, now - prev.t) : 0;
     const quiet = this.state.ch === 2, base = quiet ? .14 : .3, peak = quiet ? .28 : .62;
     fx.style.setProperty('--crt-x', x + 'px'); fx.style.setProperty('--crt-y', y + 'px'); fx.style.opacity = String(Math.min(peak, base + speed * .18));
