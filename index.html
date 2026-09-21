@@ -35,6 +35,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 .crt-pointer-noise{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.52) 0 1px,rgba(0,0,0,.62) 1px 3px),repeating-linear-gradient(90deg,transparent 0 4px,color-mix(in srgb,var(--ph,#44DD66) 48%,transparent) 4px 5px),linear-gradient(90deg,transparent 0 44%,color-mix(in srgb,var(--ph,#44DD66) 34%,transparent) 48% 52%,transparent 56%);-webkit-mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
 .crt-pointer-dot{position:absolute;left:var(--crt-x,50%);top:var(--crt-y,50%);width:9px;height:9px;border:1px solid color-mix(in srgb,var(--ph,#44DD66) 90%,white);border-radius:1px;background:color-mix(in srgb,var(--ph,#44DD66) 82%,transparent);box-shadow:0 0 8px var(--ph,#44DD66),0 0 20px color-mix(in srgb,var(--ph,#44DD66) 72%,transparent);transform:translate(-50%,-50%)}
 @media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-pointer-field{display:block}}
+@media(min-width:1000px){
+  .access-inner{width:min(100%,1800px);margin-inline:auto;grid-template-columns:minmax(0,1fr) minmax(300px,560px)!important}
+}
 @media(max-width:999px){
   .hero-sequence{height:420svh!important}
   .rv-panel-stack{gap:clamp(48px,7vh,64px)!important}
@@ -360,10 +363,34 @@ class Component extends DCLogic {
     const c = {}; copy.querySelectorAll('[data-copy]').forEach(el => { c[el.getAttribute('data-copy')] = el; });
     const isNarrow = () => innerWidth < 1000;
     const fit = (ch) => ch === 1 ? Math.min(1, (innerWidth * .78) / 620, (innerHeight * .6) / 560) : Math.min(1, (innerWidth * .5) / 620, (innerHeight * .7) / 560);
-    const pose = (ch) => { const p = this.poses[ch]; if (ch === 1) { const pad = 24, ct = c[1] ? c[1].offsetTop : innerHeight * .5, avail = ct - pad - 16, th = tv.offsetHeight || 580, tw = tv.offsetWidth || 620; const s = Math.max(.3, Math.min(1, avail / th, (innerWidth * .9) / tw)); return { xPercent: -50, yPercent: -50, left: '50%', top: (pad + avail / 2) + 'px', scale: s, rotate: 0, opacity: 1 }; } if (isNarrow()) { const hd = c[ch] && c[ch].querySelector('h2'), hb = hd ? c[ch].offsetTop + hd.offsetTop + hd.offsetHeight + 24 : innerHeight * .4, th = tv.offsetHeight || 580, avail = innerHeight - hb - 16, s = Math.max(.3, Math.min(1, (innerWidth * .9) / (tv.offsetWidth || 620), avail / th)); return { xPercent: -50, yPercent: -50, left: '50%', top: (hb + avail / 2) + 'px', scale: s, rotate: 0, opacity: 1 }; } return { xPercent: -50, yPercent: -50, left: p.x + '%', top: p.y + '%', scale: p.s * fit(ch), rotate: 0, opacity: 1 }; };
+    const clamp = (min, value, max) => Math.max(min, Math.min(value, max));
+    const pose = (ch) => {
+      const p = this.poses[ch];
+      if (ch === 1) {
+        const pad = 24, gap = clamp(52, innerHeight * .07, 84), ct = c[1] ? c[1].offsetTop : innerHeight * .5;
+        const th = tv.offsetHeight || 580, tw = tv.offsetWidth || 620, avail = ct - pad - gap;
+        const s = Math.max(.3, Math.min(1, avail / th, (innerWidth * .9) / tw));
+        const top = Math.max(pad + th * s / 2, ct - gap - th * s / 2);
+        return { xPercent: -50, yPercent: -50, left: '50%', top: top + 'px', scale: s, rotate: 0, opacity: 1 };
+      }
+      if (isNarrow()) {
+        const hd = c[ch] && c[ch].querySelector('h2'), hb = hd ? c[ch].offsetTop + hd.offsetTop + hd.offsetHeight + 24 : innerHeight * .4;
+        const th = tv.offsetHeight || 580, avail = innerHeight - hb - 16, s = Math.max(.3, Math.min(1, (innerWidth * .9) / (tv.offsetWidth || 620), avail / th));
+        return { xPercent: -50, yPercent: -50, left: '50%', top: (hb + avail / 2) + 'px', scale: s, rotate: 0, opacity: 1 };
+      }
+      const side = clamp(40, innerWidth * .04, 72), compositionW = Math.min(innerWidth - side * 2, 1520);
+      const s = p.s * fit(ch), tvW = (tv.offsetWidth || 620) * s, gap = clamp(48, innerWidth * .055, 120);
+      const copyW = Math.max(320, compositionW - tvW - gap), compositionL = (innerWidth - compositionW) / 2;
+      if (c[2]) { c[2].style.left = compositionL + 'px'; c[2].style.right = 'auto'; c[2].style.width = copyW + 'px'; }
+      return { xPercent: -50, yPercent: -50, left: (compositionL + copyW + gap + tvW / 2) + 'px', top: p.y + '%', scale: s, rotate: 0, opacity: 1 };
+    };
     const rootEl = this.refs.root.current;
-    if (isNarrow()) { rootEl.style.setProperty('--copyAlign', 'flex-start'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.setProperty('--copyBody', 'none'); }
-    else { rootEl.style.removeProperty('--copyAlign'); rootEl.style.removeProperty('--copyMax'); rootEl.style.removeProperty('--copyBody'); }
+    if (isNarrow()) {
+      rootEl.style.setProperty('--copyAlign', 'flex-start'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.setProperty('--copyBody', 'none');
+      if (c[2]) { c[2].style.left = 'clamp(16px,4vw,40px)'; c[2].style.right = 'clamp(16px,4vw,40px)'; c[2].style.width = 'auto'; }
+    } else {
+      rootEl.style.removeProperty('--copyAlign'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.removeProperty('--copyBody');
+    }
     gsap.set(tv, pose(1)); gsap.set(c[1], { opacity: 1 }); if (pw) gsap.set(pw, { opacity: 1 });
     const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: .6, onUpdate: s => this.onScroll(s.progress) } });
     // .22 the set finds its pose and beat 2 lands · .46 the screen empties into pixels · .80 she remembers
