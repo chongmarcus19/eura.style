@@ -386,6 +386,19 @@ class Component extends DCLogic {
       return { xPercent: -50, yPercent: -50, left: (compositionL + copyW + gap + tvW / 2) + 'px', top: p.y + '%', scale: s, rotate: 0, opacity: 1 };
     };
     const rootEl = this.refs.root.current;
+    const balanceOpening = isNarrow() || innerHeight > innerWidth;
+    if (balanceOpening) {
+      // Keep the opening beat centered as a single composition. Anchoring the
+      // copy near the bottom pushed both it and the TV noticeably downward on
+      // taller phones and portrait tablets, leaving a large empty area above.
+      const openingGap = isNarrow() ? clamp(52, innerHeight * .07, 84) : clamp(40, innerHeight * .05, 64);
+      const openingScale = Math.min(1, (innerWidth * .9) / (tv.offsetWidth || 620));
+      const openingHeight = (tv.offsetHeight || 580) * openingScale + openingGap + (c[1] ? c[1].offsetHeight : 0);
+      const openingEdge = Math.max(24, (innerHeight - openingHeight) / 2);
+      pin.style.setProperty('--hero-copy-bottom', openingEdge + 'px');
+    } else {
+      pin.style.removeProperty('--hero-copy-bottom');
+    }
     if (isNarrow()) {
       rootEl.style.setProperty('--copyAlign', 'flex-start'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.setProperty('--copyBody', 'none');
       if (c[2]) { c[2].style.left = 'clamp(16px,4vw,40px)'; c[2].style.right = 'clamp(16px,4vw,40px)'; c[2].style.width = 'auto'; }
