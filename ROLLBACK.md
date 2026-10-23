@@ -12,3 +12,16 @@ git push origin main
 ```
 
 GitHub Pages deploys pushes to main. This changes only the landing page; the new assets can remain for a later switch back. The pre-update tracked baseline was commit `7e59745`.
+
+## Before the website-specific video cuts and Mart animation
+
+The first Mart landing page is preserved by Git tag `landing-before-web-cuts-2026-10-23` (commit `65f7ac8`). Restore only its page with:
+
+```sh
+git restore --source landing-before-web-cuts-2026-10-23 -- index.html
+git add index.html
+git commit -m "Restore first Mart landing page"
+git push origin main
+```
+
+Its original media remain in place. The original supplied demo is unchanged at `assets/marts/demo.mp4`. The four website-specific videos can be regenerated with `python3 scripts/render-web-clips.py` (requires ffmpeg); each has a poster for loading and paused playback.

@@ -76,6 +76,29 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
   .access-form button{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.marts-beat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,4vh,48px);text-align:center}
+.marts-beat h2{font-family:Syne,sans-serif;font-size:clamp(30px,5vw,72px);line-height:1;letter-spacing:-.035em}
+.mart-collection{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,28px);width:min(100%,1000px)}
+.mart-card{padding:clamp(12px,1.8vw,24px);border:1px solid rgba(23,22,18,.3);background:#F3EFE6;text-align:left;transform-origin:center;box-shadow:0 10px 24px rgba(23,22,18,.04)}
+.mart-rule{color:#1E563C;font-size:10px;letter-spacing:.12em;margin-bottom:10px}
+.mart-card h3{font-family:Syne,sans-serif;letter-spacing:-.035em;font-size:clamp(18px,2vw,28px);margin-bottom:18px}
+.mart-products{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mart-products img{width:100%;height:clamp(100px,18vh,190px);object-fit:contain;background:#fff;min-width:0}
+.mart-arrival{margin-top:16px;font-size:clamp(8px,.8vw,11px);color:#1E563C;line-height:1.5}
+.mart-caption{font-size:clamp(13px,1.2vw,17px);line-height:1.5;max-width:40ch;color:rgba(23,22,18,.75)}
+@media(max-width:600px){
+ .marts-beat{gap:18px}
+ .mart-collection{grid-template-columns:1fr;gap:10px;max-width:380px}
+ .mart-card{position:relative;padding:14px 120px 14px 14px;min-height:104px}
+ .mart-card h3{font-size:23px;margin-bottom:0}
+ .mart-rule{font-size:8px;margin-bottom:7px}
+ .mart-products{position:absolute;right:12px;top:12px;width:96px;gap:4px}
+ .mart-products img{height:62px}
+ .mart-arrival{font-size:8px;margin-top:12px}
+}
+@media(max-height:650px) and (min-width:601px){.marts-beat{gap:16px}.mart-products img{height:100px}.marts-beat h2{font-size:36px}}
+
 </style>
 </helmet>
 <div ref="{{ rootRef }}" style="font-family:'IBM Plex Sans',sans-serif;background:#F3EFE6;color:#171612;overflow-x:clip;position:relative" data-screen-label="Proto 16">
@@ -97,18 +120,18 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
         <!-- CH 1 · transition: the reel, on the set -->
         <div style="position:absolute;inset:0;opacity:{{ c1O }};transition:opacity .35s;pointer-events:none">
           <img src="./eura-hero-poster.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))">
-          <video ref="{{ reelRef }}" src="./eura-hero-reel-loop.mp4" poster="./eura-hero-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" onLoadedData="{{ reelReady }}" onCanPlay="{{ reelReady }}" onPlaying="{{ reelPlaying }}" onPause="{{ reelUnavailable }}" onStalled="{{ reelUnavailable }}" onError="{{ reelUnavailable }}" onEnded="{{ reelEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))"></video>
+          <video ref="{{ reelRef }}" src="./eura-hero-reel-loop.mp4" poster="./eura-hero-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" onPlaying="{{ reelPlaying }}" onPause="{{ reelUnavailable }}" onStalled="{{ reelUnavailable }}" onError="{{ reelUnavailable }}" onEnded="{{ reelEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))"></video>
           <div style="position:absolute;inset:0;pointer-events:none">{{ grain }}</div>
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(36px,16cqw,96px);letter-spacing:-.02em;line-height:.9;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55)">EURA</div>
         </div>
 
-        <!-- CH 2 · the new Mart concept demonstration. -->
+        <!-- CH 2 · purpose-cut, full-screen landscape close-ups. -->
         <div style="position:absolute;inset:0;opacity:{{ c2O }};transition:opacity .35s;background:#F3EFE6;pointer-events:{{ c2PE }}">
-          <video ref="{{ audioRef }}" src="./assets/marts/demo.mp4" muted="{{ true }}" playsInline="{{ true }}" controls="{{ true }}" preload="metadata" onEnded="{{ onEnded }}" aria-label="Eura concept demo: create, refine, and return to your Mart" style="display:block;width:100%;height:100%;object-fit:contain"></video>
-          <span class="ui-label" style="position:absolute;left:12px;top:12px;font-size:9px;color:#171612;pointer-events:none">CONCEPT DEMO</span>
+          <video ref="{{ audioRef }}" src="./assets/marts/tv-demo.mp4" poster="./assets/marts/tv-demo-poster.jpg" loop="{{ true }}" onTimeUpdate="{{ onTimeUpdate }}" muted="{{ true }}" playsInline="{{ true }}" controls="{{ true }}" preload="metadata" aria-label="Eura demo: create, refine, and return to your Mart" style="display:block;width:100%;height:100%;object-fit:contain"></video>
+
         </div>
-        <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.14) 2px,rgba(0,0,0,.14) 4px)"></div>
-        <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.65) 100%)"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ tvTexture }};background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.14) 2px,rgba(0,0,0,.14) 4px)"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ tvTexture }};background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.65) 100%)"></div>
         <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 38%,transparent 62%,rgba(255,255,255,.04))"></div>
         <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ staticO }};transition:opacity .08s;background:repeating-linear-gradient(0deg,#292929 0 1px,#050505 1px 3px,#3a3a3a 3px 4px),repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 1px,transparent 1px 5px),#000;background-size:auto,17px 100%;animation:staticshift .08s steps(2) infinite;mix-blend-mode:screen"></div>
         <div style="position:absolute;inset:0;pointer-events:none;background:#030303;opacity:{{ screenOffO }};transition:opacity .07s"></div>
@@ -125,7 +148,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
             <path d="M16.5 9l5 6m0-6l-5 6" style="opacity:{{ muteSlashO }}"></path>
           </svg>
         </button>
-        <div style="flex:1"></div>
+        <div class="ui-label" style="flex:1;text-align:center;font-size:clamp(9px,1.2vw,12px);color:#EAE5DA;letter-spacing:.08em;opacity:{{ c2O }}">{{ clipLabel }}</div>
         <div style="display:flex;align-items:center;gap:10px">
           <span style="font-family:VT323,monospace;font-size:18px;color:#C9C2B4">CH {{ ch }}</span>
           <div style="width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#C9C2B4,#6E665A 55%,#3A342C);box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.4);position:relative;transform:{{ dialT }};transition:transform .4s cubic-bezier(.2,.8,.2,1)"><div style="position:absolute;top:5px;left:50%;width:4px;height:14px;margin-left:-2px;background:#171612;border-radius:2px"></div></div>
@@ -133,9 +156,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
       </div>
       <div style="margin-top:12px;display:flex;justify-content:center"><div style="width:clamp(120px,40%,200px);height:10px;border-radius:3px;background:var(--grille,repeating-linear-gradient(90deg,#1E1610 0 2px,#4A3A2C 2px 5px))"></div></div>
     </div>
-
-    <!-- the pixels. they leave the screen and become the feed. -->
-    <div ref="{{ partWrapRef }}" style="position:absolute;inset:0;pointer-events:none;z-index:3">{{ particles }}</div>
 
     <!-- copy. -->
     <div ref="{{ copyRef }}" style="position:absolute;inset:0;z-index:4;pointer-events:none">
@@ -149,16 +169,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
       <div data-copy="2" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:flex;align-items:var(--copyAlign,center);opacity:0">
         <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(34px,min(5vw,8.5svh),92px);line-height:.95;max-width:var(--copyMax,min(14ch,44vw));text-wrap:pretty">Every store starts with an idea. <span style="color:#1E563C">This one starts with yours.</span></h2>
       </div>
-      <!-- 3 -->
-      <div data-copy="3" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:grid;grid-template-rows:auto 1fr;justify-items:center;text-align:center;opacity:0">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(26px,min(3.6vw,6svh),60px);line-height:.98;max-width:22ch;text-wrap:balance">Your references. Your budget. <span style="color:#1E563C">You set the rules.</span></h2>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,16px);padding-bottom:clamp(12px,3vh,30px)">
-          <div class="ui-label" style="font-size:clamp(58px,min(12vw,20svh),190px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
-          <div class="ui-label" ref="{{ capRef }}" style="font-size:clamp(10px,.9vw,12px);letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#1E563C">{{ numLine }}</div>
-          <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center;margin-top:clamp(112px,14vh,150px)">
-            <p class="ui-label" style="font-size:clamp(11px,.95vw,14px);font-weight:600;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#1E563C">Real products. Different retailers. Your direction.</p>
-          </div>
-        </div>
+      <!-- 3 · different intentions become separate, persistent Marts. -->
+      <div data-copy="3" class="marts-beat" style="position:absolute;inset:clamp(32px,6vh,72px) clamp(16px,4vw,40px);opacity:0">
+        <h2>Different ideas.<br><span style="color:#1E563C">A Mart for each.</span></h2>
+        <div class="mart-collection"><div class="mart-card"><div class="ui-label mart-rule">YOUR REFERENCES</div><h3>Everyday 90s</h3><div class="mart-products"><img src="./assets/marts/products/90s-jacket.jpg" alt="Everyday 90s: first product" loading="eager"><img src="./assets/marts/products/90s-jeans.jpg" alt="Everyday 90s: second product" loading="eager"></div><div class="ui-label mart-arrival">＋ New finds, on your schedule</div></div><div class="mart-card"><div class="ui-label mart-rule">YOUR BUDGET</div><h3>Gym</h3><div class="mart-products"><img src="./assets/marts/products/gym-tee.png" alt="Gym: first product" loading="eager"><img src="./assets/marts/products/gym-tote.png" alt="Gym: second product" loading="eager"></div><div class="ui-label mart-arrival">＋ New finds, on your schedule</div></div><div class="mart-card"><div class="ui-label mart-rule">YOUR PLANS</div><h3>Italy in June</h3><div class="mart-products"><img src="./assets/marts/products/italy-shirt.jpg" alt="Italy in June: first product" loading="eager"><img src="./assets/marts/products/italy-pants.jpg" alt="Italy in June: second product" loading="eager"></div><div class="ui-label mart-arrival">＋ New finds, on your schedule</div></div></div>
+        <p class="mart-caption">Your references, rules, and new finds stay with each Mart.</p>
       </div>
     </div>
   </div>
@@ -170,45 +185,25 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
     <div class="rv-panel-stack" style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
       <div data-rv="1" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Turn inspiration into finds.</h3>
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Turn inspiration into finds.</h3>
         </div>
-        <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./assets/marts/demo.mp4" controls="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Concept demo: create a Mart, refine it, and get new finds" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;display:block;background:#F3EFE6;pointer-events:auto"></video></div></div>
+        <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:540/1168;border-radius:26px;overflow:hidden;background:#F3EFE6"><video src="./assets/marts/create-loop.mp4" poster="./assets/marts/create-loop-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" controls="{{ true }}" preload="metadata" aria-label="Create a Mart from your inspiration" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:auto"></video></div></div>
         <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Start with an idea, photos, or a board. Your Mart brings together real products from different retailers around what you want. Save your favorites and shop at the source.</p>
       </div>
       <div data-rv="2" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Close? Tell it what to change.</h3>
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Close? Tell it what to change.</h3>
         </div>
-        <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:390/844;overflow:hidden;border-radius:26px;background:#F3EFE6"><img src="./assets/marts/refine.png" alt="Concept: refine a Gym Mart with darker clothes under 40 dollars" loading="lazy" style="position:absolute;width:369.230769%;max-width:none;height:auto;left:-134.615385%;top:-14.691943%"></div></div>
+        <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:540/1168;border-radius:26px;overflow:hidden;background:#F3EFE6"><video src="./assets/marts/refine-loop.mp4" poster="./assets/marts/refine-loop-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" controls="{{ true }}" preload="metadata" aria-label="Refine your Mart and see the products change" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:auto"></video></div></div>
         <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">“Darker clothes under $40.” Refine the Mart you’re browsing and see the selection change. Keep the direction you like, adjust what you don’t.</p>
       </div>
       <div data-rv="3" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">New finds. On your terms.</h3>
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">New finds. On your terms.</h3>
         </div>
-        <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:390/844;overflow:hidden;border-radius:26px;background:#F3EFE6"><img src="./assets/marts/save_mart.png" alt="Concept: Mart controls for references, budget, brands, and new finds" loading="lazy" style="position:absolute;width:258.974359%;max-width:none;height:auto;left:-134.615385%;top:-14.691943%"></div></div>
+        <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:540/1168;border-radius:26px;overflow:hidden;background:#F3EFE6"><video src="./assets/marts/discover-loop.mp4" poster="./assets/marts/discover-loop-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" controls="{{ true }}" preload="metadata" aria-label="Set your discovery schedule and return to new finds" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:auto"></video></div></div>
         <p data-desc="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Choose your budget, brands, and how often new finds arrive. Everyday outfits, gym gear, a trip away: each Mart keeps its own references and rules.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- she remembers. one earlier preference, one useful callback. -->
-<section class="memory-section" ref="{{ memRef }}" data-screen-label="Memory" style="position:relative;z-index:1;min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(40px,8vh,80px);padding:clamp(64px,10vh,120px) clamp(16px,4vw,40px)">
-  <div class="memory-fade" aria-hidden="true"></div>
-  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">Make it yours. <span style="color:#1E563C">Come back for more.</span></h2>
-  <div class="memory-card" style="width:min(92vw,720px);display:grid;text-align:left;border-top:1px solid rgba(23,22,18,.28);border-bottom:1px solid rgba(23,22,18,.28)">
-    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">Your idea</div>
-      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Everyday outfits inspired by the 90s. Under $150 per item.</div>
-    </div>
-    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">Your refinement</div>
-      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Darker colors. Keep the relaxed fit.</div>
-    </div>
-    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#1E563C;font-weight:600">Next time</div>
-      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">New finds for the same Mart, with your references and changes carried forward.</div>
     </div>
   </div>
 </section>
@@ -226,7 +221,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
       <div class="access-status" role="status" aria-live="polite" style="margin-top:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;font-size:12px;color:rgba(23,22,18,.7)"><span style="color:#1E563C;font-weight:600">{{ status }}</span></div>
     </div>
   </div>
-  <p style="font-size:12px;line-height:1.6;color:rgba(23,22,18,.65);margin-top:24px">Concept preview · The demo and screens show the experience we’re building. Early trials may include human-assisted product selection.</p>
   <div class="ui-label site-footer" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(23,22,18,.6);border-top:1px solid rgba(23,22,18,.25);padding-top:14px;margin-top:40px">
     <span>eura, 2026</span>
     <div style="display:flex;gap:18px"><a href="privacy.html" style="color:inherit">privacy</a><a href="terms.html" style="color:inherit">terms</a><a href="mailto:eurastyleai@gmail.com" style="color:inherit">contact</a></div>
@@ -236,25 +230,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;phosphor&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Green (P1)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Green (P1)&quot;,&quot;Amber (P3)&quot;,&quot;Ice (P4)&quot;,&quot;Magenta&quot;],&quot;section&quot;:&quot;The set&quot;},&quot;chassis&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Walnut&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Walnut&quot;,&quot;Bakelite&quot;,&quot;Space-age&quot;,&quot;Eura green&quot;],&quot;section&quot;:&quot;The set&quot;},&quot;retro&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0,&quot;max&quot;:1.5,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;The set&quot;}}">
 class Component extends DCLogic {
-  state = { email: '', status: '', ch: 1, on: true, muted: true, phase: 'idle', caption: 0, num: 8000, staticOn: false, powerLine: false };
+  state = { email: '', status: '', ch: 1, on: true, muted: true, phase: 'idle', caption: 0, clipLabel: '01 / YOUR BRIEF', staticOn: false, powerLine: false };
   refs = {};
   scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
   ref(n) { if (!this.refs[n]) this.refs[n] = React.createRef(); return this.refs[n]; }
-  voiceQuestion = "WHAT'S YOUR TAKE ON GORPCORE?";
-  voiceCaptions = [
-    { start: 0, text: "Gorpcore is outdoor gear worn as everyday clothes." },
-    { start: 3.724, text: "As a microtrend, it's over." },
-    { start: 5.817, text: "If you actually hike, wear all of it." },
-    { start: 8.102, text: "If not, the head-to-toe technical look feels like a costume." },
-    { start: 11.811, text: "The pieces still work." },
-    { start: 13.286, text: "The uniform doesn't." }
-  ];
-  // placeholder until the real ChatGPT answer is pasted in
-  gpt = "It really depends on the vibe you're going for! A jacket can add polish, but if you'd like a more relaxed look you could leave it off.";
-  // beat 4 exchange: swap freely
-  memTitle = 'She recognizes why you keep rejecting things';
-  memYou = 'Would I actually wear this jacket?';
-  memEura = 'Probably not. You like the suede, but it repeats the two things you keep returning: cropped hems and loud hardware. Wait for a cleaner overshirt cut.';
   poses = { 1: { x: 50, y: 56, s: .95 }, 2: { x: 68, y: 52, s: 1 } };
 
   retro() { const v = this.props.retro; return v == null ? 1 : Math.max(0, Math.min(1.5, v)); }
@@ -275,7 +254,7 @@ class Component extends DCLogic {
   }
   componentDidMount() {
     this.applyTweaks(); const a = this.audio(); if (a) a.muted = true;
-    this.startGrain(); this.startParticles(); this.wait(0); this.kick(0);
+    this.startGrain(); this.wait(0); this.kick(0);
     this.onAnalyticsScroll = () => this.trackScroll();
     this.resumeReel = () => { if (document.visibilityState !== 'hidden') this.playReel(); };
     this.armReelUnlock();
@@ -329,6 +308,8 @@ class Component extends DCLogic {
   reelPlaying(e) { e.currentTarget.style.opacity = '1'; this.reelWatchTime = e.currentTarget.currentTime || 0; this.reelStallTicks = 0; this.disarmReelUnlock(); }
   reelUnavailable(e) { e.currentTarget.style.opacity = '0'; if (this.state.on && this.state.ch === 1) this.armReelUnlock(); }
   componentDidUpdate(pp, ps) {
+    ps = ps || this.previousMediaState || {};
+    this.previousMediaState = { ...this.state };
     if (pp.phosphor !== this.props.phosphor || pp.chassis !== this.props.chassis || pp.retro !== this.props.retro) this.applyTweaks();
     const v = this.refs.reel && this.refs.reel.current;
     if (v && (ps.ch !== this.state.ch || ps.on !== this.state.on)) {
@@ -356,7 +337,7 @@ class Component extends DCLogic {
   showAll() { this.rvFlow(true); const r = this.refs.root.current; if (r) r.querySelectorAll('[data-copy]').forEach(el => { el.style.opacity = '1'; el.style.position = 'relative'; el.style.inset = 'auto'; el.style.top = 'auto'; el.style.bottom = 'auto'; }); }
   build() {
     const gsap = window.gsap, ST = window.ScrollTrigger; gsap.registerPlugin(ST);
-    const pin = this.refs.pin.current, tv = this.refs.tv.current, copy = this.refs.copy.current, pw = this.refs.partWrap.current; if (!pin || !tv || !copy) return;
+    const pin = this.refs.pin.current, tv = this.refs.tv.current, copy = this.refs.copy.current; if (!pin || !tv || !copy) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return this.showAll();
     const c = {}; copy.querySelectorAll('[data-copy]').forEach(el => { c[el.getAttribute('data-copy')] = el; });
     const isNarrow = () => innerWidth < 1000;
@@ -402,30 +383,24 @@ class Component extends DCLogic {
     } else {
       rootEl.style.removeProperty('--copyAlign'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.removeProperty('--copyBody');
     }
-    gsap.set(tv, pose(1)); gsap.set(c[1], { opacity: 1 }); if (pw) gsap.set(pw, { opacity: 1 });
+    gsap.set(tv, pose(1)); gsap.set(c[1], { opacity: 1 });
     const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: .6, onUpdate: s => this.onScroll(s.progress) } });
-    // .22 the set finds its pose and beat 2 lands · .46 the screen empties into pixels · .80 she remembers
+    // The TV gives way to separate Marts, each with its own direction and arrivals.
     tl.to(c[1], { opacity: 0, y: -30, duration: .06 }, .2)
       .to(tv, { ...pose(2), duration: .1, ease: 'power2.inOut' }, .22)
       .fromTo(c[2], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .06 }, .26)
       .to(c[2], { opacity: 0, y: -30, duration: .05 }, .44)
-      .to(tv, { scale: .12, opacity: 0, duration: .09, ease: 'power2.in' }, .46)
-      .fromTo(c[3], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .06 }, .53)
+      .to(tv, { opacity: 0, y: -36, duration: .08, ease: 'power2.inOut' }, .46)
+      .fromTo(c[3], { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .06 }, .53)
+      .fromTo(c[3].querySelectorAll('.mart-card'), { opacity: 0, y: 70, scale: .88 }, { opacity: 1, y: 0, scale: 1, duration: .14, stagger: .035, ease: 'power2.out' }, .56)
+      .fromTo(c[3].querySelectorAll('.mart-products img'), { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: .07, stagger: .015 }, .69)
+      .fromTo(c[3].querySelectorAll('.mart-arrival'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .06, stagger: .025 }, .83)
       .to({}, { duration: .02 }, .98);
     this.tl = tl;
     if (!this.onResize) { this.onResize = () => { clearTimeout(this.rz); this.rz = setTimeout(() => { try { this.tl.scrollTrigger.kill(); this.tl.kill(); } catch (e) {} this.build(); }, 200); }; addEventListener('resize', this.onResize); }
     this.buildReveal(gsap, ST, isNarrow());
-    this.buildMemory(gsap, ST);
     ST.refresh();
     if (location.hash === '#access') setTimeout(() => this.goAccess(), 300);
-  }
-  buildMemory(gsap, ST) {
-    const m = this.refs.mem.current; if (!m) return;
-    if (this.memST) { try { this.memST.kill(true); } catch (e) {} this.memST = null; }
-    const items = m.querySelectorAll('[data-mem]');
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { gsap.set(items, { clearProps: 'all' }); return; }
-    gsap.set(items, { opacity: 0, y: 14 });
-    this.memST = ST.create({ trigger: m, start: 'top 60%', once: true, onEnter: () => gsap.to(items, { opacity: 1, y: 0, duration: .45, ease: 'power2.out', stagger: { each: .25, from: 'start' } }) });
   }
   rvFlow(flow) {
     const r = this.refs.root.current; if (!r) return;
@@ -477,11 +452,6 @@ class Component extends DCLogic {
     this.rvTl = tl;
   }
   onScroll(p) {
-    const cl = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
-    this.pEmit = cl((p - .46) / .10); this.pEmitP = p;
-    this.pNum = cl((p - .58) / .13);
-    const v = Math.round(8000 - 7992 * Math.pow(this.pNum, .6));
-    if (v !== this.state.num) this.setState({ num: v });
     const real = p < .22 ? 1 : p < .46 ? 2 : 3;
     if (real !== this.state.ch) {
       clearTimeout(this.staticT);
@@ -518,85 +488,26 @@ class Component extends DCLogic {
     };
     draw();
   }
-  // 8,000 pixels leave the screen, spread across the page, then collapse into eight.
-  startParticles() {
-    const c = this.refs.part && this.refs.part.current;
-    if (!c) { if ((this.tries = (this.tries || 0) + 1) < 60) this.partRaf = requestAnimationFrame(() => this.startParticles()); return; }
-    const ctx = c.getContext('2d'), N = 2400, pts = [];
-    for (let i = 0; i < N; i++) pts.push({ sx: Math.random(), sy: Math.random(), fx: Math.random(), fy: Math.random(), j: Math.random(), k: ((i * 7919) % 1000) / 1000, d: .6 + Math.random() * .4 });
-    let last = -2, lastW = 0;
-    const draw = () => {
-      const cl3 = (v) => v < 0 ? 0 : v > 1 ? 1 : v; const w = c.clientWidth, h = c.clientHeight, e1 = this.pEmit || 0, e2 = this.pNum || 0, key = e1 * 3 + e2 + (this.pEmitP || 0) * 7;
-      if (w && h && (Math.abs(key - last) > .0008 || w !== lastW)) {
-        last = key; lastW = w;
-        if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
-        ctx.clearRect(0, 0, w, h);
-        if (e1 > 0) {
-          if (e1 < 1) { const s = this.refs.screen.current, cb = c.getBoundingClientRect(); if (s) { const r = s.getBoundingClientRect(); this.src = { x: r.left - cb.left, y: r.top - cb.top, w: r.width, h: r.height }; } }
-          const src = this.src || { x: w * .4, y: h * .4, w: w * .2, h: h * .2 };
-          const a2 = e2 * e2 * (3 - 2 * e2);
-          const cap = this.refs.cap && this.refs.cap.current, cb = cap ? cap.getBoundingClientRect() : null, cr = c.getBoundingClientRect();
-          const gap = 10, tile = Math.min((w * .5 - 7 * gap) / 8, 56), gx = (w - (8 * tile + 7 * gap)) / 2, gy = cb ? Math.min(cb.bottom - cr.top + 28, h * .8) : h * .68;
-          for (let i = 0; i < N; i++) {
-            const q = pts[i], t = Math.min(1, e1 / q.d), a1 = t * t * (3 - 2 * t);
-            const x0 = src.x + q.sx * src.w, y0 = src.y + q.sy * src.h;
-            let x = x0 + (q.fx * w - x0) * a1, y = y0 + (q.fy * h - y0) * a1;
-            const tx = gx + (i % 8) * (tile + gap) + q.j * tile, ty = gy + q.k * tile * 1.25;
-            x += (tx - x) * a2; y += (ty - y) * a2;
-            ctx.fillStyle = `rgba(23,22,18,${(.12 + .42 * a1) * (1 + a2 * .6)})`;
-            const sz = 1.5 + a1 * .6 + a2 * 1.2;
-            ctx.fillRect(x, y, sz, sz);
-          }
-        }
-      }
-      this.partRaf = requestAnimationFrame(draw);
-    };
-    draw();
-  }
   audio() { return this.refs.audio.current; }
-  captionAt(t) {
-    let index = 0;
-    const led = t + .14;
-    for (let i = 0; i < this.voiceCaptions.length; i++) if (led >= this.voiceCaptions[i].start) index = i;
-    return index;
-  }
-  startCaptionSync() {
-    cancelAnimationFrame(this.captionRaf);
-    const tick = () => {
-      const a = this.audio();
-      if (!a || a.paused || this.state.phase !== 'playing') return;
-      const index = this.captionAt(a.currentTime || 0);
-      if (index !== this.state.caption) this.setState({ caption: index });
-      this.captionRaf = requestAnimationFrame(tick);
-    };
-    this.captionRaf = requestAnimationFrame(tick);
-  }
-  finishClip() {
-    cancelAnimationFrame(this.captionRaf); clearTimeout(this.fallback);
-    this.setState({ phase: 'done', caption: this.voiceCaptions.length - 1 });
-  }
   beginVoiceBeat() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); cancelAnimationFrame(this.captionRaf);
     if (!this.state.on || this.state.ch !== 2) return;
-    const a = this.audio(); if (a) { a.pause(); try { a.currentTime = 0; } catch (e) {} }
-    this.setState({ phase: 'prompt', caption: 0 });
-    this.voiceT = setTimeout(() => { if (this.state.on && this.state.ch === 2) this.playClip(true); }, 900);
+    this.playClip(true);
   }
   playClip(restart = true) {
-    const a = this.audio(); clearTimeout(this.voiceT); clearTimeout(this.fallback);
-    this.setState({ phase: 'playing', caption: restart ? 0 : this.state.caption });
-    if (a) {
-      a.muted = this.state.muted;
-      if (restart) try { a.currentTime = 0; } catch (e) {}
-      const p = a.play();
-      if (p && p.then) p.then(() => this.startCaptionSync()).catch(() => this.armFallback());
-      else this.startCaptionSync();
-    } else this.armFallback();
+    const video = this.audio();
+    if (!video) return;
+    video.muted = true;
+    if (restart) video.currentTime = 0;
+    const playing = video.play();
+    if (playing && playing.catch) playing.catch(() => {});
   }
-  armFallback() { clearTimeout(this.fallback); this.fallback = setTimeout(() => this.finishClip(), 14750); }
   onTimeUpdate(e) {
-    const index = this.captionAt(e.target.currentTime || 0);
-    if (index !== this.state.caption) this.setState({ caption: index });
+    const t = e.target.currentTime;
+    const ends = [2.16, 4.41, 7.01, 9.44, 11.615, 14.315];
+    const labels = ['01 / YOUR BRIEF', '02 / YOUR REFERENCES', '03 / YOUR FINDS', '04 / REFINE YOUR MART', '05 / SEE THE CHANGE', '06 / SET YOUR SCHEDULE', '07 / COME BACK FOR MORE'];
+    const index = ends.findIndex(end => t < end);
+    const clipLabel = labels[index < 0 ? 6 : index];
+    if (clipLabel !== this.state.clipLabel) this.setState({ clipLabel });
   }
   toggleMute() {
     const muted = !this.state.muted, a = this.audio();
@@ -646,7 +557,7 @@ class Component extends DCLogic {
     }, 190);
   }
   componentWillUnmount() {
-    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); clearInterval(this.reelWatch); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); clearInterval(this.reelWatch); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
     try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
   }
@@ -654,28 +565,24 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state, ch = s.ch, on = s.on, c2 = ch === 2, eura = c2 && on, done = eura && s.phase === 'done';
     return {
-      rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), memRef: this.ref('mem'), capRef: this.ref('cap'), reelRef: this.ref('reel'), screenRef: this.ref('screen'), crtPointerRef: this.ref('crtPointer'),
+      rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), reelRef: this.ref('reel'), screenRef: this.ref('screen'), crtPointerRef: this.ref('crtPointer'),
       screenPointerMove: (e) => this.screenPointerMove(e), screenPointerEnter: (e) => this.screenPointerEnter(e), screenPointerLeave: () => this.screenPointerLeave(),
       reelReady: (e) => this.reelReady(e), reelPlaying: (e) => this.reelPlaying(e), reelUnavailable: (e) => this.reelUnavailable(e), reelEnded: () => this.playReel(true),
-      onTimeUpdate: (e) => this.onTimeUpdate(e), onEnded: () => this.finishClip(), onAudioError: () => this.armFallback(),
+      onTimeUpdate: (e) => this.onTimeUpdate(e),
       grain: React.createElement('canvas', { ref: this.ref('grain'), style: { width: '100%', height: '100%', display: 'block', mixBlendMode: 'overlay', imageRendering: 'pixelated' } }),
-      particles: React.createElement('canvas', { ref: this.ref('part'), style: { width: '100%', height: '100%', display: 'block' } }),
-      tvRef: this.ref('tv'), copyRef: this.ref('copy'), partWrapRef: this.ref('partWrap'),
+      tvRef: this.ref('tv'), copyRef: this.ref('copy'),
       goAccess: (e) => this.goAccess(e),
       ch, dialT: `rotate(${(ch - 1) * 60 - 90}deg)`, staticO: s.staticOn ? .95 : 0, screenOffO: on ? 0 : 1,
       powerLineO: s.powerLine ? 1 : 0, powerLineScale: s.powerLine ? 1 : .04,
       c1O: ch === 1 ? 1 : 0,
       c2O: c2 ? 1 : 0, c2PE: c2 ? 'auto' : 'none', offO: on ? 0 : 1,
-      speakerLabel: s.phase === 'prompt' ? 'MARCUS / ASKED' : 'EURA / ANSWERING',
-      transcript: s.phase === 'prompt' ? this.voiceQuestion : (this.voiceCaptions[s.caption] ? this.voiceCaptions[s.caption].text : this.voiceCaptions[0].text),
-      transcriptO: eura && s.phase !== 'idle' ? 1 : 0, barsO: eura && s.phase === 'playing' ? 1 : .22,
+      tvTexture: ch === 2 ? .08 : this.retro(), clipLabel: s.clipLabel,
       soundState: s.muted ? 'MUTED' : 'SOUND ON', muted: s.muted,
       againO: done ? 1 : 0, againPE: done ? 'auto' : 'none',
       playAgain: () => this.beginVoiceBeat(), power: () => this.power(), toggleMute: () => this.toggleMute(),
       muteDisplay: 'none', muteLabel: s.muted ? 'Unmute Eura' : 'Mute Eura', muteColor: s.muted ? '#C9C2B4' : 'var(--ph,#44DD66)',
       soundWaveO: s.muted ? 0 : 1, muteSlashO: s.muted ? 1 : 0,
       powerBg: on ? 'var(--ph,#44DD66)' : '#5A2A22', powerGlow: on ? '0 0 8px var(--ph,#44DD66)' : 'none',
-      bigNum: 'YOURS', numLine: 'A Mart built around your idea',
       email: s.email, status: s.status, onEmail: (e) => this.setState({ email: e.target.value }),
       submit: (e) => {
         e.preventDefault(); const email = s.email.trim(); if (!email) return;
