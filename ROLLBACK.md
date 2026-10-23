@@ -25,3 +25,16 @@ git push origin main
 ```
 
 Its original media remain in place. The original supplied demo is unchanged at `assets/marts/demo.mp4`. The four website-specific videos can be regenerated with `python3 scripts/render-web-clips.py` (requires ffmpeg); each has a poster for loading and paused playback.
+
+## Before the clarity, layout, and performance review
+
+The previous scroll-based landing page is preserved at tag `landing-before-review-2026-10-23` (commit `94f62d8`). Its media and `support.js` remain in place. To restore:
+
+```sh
+git restore --source landing-before-review-2026-10-23 -- index.html assets/marts/tv-demo.mp4 assets/marts/tv-demo-poster.jpg assets/marts/create-loop.mp4 assets/marts/create-loop-poster.jpg scripts/render-web-clips.py
+git add index.html assets/marts/tv-demo.mp4 assets/marts/tv-demo-poster.jpg assets/marts/create-loop.mp4 assets/marts/create-loop-poster.jpg scripts/render-web-clips.py
+git commit -m "Restore landing page before clarity review"
+git push origin main
+```
+
+Additional files from the review can remain; the restored page does not reference them.
