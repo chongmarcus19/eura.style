@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eura | What to Wear. What to Buy.</title>
+<meta name="description" content="Eura is a voice stylist with real fashion judgment. Get an opinion on what you are wearing, eight considered picks, and advice that remembers your taste.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eura | What to Wear. What to Buy.">
+<meta property="og:description" content="Eura is a voice stylist with real fashion judgment. Get an opinion on what you are wearing, eight considered picks, and advice that remembers your taste.">
+<meta property="og:url" content="https://eura.style/">
+<meta property="og:image" content="https://eura.style/eura-og-preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="theme-color" content="#F3EFE6">
+<meta name="impact-site-verification" value="6688a64b-4015-4fe9-bf53-a6ac6e1dfeeb">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BVDCWB00GN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BVDCWB00GN');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@900&family=Syne:wght@700;800&family=VT323&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#F3EFE6;color:#171612;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;overflow-x:hidden}
+.ui-label{font-family:'IBM Plex Mono',monospace}
+a{color:#171612;text-decoration:none}a:hover{color:#1E563C}
+input::placeholder{color:rgba(23,22,18,.4)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A24!important;outline-offset:3px}
+::selection{background:#D09A24;color:#171612}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes voicebar{from{transform:scaleY(.35);opacity:.55}to{transform:scaleY(1);opacity:1}}
+@keyframes staticshift{0%{background-position:0 0}25%{background-position:9px -13px}50%{background-position:-7px 8px}75%{background-position:13px 4px}100%{background-position:-4px -9px}}
+.eura-grid-field{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(23,22,18,.34) 0 1.6px,transparent 2px);background-size:112px 112px;background-position:0 0}
+.memory-fade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(243,239,230,.98) 0%,rgba(243,239,230,.93) 36%,rgba(243,239,230,.58) 62%,rgba(243,239,230,0) 82%)}
+.crt-pointer-field{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;display:none;transition:opacity .12s linear}
+.crt-pointer-noise{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.52) 0 1px,rgba(0,0,0,.62) 1px 3px),repeating-linear-gradient(90deg,transparent 0 4px,color-mix(in srgb,var(--ph,#44DD66) 48%,transparent) 4px 5px),linear-gradient(90deg,transparent 0 44%,color-mix(in srgb,var(--ph,#44DD66) 34%,transparent) 48% 52%,transparent 56%);-webkit-mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
+.crt-pointer-dot{position:absolute;left:var(--crt-x,50%);top:var(--crt-y,50%);width:9px;height:9px;border:1px solid color-mix(in srgb,var(--ph,#44DD66) 90%,white);border-radius:1px;background:color-mix(in srgb,var(--ph,#44DD66) 82%,transparent);box-shadow:0 0 8px var(--ph,#44DD66),0 0 20px color-mix(in srgb,var(--ph,#44DD66) 72%,transparent);transform:translate(-50%,-50%)}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-pointer-field{display:block}}
+@media(min-width:1000px){
+  .hero-sequence{--hero-copy-bottom:clamp(72px,9svh,104px)}
+  .access-inner{width:min(100%,1800px);margin-inline:auto;grid-template-columns:minmax(0,1fr) minmax(300px,560px)!important}
+}
+@media(max-width:999px){
+  .hero-sequence{height:420svh!important}
+  .rv-panel-stack{gap:clamp(48px,7vh,64px)!important}
+  [data-rv]{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;row-gap:clamp(16px,4vw,22px)!important}
+  [data-rv] [data-head],[data-rv] [data-desc]{justify-self:center;width:min(100%,34rem);text-align:center}
+  [data-rv] [data-head]{order:1;justify-items:center}
+  [data-rv] [data-desc]{order:2}
+  [data-phone]{order:3;justify-self:center!important;margin-top:4px}
+  [data-copy="2"]{justify-content:center;text-align:center}
+  [data-copy="2"] h2{max-width:min(15ch,100%)!important}
+  .memory-card{width:100%!important;max-width:720px;margin-inline:auto;padding-inline:clamp(4px,1.5vw,10px)}
+  .access-inner{justify-items:center;text-align:center}
+  .access-form{width:min(100%,560px);margin-inline:auto}
+  .access-status{justify-content:center!important}
+}
+@media(max-width:640px){
+  .eura-grid-field{background-size:96px 96px}
+  .eura-tv{width:min(92vw,620px)!important;padding:14px 14px 12px!important;border-radius:22px 22px 18px 18px!important}
+  [data-phone]{width:min(72vw,280px)!important}
+  .memory-section{min-height:auto!important;padding:72px 16px 80px!important;gap:48px!important}
+  .memory-row{grid-template-columns:1fr!important;gap:7px!important;padding:18px 0!important}
+  .access-section{min-height:auto!important;padding:80px 16px calc(18px + env(safe-area-inset-bottom))!important}
+  .site-footer{justify-content:center!important;text-align:center;margin-top:64px!important}
+}
+@media(max-width:360px){
+  .access-form{flex-direction:column}
+  .access-form button{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="font-family:'IBM Plex Sans',sans-serif;background:#F3EFE6;color:#171612;overflow-x:clip;position:relative" data-screen-label="Proto 16">
+
+<audio ref="{{ audioRef }}" src="./eura-gorpcore-opinion.mp3" preload="auto" muted="{{ muted }}" onTimeUpdate="{{ onTimeUpdate }}" onEnded="{{ onEnded }}" onError="{{ onAudioError }}"></audio>
+
+<!-- Nothing-inspired single-scale technical dot grid. -->
+<div class="eura-grid-field" aria-hidden="true"></div>
+
+<!-- THE SET. the TV carries two beats, then breaks into pixels. -->
+<section class="hero-sequence" ref="{{ pinRef }}" style="position:relative;z-index:1;height:500svh">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;background:rgba(243,239,230,.18)">
+
+    <!-- the TV -->
+    <div class="eura-tv" ref="{{ tvRef }}" style="position:absolute;top:50%;left:50%;width:min(88vw,620px);background:var(--chassis,repeating-linear-gradient(92deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),linear-gradient(180deg,#5A4636,#3E2E22 60%,#2E2119));border-radius:26px 26px 22px 22px;padding:clamp(16px,2.6vw,26px) clamp(16px,2.6vw,26px) 16px;box-shadow:0 40px 100px rgba(23,22,18,.4),inset 0 2px 0 rgba(255,255,255,.12),inset 0 -3px 0 rgba(0,0,0,.45);will-change:transform">
+      <div class="crt-screen" ref="{{ screenRef }}" onMouseMove="{{ screenPointerMove }}" onMouseEnter="{{ screenPointerEnter }}" onMouseLeave="{{ screenPointerLeave }}" style="background:#000;border-radius:38px/30px;overflow:hidden;position:relative;aspect-ratio:4/3;border:6px solid var(--bezel,#1A1814);box-shadow:inset 0 0 0 3px var(--bezel2,#4a4038),inset 0 0 40px rgba(0,0,0,.9),0 0 0 2px rgba(0,0,0,.6)">
+        <div style="position:absolute;inset:0;background:#0A0A0A"></div>
+
+        <!-- CH 1 · transition: the reel, on the set -->
+        <div style="position:absolute;inset:0;opacity:{{ c1O }};transition:opacity .35s;pointer-events:none">
+          <img src="./eura-hero-poster.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))">
+          <video ref="{{ reelRef }}" src="./eura-hero-reel-loop.mp4" poster="./eura-hero-poster.jpg" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" onLoadedData="{{ reelReady }}" onCanPlay="{{ reelReady }}" onPlaying="{{ reelPlaying }}" onPause="{{ reelUnavailable }}" onStalled="{{ reelUnavailable }}" onError="{{ reelUnavailable }}" onEnded="{{ reelEnded }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s;filter:var(--reel,contrast(1.15) saturate(.7) sepia(.18) brightness(.9))"></video>
+          <div style="position:absolute;inset:0;pointer-events:none">{{ grain }}</div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(36px,16cqw,96px);letter-spacing:-.02em;line-height:.9;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55)">EURA</div>
+        </div>
+
+        <!-- CH 2 · Eura speaks. Real Hume audio, with timed captions. -->
+        <div style="position:absolute;inset:0;opacity:{{ c2O }};transition:opacity .35s;background:#0A0A0A;pointer-events:{{ c2PE }}">
+          <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 60px rgba(0,0,0,.55)"></div>
+          <div aria-live="polite" style="position:absolute;inset:10% 9% 13%;display:grid;grid-template-rows:auto 1fr auto;gap:12px;font-family:VT323,monospace;color:var(--ph,#44DD66);opacity:{{ transcriptO }};transition:opacity .3s;pointer-events:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:clamp(12px,2vw,17px);letter-spacing:.14em;color:var(--ph2,#DDAA33)"><span>{{ speakerLabel }}</span><span>{{ soundState }}</span></div>
+            <div style="display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(24px,4.4vw,42px);line-height:.98;max-width:22ch;margin:auto;text-wrap:balance;text-shadow:0 0 14px color-mix(in srgb,var(--ph,#44DD66) 45%,transparent)">{{ transcript }}</div>
+            <div style="display:flex;align-items:flex-end;gap:4px;height:28px;justify-content:center;opacity:{{ barsO }}">
+              <span style="display:block;width:4px;height:38%;background:var(--ph,#44DD66);animation:voicebar .7s ease-in-out infinite alternate"></span>
+              <span style="display:block;width:4px;height:80%;background:var(--ph,#44DD66);animation:voicebar .48s ease-in-out .12s infinite alternate"></span>
+              <span style="display:block;width:4px;height:55%;background:var(--ph,#44DD66);animation:voicebar .62s ease-in-out .05s infinite alternate"></span>
+              <span style="display:block;width:4px;height:95%;background:var(--ph,#44DD66);animation:voicebar .52s ease-in-out .18s infinite alternate"></span>
+              <span style="display:block;width:4px;height:45%;background:var(--ph,#44DD66);animation:voicebar .74s ease-in-out .08s infinite alternate"></span>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:14px;display:flex;justify-content:center;opacity:{{ againO }};pointer-events:{{ againPE }};transition:opacity .3s">
+            <button onClick="{{ playAgain }}" style="font-family:VT323,monospace;font-size:20px;color:var(--ph2,#DDAA33);background:rgba(0,0,0,.6);border:1px solid var(--ph2,#DDAA33);padding:6px 14px;cursor:pointer;min-height:40px" style-hover="background:var(--ph2,#DDAA33);color:#000">Play again</button>
+          </div>
+        </div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.14) 2px,rgba(0,0,0,.14) 4px)"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.65) 100%)"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 38%,transparent 62%,rgba(255,255,255,.04))"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ staticO }};transition:opacity .08s;background:repeating-linear-gradient(0deg,#292929 0 1px,#050505 1px 3px,#3a3a3a 3px 4px),repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 1px,transparent 1px 5px),#000;background-size:auto,17px 100%;animation:staticshift .08s steps(2) infinite;mix-blend-mode:screen"></div>
+        <div style="position:absolute;inset:0;pointer-events:none;background:#030303;opacity:{{ screenOffO }};transition:opacity .07s"></div>
+        <div style="position:absolute;left:10%;right:10%;top:50%;height:2px;margin-top:-1px;pointer-events:none;background:#E9E5D9;box-shadow:0 0 7px #fff,0 0 18px rgba(255,255,255,.75);opacity:{{ powerLineO }};transform:scaleX({{ powerLineScale }});transition:opacity .1s,transform .16s cubic-bezier(.6,0,1,.4)"></div>
+        <div class="crt-pointer-field" ref="{{ crtPointerRef }}" aria-hidden="true"><div class="crt-pointer-noise"></div><div class="crt-pointer-dot"></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 4px 0;gap:12px">
+        <button onClick="{{ power }}" aria-label="Power" style="width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#8A8378,#3A342C);border:2px solid #241C15;box-shadow:0 2px 4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.2);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ powerBg }};box-shadow:{{ powerGlow }};transition:background .3s"></span></button>
+        <button onClick="{{ toggleMute }}" aria-label="{{ muteLabel }}" title="{{ muteLabel }}" style="width:42px;height:42px;color:{{ muteColor }};background:#211C17;border:1px solid #756B5E;border-radius:4px;padding:8px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);display:{{ muteDisplay }};align-items:center;justify-content:center" style-hover="border-color:var(--ph2,#DDAA33);color:var(--ph2,#DDAA33)">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9H4"></path>
+            <path d="M16 9.5c1.4 1.4 1.4 3.6 0 5" style="opacity:{{ soundWaveO }}"></path>
+            <path d="M18.5 7c2.8 2.8 2.8 7.2 0 10" style="opacity:{{ soundWaveO }}"></path>
+            <path d="M16.5 9l5 6m0-6l-5 6" style="opacity:{{ muteSlashO }}"></path>
+          </svg>
+        </button>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:VT323,monospace;font-size:18px;color:#C9C2B4">CH {{ ch }}</span>
+          <div style="width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#C9C2B4,#6E665A 55%,#3A342C);box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.4);position:relative;transform:{{ dialT }};transition:transform .4s cubic-bezier(.2,.8,.2,1)"><div style="position:absolute;top:5px;left:50%;width:4px;height:14px;margin-left:-2px;background:#171612;border-radius:2px"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:center"><div style="width:clamp(120px,40%,200px);height:10px;border-radius:3px;background:var(--grille,repeating-linear-gradient(90deg,#1E1610 0 2px,#4A3A2C 2px 5px))"></div></div>
+    </div>
+
+    <!-- the pixels. they leave the screen and become the feed. -->
+    <div ref="{{ partWrapRef }}" style="position:absolute;inset:0;pointer-events:none;z-index:3">{{ particles }}</div>
+
+    <!-- copy. -->
+    <div ref="{{ copyRef }}" style="position:absolute;inset:0;z-index:4;pointer-events:none">
+      <!-- 1 · the moment. text up top, the set below. -->
+      <div data-copy="1" style="position:absolute;bottom:var(--hero-copy-bottom,clamp(20px,4vh,44px));left:clamp(16px,4vw,40px);right:clamp(16px,4vw,40px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(8px,1.6vh,18px)">
+        <h1 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(5.4vw,7.2svh),84px);line-height:.95;max-width:16ch;text-wrap:balance">Something's off. <span style="color:#1E563C">Eura tells you why.</span></h1>
+        <p style="font-size:clamp(13px,min(1.05vw,2.2svh),16px);line-height:1.5;max-width:56ch;text-wrap:pretty;color:rgba(23,22,18,.82)">A voice stylist who actually knows fashion: what to wear for tonight and the eight things she'd buy you next.</p>
+        <a class="ui-label" href="#access" onClick="{{ goAccess }}" style="pointer-events:auto;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:#171612;color:#F3EFE6;padding:0 30px;min-height:50px;display:inline-flex;align-items:center;white-space:nowrap;margin-top:clamp(2px,.8vh,8px)" style-hover="background:#1E563C;color:#F3EFE6">Join the waitlist</a>
+      </div>
+      <!-- 2 -->
+      <div data-copy="2" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:flex;align-items:var(--copyAlign,center);opacity:0">
+        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(34px,min(5vw,8.5svh),92px);line-height:.95;max-width:var(--copyMax,min(14ch,44vw));text-wrap:pretty">Chatbots give you options. <span style="color:#1E563C">Eura gives you opinions.</span></h2>
+      </div>
+      <!-- 3 -->
+      <div data-copy="3" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:grid;grid-template-rows:auto 1fr;justify-items:center;text-align:center;opacity:0">
+        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(26px,min(3.6vw,6svh),60px);line-height:.98;max-width:22ch;text-wrap:balance">A feed shows you everything. <span style="color:#1E563C">Eura chooses eight.</span></h2>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,16px);padding-bottom:clamp(12px,3vh,30px)">
+          <div class="ui-label" style="font-size:clamp(80px,min(15vw,24svh),240px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
+          <div class="ui-label" ref="{{ capRef }}" style="font-size:clamp(10px,.9vw,12px);letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#1E563C">{{ numLine }}</div>
+          <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center;margin-top:clamp(112px,14vh,150px)">
+            <p class="ui-label" style="font-size:clamp(11px,.95vw,14px);font-weight:600;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#1E563C">A reason for every pick</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIDE EURA. the app, one screen at a time. -->
+<section ref="{{ rvRef }}" data-screen-label="Inside Eura" style="position:relative;z-index:1;height:var(--rvH,330svh)">
+  <div style="position:var(--rvSticky,sticky);top:0;height:var(--rvStH,100svh);overflow:hidden;padding:var(--rvPad,0);background:rgba(243,239,230,.18)">
+    <div class="rv-panel-stack" style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
+      <div data-rv="1" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
+        <div data-head="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Eight things worth seeing.</h3>
+        </div>
+        <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-mart-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Eura's Edit: eight picks in the Mart" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
+        <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Tell Eura anything. More running shoes. Italy in October. Nothing navy. She builds your next eight around it.</p>
+      </div>
+      <div data-rv="2" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
+        <div data-head="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Talk it through. Or type it out.</h3>
+        </div>
+        <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-voice-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Talking to Eura" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
+        <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Where you're going. What you have on. What doesn't feel right. However you ask, Eura tells you what to do next.</p>
+      </div>
+      <div data-rv="3" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
+        <div data-head="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Inspiration without the impersonation.</h3>
+        </div>
+        <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><img src="./eura-chat.png" alt="Eura on dressing like Tyler, the Creator" style="display:block;width:100%;aspect-ratio:9/19.5;object-fit:cover;object-position:50% 0;border-radius:26px"></div>
+        <p data-desc="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Bring her an artist, an era or a photo. She pulls out what makes it work and translates it into something you would actually wear.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- she remembers. one earlier preference, one useful callback. -->
+<section class="memory-section" ref="{{ memRef }}" data-screen-label="Memory" style="position:relative;z-index:1;min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(40px,8vh,80px);padding:clamp(64px,10vh,120px) clamp(16px,4vw,40px)">
+  <div class="memory-fade" aria-hidden="true"></div>
+  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">You said it once. <span style="color:#1E563C">Eura remembers.</span></h2>
+  <div class="memory-card" style="width:min(92vw,720px);display:grid;text-align:left;border-top:1px solid rgba(23,22,18,.28);border-bottom:1px solid rgba(23,22,18,.28)">
+    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0">
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / March 12</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Nothing with a visible logo. Ever.</div>
+    </div>
+    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / Today</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Find me a jacket for fall.</div>
+    </div>
+    <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#1E563C;font-weight:600">Eura</div>
+      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">I skipped every logo. These three also work with the trousers you wear most.</div>
+    </div>
+  </div>
+</section>
+
+<!-- access -->
+<section class="access-section" id="access" style="position:relative;z-index:1;min-height:70svh;display:grid;grid-template-rows:1fr auto;padding:clamp(72px,10vh,120px) clamp(16px,4vw,40px) 20px">
+  <div class="access-inner" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(20px,4vw,64px);align-items:center">
+    <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(44px,7vw,120px);line-height:.95">Get early access.</h2>
+    <div>
+      <form class="access-form" onSubmit="{{ submit }}" style="display:flex;border:1px solid #171612;max-width:560px;background:#F3EFE6">
+        <input type="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="you@email.com" value="{{ email }}" onChange="{{ onEmail }}" style="flex:1;min-width:0;font-family:inherit;font-size:16px;padding:16px 18px;background:transparent;border:none;color:#171612;outline:none;min-height:56px">
+        <button class="ui-label" type="submit" style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:0 26px;background:#171612;color:#F3EFE6;border:none;cursor:pointer;min-height:56px" style-hover="background:#1E563C">Join</button>
+      </form>
+      <div class="access-status" role="status" aria-live="polite" style="margin-top:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;font-size:12px;color:rgba(23,22,18,.7)"><span style="color:#1E563C;font-weight:600">{{ status }}</span></div>
+    </div>
+  </div>
+  <div class="ui-label site-footer" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(23,22,18,.6);border-top:1px solid rgba(23,22,18,.25);padding-top:14px;margin-top:40px">
+    <span>eura, 2026</span>
+    <div style="display:flex;gap:18px"><a href="privacy.html" style="color:inherit">privacy</a><a href="terms.html" style="color:inherit">terms</a><a href="mailto:eurastyleai@gmail.com" style="color:inherit">contact</a></div>
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;phosphor&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Green (P1)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Green (P1)&quot;,&quot;Amber (P3)&quot;,&quot;Ice (P4)&quot;,&quot;Magenta&quot;],&quot;section&quot;:&quot;The set&quot;},&quot;chassis&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Walnut&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;Walnut&quot;,&quot;Bakelite&quot;,&quot;Space-age&quot;,&quot;Eura green&quot;],&quot;section&quot;:&quot;The set&quot;},&quot;retro&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0,&quot;max&quot;:1.5,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;The set&quot;}}">
+class Component extends DCLogic {
+  state = { email: '', status: '', ch: 1, on: true, muted: true, phase: 'idle', caption: 0, num: 8000, staticOn: false, powerLine: false };
+  refs = {};
+  scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+  ref(n) { if (!this.refs[n]) this.refs[n] = React.createRef(); return this.refs[n]; }
+  voiceQuestion = "WHAT'S YOUR TAKE ON GORPCORE?";
+  voiceCaptions = [
+    { start: 0, text: "Gorpcore is outdoor gear worn as everyday clothes." },
+    { start: 3.724, text: "As a microtrend, it's over." },
+    { start: 5.817, text: "If you actually hike, wear all of it." },
+    { start: 8.102, text: "If not, the head-to-toe technical look feels like a costume." },
+    { start: 11.811, text: "The pieces still work." },
+    { start: 13.286, text: "The uniform doesn't." }
+  ];
+  // placeholder until the real ChatGPT answer is pasted in
+  gpt = "It really depends on the vibe you're going for! A jacket can add polish, but if you'd like a more relaxed look you could leave it off.";
+  // beat 4 exchange: swap freely
+  memTitle = 'She recognizes why you keep rejecting things';
+  memYou = 'Would I actually wear this jacket?';
+  memEura = 'Probably not. You like the suede, but it repeats the two things you keep returning: cropped hems and loud hardware. Wait for a cleaner overshirt cut.';
+  poses = { 1: { x: 50, y: 56, s: .95 }, 2: { x: 68, y: 52, s: 1 } };
+
+  retro() { const v = this.props.retro; return v == null ? 1 : Math.max(0, Math.min(1.5, v)); }
+  phosphors = { 'Green (P1)': ['#44DD66', '#DDAA33'], 'Amber (P3)': ['#F2A93B', '#FFE08A'], 'Ice (P4)': ['#BFE6FF', '#FFFFFF'], 'Magenta': ['#FF5FA8', '#FFD1E8'] };
+  chassis = {
+    'Walnut': { c: 'repeating-linear-gradient(92deg,rgba(255,255,255,.035) 0 2px,transparent 2px 7px),linear-gradient(180deg,#5A4636,#3E2E22 60%,#2E2119)', b: '#1A1814', b2: '#4a4038', g: 'repeating-linear-gradient(90deg,#1E1610 0 2px,#4A3A2C 2px 5px)', badge: '#9A9384' },
+    'Bakelite': { c: 'linear-gradient(180deg,#2A2624,#161311 60%,#0E0C0B)', b: '#3A3430', b2: '#24201D', g: 'repeating-linear-gradient(90deg,#0B0A09 0 2px,#2C2724 2px 5px)', badge: '#8A8378' },
+    'Space-age': { c: 'linear-gradient(180deg,#F4F0E6,#DDD7C8 60%,#C9C2B2)', b: '#7A7264', b2: '#B5AD9C', g: 'repeating-linear-gradient(90deg,#A39B8B 0 2px,#E6E0D2 2px 5px)', badge: '#5A5348' },
+    'Eura green': { c: 'linear-gradient(180deg,#2E7A52,#1E563C 60%,#163F2C)', b: '#0F2A1D', b2: '#2A6B48', g: 'repeating-linear-gradient(90deg,#0F2A1D 0 2px,#2A6B48 2px 5px)', badge: '#BFE3CB' }
+  };
+  applyTweaks() {
+    const r = this.refs.root.current; if (!r) return;
+    const ph = this.phosphors[this.props.phosphor] || this.phosphors['Green (P1)'], ch = this.chassis[this.props.chassis] || this.chassis['Walnut'], k = this.retro();
+    r.style.setProperty('--ph', ph[0]); r.style.setProperty('--ph2', ph[1]);
+    r.style.setProperty('--retro', String(k));
+    r.style.setProperty('--reel', k === 0 ? 'none' : `contrast(${1 + .15 * k}) saturate(${1 - .3 * k}) sepia(${.18 * k}) brightness(${1 - .1 * k})`);
+    r.style.setProperty('--chassis', ch.c); r.style.setProperty('--bezel', ch.b); r.style.setProperty('--bezel2', ch.b2); r.style.setProperty('--grille', ch.g); r.style.setProperty('--badge', ch.badge);
+  }
+  componentDidMount() {
+    this.applyTweaks(); const a = this.audio(); if (a) a.muted = true;
+    this.startGrain(); this.startParticles(); this.wait(0); this.kick(0);
+    this.onAnalyticsScroll = () => this.trackScroll();
+    this.resumeReel = () => { if (document.visibilityState !== 'hidden') this.playReel(); };
+    this.armReelUnlock();
+    this.startReelWatch();
+    addEventListener('scroll', this.onAnalyticsScroll, { passive: true });
+    addEventListener('pageshow', this.resumeReel);
+    addEventListener('focus', this.resumeReel);
+    document.addEventListener('visibilitychange', this.resumeReel);
+    this.trackScroll();
+  }
+  kick(n) { const v = this.refs.reel && this.refs.reel.current; if (v) return this.playReel(); if (n < 40) this.reelKick = setTimeout(() => this.kick(n + 1), 150); }
+  armReelUnlock() {
+    if (this.reelUnlockArmed) return;
+    this.reelUnlockArmed = true;
+    this.unlockReel = () => { if (this.state.on && this.state.ch === 1) { this.disarmReelUnlock(); this.playReel(); } };
+    document.addEventListener('touchstart', this.unlockReel, { passive: true });
+    document.addEventListener('pointerdown', this.unlockReel, { passive: true });
+    document.addEventListener('keydown', this.unlockReel);
+  }
+  disarmReelUnlock() {
+    if (!this.reelUnlockArmed) return;
+    this.reelUnlockArmed = false;
+    document.removeEventListener('touchstart', this.unlockReel);
+    document.removeEventListener('pointerdown', this.unlockReel);
+    document.removeEventListener('keydown', this.unlockReel);
+  }
+  startReelWatch() {
+    clearInterval(this.reelWatch); this.reelWatchTime = -1; this.reelStallTicks = 0;
+    this.reelWatch = setInterval(() => {
+      const v = this.refs.reel && this.refs.reel.current;
+      if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') { this.reelWatchTime = -1; this.reelStallTicks = 0; return; }
+      const t = Number.isFinite(v.currentTime) ? v.currentTime : 0;
+      if (v.paused || v.ended) { this.armReelUnlock(); this.playReel(v.ended); this.reelWatchTime = t; return; }
+      this.reelStallTicks = this.reelWatchTime >= 0 && Math.abs(t - this.reelWatchTime) < .04 ? this.reelStallTicks + 1 : 0;
+      this.reelWatchTime = t;
+      if (this.reelStallTicks < 2) return;
+      this.reelStallTicks = 0; v.style.opacity = '0'; try { v.pause(); v.load(); } catch (e) {}
+      this.armReelUnlock(); this.playReel();
+    }, 1500);
+  }
+  playReel(reset = false, attempt = 0) {
+    const v = this.refs.reel && this.refs.reel.current;
+    if (!v || !this.state.on || this.state.ch !== 1 || document.visibilityState === 'hidden') return;
+    clearTimeout(this.reelRetry); v.muted = true; v.loop = true; v.playsInline = true;
+    if (reset || v.ended) try { v.currentTime = 0; } catch (e) {}
+    if (v.readyState === 0) try { v.load(); } catch (e) {}
+    const p = v.play();
+    if (p && p.then) p.then(() => this.disarmReelUnlock()).catch(() => { this.armReelUnlock(); if (attempt < 6) this.reelRetry = setTimeout(() => this.playReel(false, attempt + 1), 300 + attempt * 250); });
+  }
+  reelReady(e) { if (this.state.on && this.state.ch === 1) this.playReel(); }
+  reelPlaying(e) { e.currentTarget.style.opacity = '1'; this.reelWatchTime = e.currentTarget.currentTime || 0; this.reelStallTicks = 0; this.disarmReelUnlock(); }
+  reelUnavailable(e) { e.currentTarget.style.opacity = '0'; if (this.state.on && this.state.ch === 1) this.armReelUnlock(); }
+  componentDidUpdate(pp, ps) {
+    if (pp.phosphor !== this.props.phosphor || pp.chassis !== this.props.chassis || pp.retro !== this.props.retro) this.applyTweaks();
+    const v = this.refs.reel && this.refs.reel.current;
+    if (v && (ps.ch !== this.state.ch || ps.on !== this.state.on)) {
+      if (this.state.ch === 1 && this.state.on) this.playReel();
+      else v.pause();
+    }
+    const a = this.audio(); if (a && ps.muted !== this.state.muted) a.muted = this.state.muted;
+    if (ps.ch !== this.state.ch || ps.on !== this.state.on) {
+      const fx = this.refs.crtPointer && this.refs.crtPointer.current;
+      if (!this.state.on) this.screenPointerLeave();
+      else if (fx && this.crtInside) fx.style.opacity = this.state.ch === 2 ? '.14' : '.3';
+    }
+  }
+  trackScroll() {
+    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    const progress = Math.round((scrollY / max) * 100);
+    [25, 50, 75, 100].forEach(mark => {
+      if (progress >= mark && !this.scrollMilestones[mark]) {
+        this.scrollMilestones[mark] = true;
+        if (typeof window.gtag === 'function') window.gtag('event', 'scroll_depth', { depth_percent: mark });
+      }
+    });
+  }
+  wait(t) { if (window.gsap && window.ScrollTrigger) return this.build(); if (t > 60) return this.showAll(); setTimeout(() => this.wait(t + 1), 100); }
+  showAll() { this.rvFlow(true); const r = this.refs.root.current; if (r) r.querySelectorAll('[data-copy]').forEach(el => { el.style.opacity = '1'; el.style.position = 'relative'; el.style.inset = 'auto'; el.style.top = 'auto'; el.style.bottom = 'auto'; }); }
+  build() {
+    const gsap = window.gsap, ST = window.ScrollTrigger; gsap.registerPlugin(ST);
+    const pin = this.refs.pin.current, tv = this.refs.tv.current, copy = this.refs.copy.current, pw = this.refs.partWrap.current; if (!pin || !tv || !copy) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return this.showAll();
+    const c = {}; copy.querySelectorAll('[data-copy]').forEach(el => { c[el.getAttribute('data-copy')] = el; });
+    const isNarrow = () => innerWidth < 1000;
+    const fit = (ch) => ch === 1 ? Math.min(1, (innerWidth * .78) / 620, (innerHeight * .6) / 560) : Math.min(1, (innerWidth * .5) / 620, (innerHeight * .7) / 560);
+    const clamp = (min, value, max) => Math.max(min, Math.min(value, max));
+    const pose = (ch) => {
+      const p = this.poses[ch];
+      if (ch === 1) {
+        const pad = 24, gap = isNarrow() ? clamp(52, innerHeight * .07, 84) : clamp(40, innerHeight * .05, 64), ct = c[1] ? c[1].offsetTop : innerHeight * .5;
+        const th = tv.offsetHeight || 580, tw = tv.offsetWidth || 620, avail = ct - pad - gap;
+        const s = Math.max(.3, Math.min(1, avail / th, (innerWidth * .9) / tw));
+        const top = Math.max(pad + th * s / 2, ct - gap - th * s / 2);
+        return { xPercent: -50, yPercent: -50, left: '50%', top: top + 'px', scale: s, rotate: 0, opacity: 1 };
+      }
+      if (isNarrow()) {
+        const hd = c[ch] && c[ch].querySelector('h2'), hb = hd ? c[ch].offsetTop + hd.offsetTop + hd.offsetHeight + 24 : innerHeight * .4;
+        const th = tv.offsetHeight || 580, avail = innerHeight - hb - 16, s = Math.max(.3, Math.min(1, (innerWidth * .9) / (tv.offsetWidth || 620), avail / th));
+        return { xPercent: -50, yPercent: -50, left: '50%', top: (hb + avail / 2) + 'px', scale: s, rotate: 0, opacity: 1 };
+      }
+      const side = clamp(40, innerWidth * .04, 72), compositionW = Math.min(innerWidth - side * 2, 1520);
+      const s = p.s * fit(ch), tvW = (tv.offsetWidth || 620) * s, gap = clamp(48, innerWidth * .055, 120);
+      const copyW = Math.max(320, compositionW - tvW - gap), compositionL = (innerWidth - compositionW) / 2;
+      if (c[2]) { c[2].style.left = compositionL + 'px'; c[2].style.right = 'auto'; c[2].style.width = copyW + 'px'; }
+      return { xPercent: -50, yPercent: -50, left: (compositionL + copyW + gap + tvW / 2) + 'px', top: p.y + '%', scale: s, rotate: 0, opacity: 1 };
+    };
+    const rootEl = this.refs.root.current;
+    const balanceOpening = isNarrow() || innerHeight > innerWidth;
+    if (balanceOpening) {
+      // Keep the opening beat centered as a single composition. Anchoring the
+      // copy near the bottom pushed both it and the TV noticeably downward on
+      // taller phones and portrait tablets, leaving a large empty area above.
+      const openingGap = isNarrow() ? clamp(52, innerHeight * .07, 84) : clamp(40, innerHeight * .05, 64);
+      const openingScale = Math.min(1, (innerWidth * .9) / (tv.offsetWidth || 620));
+      const openingHeight = (tv.offsetHeight || 580) * openingScale + openingGap + (c[1] ? c[1].offsetHeight : 0);
+      const openingEdge = Math.max(24, (innerHeight - openingHeight) / 2);
+      pin.style.setProperty('--hero-copy-bottom', openingEdge + 'px');
+    } else {
+      pin.style.removeProperty('--hero-copy-bottom');
+    }
+    if (isNarrow()) {
+      rootEl.style.setProperty('--copyAlign', 'flex-start'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.setProperty('--copyBody', 'none');
+      if (c[2]) { c[2].style.left = 'clamp(16px,4vw,40px)'; c[2].style.right = 'clamp(16px,4vw,40px)'; c[2].style.width = 'auto'; }
+    } else {
+      rootEl.style.removeProperty('--copyAlign'); rootEl.style.setProperty('--copyMax', '100%'); rootEl.style.removeProperty('--copyBody');
+    }
+    gsap.set(tv, pose(1)); gsap.set(c[1], { opacity: 1 }); if (pw) gsap.set(pw, { opacity: 1 });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: .6, onUpdate: s => this.onScroll(s.progress) } });
+    // .22 the set finds its pose and beat 2 lands · .46 the screen empties into pixels · .80 she remembers
+    tl.to(c[1], { opacity: 0, y: -30, duration: .06 }, .2)
+      .to(tv, { ...pose(2), duration: .1, ease: 'power2.inOut' }, .22)
+      .fromTo(c[2], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .06 }, .26)
+      .to(c[2], { opacity: 0, y: -30, duration: .05 }, .44)
+      .to(tv, { scale: .12, opacity: 0, duration: .09, ease: 'power2.in' }, .46)
+      .fromTo(c[3], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .06 }, .53)
+      .to({}, { duration: .02 }, .98);
+    this.tl = tl;
+    if (!this.onResize) { this.onResize = () => { clearTimeout(this.rz); this.rz = setTimeout(() => { try { this.tl.scrollTrigger.kill(); this.tl.kill(); } catch (e) {} this.build(); }, 200); }; addEventListener('resize', this.onResize); }
+    this.buildReveal(gsap, ST, isNarrow());
+    this.buildMemory(gsap, ST);
+    ST.refresh();
+    if (location.hash === '#access') setTimeout(() => this.goAccess(), 300);
+  }
+  buildMemory(gsap, ST) {
+    const m = this.refs.mem.current; if (!m) return;
+    if (this.memST) { try { this.memST.kill(true); } catch (e) {} this.memST = null; }
+    const items = m.querySelectorAll('[data-mem]');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { gsap.set(items, { clearProps: 'all' }); return; }
+    gsap.set(items, { opacity: 0, y: 14 });
+    this.memST = ST.create({ trigger: m, start: 'top 60%', once: true, onEnter: () => gsap.to(items, { opacity: 1, y: 0, duration: .45, ease: 'power2.out', stagger: { each: .25, from: 'start' } }) });
+  }
+  rvFlow(flow) {
+    const r = this.refs.root.current; if (!r) return;
+    const v = flow ? { '--rvH': 'auto', '--rvSticky': 'relative', '--rvStH': 'auto', '--rvPad': 'clamp(48px,7vh,72px) clamp(18px,5vw,32px) clamp(40px,6vh,64px)', '--rvPanelPos': 'relative', '--rvInset': 'auto', '--rvPanelDisp': 'grid', '--rvPanelsDisp': 'grid', '--rvCopyPos': 'relative', '--rvCopyL': 'auto', '--rvHeadB': 'auto', '--rvDescT': 'auto', '--rvCopyMax': '34rem', '--rvPhPos': 'relative', '--rvPhL': 'auto', '--rvPhT': 'auto', '--rvPhW': 'min(72vw,280px)', '--rvPhJust': 'center' } : {};
+    ['--rvH','--rvSticky','--rvStH','--rvPad','--rvPanelPos','--rvInset','--rvPanelDisp','--rvPanelsDisp','--rvCopyPos','--rvCopyL','--rvHeadB','--rvDescT','--rvCopyMax','--rvPhPos','--rvPhL','--rvPhT','--rvPhW','--rvPhJust'].forEach(k => v[k] ? r.style.setProperty(k, v[k]) : r.style.removeProperty(k));
+  }
+  pauseDemos() { const rv = this.refs.rv.current; if (rv) rv.querySelectorAll('video').forEach(v => v.pause()); }
+  playDemo(index) {
+    const rv = this.refs.rv.current; if (!rv) return;
+    rv.querySelectorAll('video').forEach((v, i) => {
+      v.muted = true; v.loop = true;
+      if (i !== index) return v.pause();
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    });
+  }
+  buildReveal(gsap, ST, narrow) {
+    const rv = this.refs.rv.current; if (!rv) return;
+    this.pauseDemos();
+    if (this.demoSTs) this.demoSTs.forEach(t => { try { t.kill(); } catch (e) {} });
+    this.demoSTs = [];
+    if (this.rvTl) { try { this.rvTl.scrollTrigger && this.rvTl.scrollTrigger.kill(); this.rvTl.kill(); } catch (e) {} this.rvTl = null; }
+    const panels = [1,2,3].map(k => rv.querySelector('[data-rv="' + k + '"]')), phones = [1,2,3].map(k => rv.querySelector('[data-phone="' + k + '"]')), heads = [1,2,3].map(k => rv.querySelector('[data-head="' + k + '"]')), descs = [1,2,3].map(k => rv.querySelector('[data-desc="' + k + '"]'));
+    const all = [...phones, ...heads, ...descs].filter(Boolean);
+    const flow = narrow || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.rvFlow(flow);
+    gsap.set(all, { clearProps: 'transform,translate,rotate,scale,x,y,opacity' });
+    if (flow || phones.some(p => !p)) {
+      phones.forEach((phone, i) => {
+        if (!phone || !phone.querySelector('video')) return;
+        this.demoSTs.push(ST.create({ trigger: panels[i] || phone, start: i === 0 ? 'top 110%' : 'top 88%', end: 'bottom 18%', onEnter: () => this.playDemo(i), onEnterBack: () => this.playDemo(i), onLeave: () => this.pauseDemos(), onLeaveBack: () => this.pauseDemos() }));
+      });
+      return;
+    }
+    const W = innerWidth, Hh = innerHeight, ph = phones[0].offsetHeight || 600;
+    const fs = Math.min(1.1, (Hh * .84) / ph);
+    const focus = { xPercent: -50, yPercent: -50, x: Math.min(W * .135, 280), y: 0, scale: fs, rotate: 0, opacity: 1 };
+    gsap.set(phones, { ...focus, opacity: 0 }); gsap.set(phones[0], focus);
+    gsap.set([...heads, ...descs], { opacity: 0 }); gsap.set([heads[0], descs[0]], { opacity: 1 });
+    this.demoSTs.push(ST.create({ trigger: rv, start: 'top 95%', end: 'top top', onEnter: () => this.playDemo(0), onEnterBack: () => this.playDemo(0), onLeaveBack: () => this.pauseDemos() }));
+    const tl = gsap.timeline({ scrollTrigger: { trigger: rv, start: 'top top', end: 'bottom bottom', scrub: .5, onEnter: () => this.playDemo(0), onEnterBack: self => this.playDemo(self.progress < .52 ? 0 : 1), onUpdate: self => this.playDemo(self.progress < .34 ? 0 : self.progress < .68 ? 1 : 2), onLeave: () => this.pauseDemos(), onLeaveBack: () => this.pauseDemos() } });
+    const T = [0, .36, .70], d = .06;
+    [0,1,2].forEach(i => {
+      const t = T[i];
+      if (i) tl.fromTo(phones[i], { ...focus, y: 60, opacity: 0, scale: fs * .92 }, { ...focus, duration: d, ease: 'power2.out', immediateRender: false }, t);
+      if (i) tl.fromTo([heads[i], descs[i]], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: d, stagger: .015, immediateRender: false }, t + .02);
+      if (i < 2) { tl.to(phones[i], { opacity: 0, y: -60, scale: fs * .94, duration: d, ease: 'power2.in' }, T[i + 1] - .01); tl.to([heads[i], descs[i]], { opacity: 0, y: -20, duration: .04 }, T[i + 1] - .01); }
+    });
+    tl.to({}, { duration: .02 }, .98);
+    this.rvTl = tl;
+  }
+  onScroll(p) {
+    const cl = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    this.pEmit = cl((p - .46) / .10); this.pEmitP = p;
+    this.pNum = cl((p - .58) / .13);
+    const v = Math.round(8000 - 7992 * Math.pow(this.pNum, .6));
+    if (v !== this.state.num) this.setState({ num: v });
+    const real = p < .22 ? 1 : p < .46 ? 2 : 3;
+    if (real !== this.state.ch) {
+      clearTimeout(this.staticT);
+      const a = this.audio(); if (a) a.pause(); cancelAnimationFrame(this.captionRaf); clearTimeout(this.fallback);
+      const flash = real <= 2;
+      clearTimeout(this.voiceT);
+      this.setState({ ch: real, staticOn: flash, phase: 'idle', caption: 0 });
+      if (typeof window.gtag === 'function') window.gtag('event', 'frame_view', { frame_number: real });
+      if (real === 2 && this.state.on) setTimeout(() => this.beginVoiceBeat(), 0);
+      if (flash) this.staticT = setTimeout(() => this.setState({ staticOn: false }), 160);
+    }
+  }
+  goAccess(e) {
+    if (e) e.preventDefault();
+    const el = document.getElementById('access'); if (!el) return;
+    window.scrollTo({ top: el.offsetTop, behavior: 'auto' });
+    if (matchMedia('(pointer:fine)').matches) setTimeout(() => { const input = el.querySelector('input[type="email"]'); if (input) input.focus({ preventScroll: true }); }, 60);
+  }
+  startGrain() {
+    const c = this.refs.grain && this.refs.grain.current;
+    if (!c) { if ((this.gt = (this.gt || 0) + 1) < 60) this.grainRaf = requestAnimationFrame(() => this.startGrain()); return; }
+    const ctx = c.getContext('2d'); let last = -100;
+    const draw = (now = 0) => {
+      if (this.state.ch === 1 && now - last >= 85) {
+        last = now;
+        const w = Math.max(1, Math.floor(c.clientWidth / 3)), h = Math.max(1, Math.floor(c.clientHeight / 3));
+        if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+        const img = ctx.createImageData(w, h), d = img.data;
+        for (let i = 0; i < d.length; i += 4) { const v = 128 + (Math.random() - .5) * 140; d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 60 * this.retro(); }
+        ctx.putImageData(img, 0, 0);
+        if (Math.random() < .08 * this.retro()) { ctx.fillStyle = 'rgba(255,255,255,.35)'; const x = Math.random() * w; ctx.fillRect(x, 0, 1, h * Math.random()); }
+      }
+      this.grainRaf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+  // 8,000 pixels leave the screen, spread across the page, then collapse into eight.
+  startParticles() {
+    const c = this.refs.part && this.refs.part.current;
+    if (!c) { if ((this.tries = (this.tries || 0) + 1) < 60) this.partRaf = requestAnimationFrame(() => this.startParticles()); return; }
+    const ctx = c.getContext('2d'), N = 2400, pts = [];
+    for (let i = 0; i < N; i++) pts.push({ sx: Math.random(), sy: Math.random(), fx: Math.random(), fy: Math.random(), j: Math.random(), k: ((i * 7919) % 1000) / 1000, d: .6 + Math.random() * .4 });
+    let last = -2, lastW = 0;
+    const draw = () => {
+      const cl3 = (v) => v < 0 ? 0 : v > 1 ? 1 : v; const w = c.clientWidth, h = c.clientHeight, e1 = this.pEmit || 0, e2 = this.pNum || 0, key = e1 * 3 + e2 + (this.pEmitP || 0) * 7;
+      if (w && h && (Math.abs(key - last) > .0008 || w !== lastW)) {
+        last = key; lastW = w;
+        if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+        ctx.clearRect(0, 0, w, h);
+        if (e1 > 0) {
+          if (e1 < 1) { const s = this.refs.screen.current, cb = c.getBoundingClientRect(); if (s) { const r = s.getBoundingClientRect(); this.src = { x: r.left - cb.left, y: r.top - cb.top, w: r.width, h: r.height }; } }
+          const src = this.src || { x: w * .4, y: h * .4, w: w * .2, h: h * .2 };
+          const a2 = e2 * e2 * (3 - 2 * e2);
+          const cap = this.refs.cap && this.refs.cap.current, cb = cap ? cap.getBoundingClientRect() : null, cr = c.getBoundingClientRect();
+          const gap = 10, tile = Math.min((w * .5 - 7 * gap) / 8, 56), gx = (w - (8 * tile + 7 * gap)) / 2, gy = cb ? Math.min(cb.bottom - cr.top + 28, h * .8) : h * .68;
+          for (let i = 0; i < N; i++) {
+            const q = pts[i], t = Math.min(1, e1 / q.d), a1 = t * t * (3 - 2 * t);
+            const x0 = src.x + q.sx * src.w, y0 = src.y + q.sy * src.h;
+            let x = x0 + (q.fx * w - x0) * a1, y = y0 + (q.fy * h - y0) * a1;
+            const tx = gx + (i % 8) * (tile + gap) + q.j * tile, ty = gy + q.k * tile * 1.25;
+            x += (tx - x) * a2; y += (ty - y) * a2;
+            ctx.fillStyle = `rgba(23,22,18,${(.12 + .42 * a1) * (1 + a2 * .6)})`;
+            const sz = 1.5 + a1 * .6 + a2 * 1.2;
+            ctx.fillRect(x, y, sz, sz);
+          }
+        }
+      }
+      this.partRaf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+  audio() { return this.refs.audio.current; }
+  captionAt(t) {
+    let index = 0;
+    const led = t + .14;
+    for (let i = 0; i < this.voiceCaptions.length; i++) if (led >= this.voiceCaptions[i].start) index = i;
+    return index;
+  }
+  startCaptionSync() {
+    cancelAnimationFrame(this.captionRaf);
+    const tick = () => {
+      const a = this.audio();
+      if (!a || a.paused || this.state.phase !== 'playing') return;
+      const index = this.captionAt(a.currentTime || 0);
+      if (index !== this.state.caption) this.setState({ caption: index });
+      this.captionRaf = requestAnimationFrame(tick);
+    };
+    this.captionRaf = requestAnimationFrame(tick);
+  }
+  finishClip() {
+    cancelAnimationFrame(this.captionRaf); clearTimeout(this.fallback);
+    this.setState({ phase: 'done', caption: this.voiceCaptions.length - 1 });
+  }
+  beginVoiceBeat() {
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); cancelAnimationFrame(this.captionRaf);
+    if (!this.state.on || this.state.ch !== 2) return;
+    const a = this.audio(); if (a) { a.pause(); try { a.currentTime = 0; } catch (e) {} }
+    this.setState({ phase: 'prompt', caption: 0 });
+    this.voiceT = setTimeout(() => { if (this.state.on && this.state.ch === 2) this.playClip(true); }, 900);
+  }
+  playClip(restart = true) {
+    const a = this.audio(); clearTimeout(this.voiceT); clearTimeout(this.fallback);
+    this.setState({ phase: 'playing', caption: restart ? 0 : this.state.caption });
+    if (a) {
+      a.muted = this.state.muted;
+      if (restart) try { a.currentTime = 0; } catch (e) {}
+      const p = a.play();
+      if (p && p.then) p.then(() => this.startCaptionSync()).catch(() => this.armFallback());
+      else this.startCaptionSync();
+    } else this.armFallback();
+  }
+  armFallback() { clearTimeout(this.fallback); this.fallback = setTimeout(() => this.finishClip(), 14750); }
+  onTimeUpdate(e) {
+    const index = this.captionAt(e.target.currentTime || 0);
+    if (index !== this.state.caption) this.setState({ caption: index });
+  }
+  toggleMute() {
+    const muted = !this.state.muted, a = this.audio();
+    if (a) a.muted = muted;
+    this.setState({ muted });
+    if (!muted && this.state.ch === 2 && this.state.on && this.state.phase === 'prompt') return this.playClip(true);
+    if (!muted && this.state.ch === 2 && this.state.on && a && a.paused && this.state.phase !== 'done') this.playClip(false);
+  }
+  screenPointerEnabled() {
+    return matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)').matches;
+  }
+  screenPointerEnter(e) {
+    this.crtInside = true;
+    this.screenPointerMove(e);
+  }
+  screenPointerMove(e) {
+    const fx = this.refs.crtPointer && this.refs.crtPointer.current, screen = this.refs.screen && this.refs.screen.current;
+    if (!fx || !screen || !this.state.on || !this.screenPointerEnabled()) return;
+    const r = screen.getBoundingClientRect(), scaleX = r.width / Math.max(1, screen.offsetWidth), scaleY = r.height / Math.max(1, screen.offsetHeight);
+    const x = Math.max(0, Math.min(screen.clientWidth, (e.clientX - r.left) / scaleX - screen.clientLeft)), y = Math.max(0, Math.min(screen.clientHeight, (e.clientY - r.top) / scaleY - screen.clientTop)), now = performance.now(), prev = this.crtPoint;
+    const speed = prev ? Math.hypot(x - prev.x, y - prev.y) / Math.max(16, now - prev.t) : 0;
+    const quiet = this.state.ch === 2, base = quiet ? .14 : .3, peak = quiet ? .28 : .62;
+    fx.style.setProperty('--crt-x', x + 'px'); fx.style.setProperty('--crt-y', y + 'px'); fx.style.opacity = String(Math.min(peak, base + speed * .18));
+    this.crtPoint = { x, y, t: now }; this.crtInside = true;
+    clearTimeout(this.crtFade); this.crtFade = setTimeout(() => { if (this.crtInside && this.state.on && fx) fx.style.opacity = String(base); }, 90);
+  }
+  screenPointerLeave() {
+    const fx = this.refs.crtPointer && this.refs.crtPointer.current;
+    clearTimeout(this.crtFade); this.crtInside = false; this.crtPoint = null; if (fx) fx.style.opacity = '0';
+  }
+  power() {
+    const a = this.audio(), v = this.refs.reel && this.refs.reel.current;
+    clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.staticT);
+    if (this.state.on) {
+      if (a) a.pause(); if (v) v.pause(); cancelAnimationFrame(this.captionRaf); clearTimeout(this.voiceT); clearTimeout(this.fallback);
+      this.setState({ staticOn: true, powerLine: false });
+      this.powerT1 = setTimeout(() => this.setState({ on: false, staticOn: false, powerLine: true, phase: 'idle', caption: 0 }), 150);
+      this.powerT2 = setTimeout(() => this.setState({ powerLine: false }), 310);
+      return;
+    }
+    this.setState({ on: true, staticOn: true, powerLine: true });
+    this.powerT1 = setTimeout(() => this.setState({ powerLine: false }), 90);
+    this.powerT2 = setTimeout(() => {
+      this.setState({ staticOn: false });
+      if (this.state.ch === 2) this.beginVoiceBeat();
+      else if (this.state.ch === 1 && v) this.playReel();
+    }, 190);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.voiceT); clearTimeout(this.fallback); clearTimeout(this.staticT); clearTimeout(this.powerT1); clearTimeout(this.powerT2); clearTimeout(this.rz); clearTimeout(this.crtFade); clearTimeout(this.reelKick); clearTimeout(this.reelRetry); clearInterval(this.reelWatch); cancelAnimationFrame(this.captionRaf); cancelAnimationFrame(this.partRaf); cancelAnimationFrame(this.grainRaf); this.disarmReelUnlock(); removeEventListener('resize', this.onResize); removeEventListener('scroll', this.onAnalyticsScroll); removeEventListener('pageshow', this.resumeReel); removeEventListener('focus', this.resumeReel); document.removeEventListener('visibilitychange', this.resumeReel);
+    try { this.tl && this.tl.scrollTrigger && this.tl.scrollTrigger.kill(true); this.tl && this.tl.kill(); this.rvTl && this.rvTl.kill(); this.memST && this.memST.kill(true); this.demoSTs && this.demoSTs.forEach(t => t.kill()); } catch (e) {}
+    if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach(t => { try { t.kill(true); } catch (e) {} });
+  }
+
+  renderVals() {
+    const s = this.state, ch = s.ch, on = s.on, c2 = ch === 2, eura = c2 && on, done = eura && s.phase === 'done';
+    return {
+      rootRef: this.ref('root'), audioRef: this.ref('audio'), pinRef: this.ref('pin'), rvRef: this.ref('rv'), memRef: this.ref('mem'), capRef: this.ref('cap'), reelRef: this.ref('reel'), screenRef: this.ref('screen'), crtPointerRef: this.ref('crtPointer'),
+      screenPointerMove: (e) => this.screenPointerMove(e), screenPointerEnter: (e) => this.screenPointerEnter(e), screenPointerLeave: () => this.screenPointerLeave(),
+      reelReady: (e) => this.reelReady(e), reelPlaying: (e) => this.reelPlaying(e), reelUnavailable: (e) => this.reelUnavailable(e), reelEnded: () => this.playReel(true),
+      onTimeUpdate: (e) => this.onTimeUpdate(e), onEnded: () => this.finishClip(), onAudioError: () => this.armFallback(),
+      grain: React.createElement('canvas', { ref: this.ref('grain'), style: { width: '100%', height: '100%', display: 'block', mixBlendMode: 'overlay', imageRendering: 'pixelated' } }),
+      particles: React.createElement('canvas', { ref: this.ref('part'), style: { width: '100%', height: '100%', display: 'block' } }),
+      tvRef: this.ref('tv'), copyRef: this.ref('copy'), partWrapRef: this.ref('partWrap'),
+      goAccess: (e) => this.goAccess(e),
+      ch, dialT: `rotate(${(ch - 1) * 60 - 90}deg)`, staticO: s.staticOn ? .95 : 0, screenOffO: on ? 0 : 1,
+      powerLineO: s.powerLine ? 1 : 0, powerLineScale: s.powerLine ? 1 : .04,
+      c1O: ch === 1 ? 1 : 0,
+      c2O: c2 ? 1 : 0, c2PE: c2 ? 'auto' : 'none', offO: on ? 0 : 1,
+      speakerLabel: s.phase === 'prompt' ? 'MARCUS / ASKED' : 'EURA / ANSWERING',
+      transcript: s.phase === 'prompt' ? this.voiceQuestion : (this.voiceCaptions[s.caption] ? this.voiceCaptions[s.caption].text : this.voiceCaptions[0].text),
+      transcriptO: eura && s.phase !== 'idle' ? 1 : 0, barsO: eura && s.phase === 'playing' ? 1 : .22,
+      soundState: s.muted ? 'MUTED' : 'SOUND ON', muted: s.muted,
+      againO: done ? 1 : 0, againPE: done ? 'auto' : 'none',
+      playAgain: () => this.beginVoiceBeat(), power: () => this.power(), toggleMute: () => this.toggleMute(),
+      muteDisplay: c2 ? 'flex' : 'none', muteLabel: s.muted ? 'Unmute Eura' : 'Mute Eura', muteColor: s.muted ? '#C9C2B4' : 'var(--ph,#44DD66)',
+      soundWaveO: s.muted ? 0 : 1, muteSlashO: s.muted ? 1 : 0,
+      powerBg: on ? 'var(--ph,#44DD66)' : '#5A2A22', powerGlow: on ? '0 0 8px var(--ph,#44DD66)' : 'none',
+      bigNum: s.num >= 1000 ? s.num.toLocaleString('en-US') : String(s.num), numLine: s.num > 200 ? 'things the algorithm shows you' : 'chosen around your taste',
+      email: s.email, status: s.status, onEmail: (e) => this.setState({ email: e.target.value }),
+      submit: (e) => {
+        e.preventDefault(); const email = s.email.trim(); if (!email) return;
+        this.setState({ status: 'Sending' });
+        fetch('https://api.eura.style/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
+          .then(r => r.json().catch(() => ({})).then(d => ({ st: r.status, d })))
+          .then(({ st, d }) => {
+            if (st < 300 && typeof window.gtag === 'function') window.gtag('event', 'waitlist_signup');
+            this.setState({ status: st < 300 ? "You're on the list. Watch your inbox." : st === 409 ? "You're already on the list." : (d && d.detail) || 'Something went wrong. Try again.', email: st < 300 ? '' : s.email });
+          })
+          .catch(() => this.setState({ status: 'Could not reach us. Try again in a bit.' }));
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

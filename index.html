@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eura | What to Wear. What to Buy.</title>
-<meta name="description" content="Eura is a voice stylist with real fashion judgment. Get an opinion on what you are wearing, eight considered picks, and advice that remembers your taste.">
+<title>Eura | Your inspiration. Your own store.</title>
+<meta name="description" content="Turn your inspiration into a personal collection of real clothes to buy. Create a Mart, refine your finds, and discover more on your schedule. Join the early-access list.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Eura | What to Wear. What to Buy.">
-<meta property="og:description" content="Eura is a voice stylist with real fashion judgment. Get an opinion on what you are wearing, eight considered picks, and advice that remembers your taste.">
+<meta property="og:title" content="Eura | Your inspiration. Your own store.">
+<meta property="og:description" content="Turn your inspiration into a personal collection of real clothes to buy. Create a Mart, refine your finds, and discover more on your schedule. Join the early-access list.">
 <meta property="og:url" content="https://eura.style/">
 <meta property="og:image" content="https://eura.style/eura-og-preview.png">
 <meta property="og:image:type" content="image/png">
@@ -80,7 +80,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 </helmet>
 <div ref="{{ rootRef }}" style="font-family:'IBM Plex Sans',sans-serif;background:#F3EFE6;color:#171612;overflow-x:clip;position:relative" data-screen-label="Proto 16">
 
-<audio ref="{{ audioRef }}" src="./eura-gorpcore-opinion.mp3" preload="auto" muted="{{ muted }}" onTimeUpdate="{{ onTimeUpdate }}" onEnded="{{ onEnded }}" onError="{{ onAudioError }}"></audio>
+
 
 <!-- Nothing-inspired single-scale technical dot grid. -->
 <div class="eura-grid-field" aria-hidden="true"></div>
@@ -102,23 +102,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(36px,16cqw,96px);letter-spacing:-.02em;line-height:.9;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55)">EURA</div>
         </div>
 
-        <!-- CH 2 · Eura speaks. Real Hume audio, with timed captions. -->
-        <div style="position:absolute;inset:0;opacity:{{ c2O }};transition:opacity .35s;background:#0A0A0A;pointer-events:{{ c2PE }}">
-          <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 60px rgba(0,0,0,.55)"></div>
-          <div aria-live="polite" style="position:absolute;inset:10% 9% 13%;display:grid;grid-template-rows:auto 1fr auto;gap:12px;font-family:VT323,monospace;color:var(--ph,#44DD66);opacity:{{ transcriptO }};transition:opacity .3s;pointer-events:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:clamp(12px,2vw,17px);letter-spacing:.14em;color:var(--ph2,#DDAA33)"><span>{{ speakerLabel }}</span><span>{{ soundState }}</span></div>
-            <div style="display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(24px,4.4vw,42px);line-height:.98;max-width:22ch;margin:auto;text-wrap:balance;text-shadow:0 0 14px color-mix(in srgb,var(--ph,#44DD66) 45%,transparent)">{{ transcript }}</div>
-            <div style="display:flex;align-items:flex-end;gap:4px;height:28px;justify-content:center;opacity:{{ barsO }}">
-              <span style="display:block;width:4px;height:38%;background:var(--ph,#44DD66);animation:voicebar .7s ease-in-out infinite alternate"></span>
-              <span style="display:block;width:4px;height:80%;background:var(--ph,#44DD66);animation:voicebar .48s ease-in-out .12s infinite alternate"></span>
-              <span style="display:block;width:4px;height:55%;background:var(--ph,#44DD66);animation:voicebar .62s ease-in-out .05s infinite alternate"></span>
-              <span style="display:block;width:4px;height:95%;background:var(--ph,#44DD66);animation:voicebar .52s ease-in-out .18s infinite alternate"></span>
-              <span style="display:block;width:4px;height:45%;background:var(--ph,#44DD66);animation:voicebar .74s ease-in-out .08s infinite alternate"></span>
-            </div>
-          </div>
-          <div style="position:absolute;left:0;right:0;bottom:0;padding:14px;display:flex;justify-content:center;opacity:{{ againO }};pointer-events:{{ againPE }};transition:opacity .3s">
-            <button onClick="{{ playAgain }}" style="font-family:VT323,monospace;font-size:20px;color:var(--ph2,#DDAA33);background:rgba(0,0,0,.6);border:1px solid var(--ph2,#DDAA33);padding:6px 14px;cursor:pointer;min-height:40px" style-hover="background:var(--ph2,#DDAA33);color:#000">Play again</button>
-          </div>
+        <!-- CH 2 · the new Mart concept demonstration. -->
+        <div style="position:absolute;inset:0;opacity:{{ c2O }};transition:opacity .35s;background:#F3EFE6;pointer-events:{{ c2PE }}">
+          <video ref="{{ audioRef }}" src="./assets/marts/demo.mp4" muted="{{ true }}" playsInline="{{ true }}" controls="{{ true }}" preload="metadata" onEnded="{{ onEnded }}" aria-label="Eura concept demo: create, refine, and return to your Mart" style="display:block;width:100%;height:100%;object-fit:contain"></video>
+          <span class="ui-label" style="position:absolute;left:12px;top:12px;font-size:9px;color:#171612;pointer-events:none">CONCEPT DEMO</span>
         </div>
         <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.14) 2px,rgba(0,0,0,.14) 4px)"></div>
         <div style="position:absolute;inset:0;pointer-events:none;opacity:var(--retro,1);background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.65) 100%)"></div>
@@ -154,22 +141,22 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
     <div ref="{{ copyRef }}" style="position:absolute;inset:0;z-index:4;pointer-events:none">
       <!-- 1 · the moment. text up top, the set below. -->
       <div data-copy="1" style="position:absolute;bottom:var(--hero-copy-bottom,clamp(20px,4vh,44px));left:clamp(16px,4vw,40px);right:clamp(16px,4vw,40px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(8px,1.6vh,18px)">
-        <h1 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(5.4vw,7.2svh),84px);line-height:.95;max-width:16ch;text-wrap:balance">Something's off. <span style="color:#1E563C">Eura tells you why.</span></h1>
-        <p style="font-size:clamp(13px,min(1.05vw,2.2svh),16px);line-height:1.5;max-width:56ch;text-wrap:pretty;color:rgba(23,22,18,.82)">A voice stylist who actually knows fashion: what to wear for tonight and the eight things she'd buy you next.</p>
-        <a class="ui-label" href="#access" onClick="{{ goAccess }}" style="pointer-events:auto;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:#171612;color:#F3EFE6;padding:0 30px;min-height:50px;display:inline-flex;align-items:center;white-space:nowrap;margin-top:clamp(2px,.8vh,8px)" style-hover="background:#1E563C;color:#F3EFE6">Join the waitlist</a>
+        <h1 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(5.4vw,7.2svh),84px);line-height:.95;max-width:16ch;text-wrap:balance">Your inspiration. <span style="color:#1E563C">Your own store.</span></h1>
+        <p style="font-size:clamp(13px,min(1.05vw,2.2svh),16px);line-height:1.5;max-width:56ch;text-wrap:pretty;color:rgba(23,22,18,.82)">Turn the looks you save into real clothes you can buy. Create a Mart, tell it what to change, and keep finding more.</p>
+        <a class="ui-label" href="#access" onClick="{{ goAccess }}" style="pointer-events:auto;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:#171612;color:#F3EFE6;padding:0 30px;min-height:50px;display:inline-flex;align-items:center;white-space:nowrap;margin-top:clamp(2px,.8vh,8px)" style-hover="background:#1E563C;color:#F3EFE6">Get early access</a>
       </div>
       <!-- 2 -->
       <div data-copy="2" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:flex;align-items:var(--copyAlign,center);opacity:0">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(34px,min(5vw,8.5svh),92px);line-height:.95;max-width:var(--copyMax,min(14ch,44vw));text-wrap:pretty">Chatbots give you options. <span style="color:#1E563C">Eura gives you opinions.</span></h2>
+        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(34px,min(5vw,8.5svh),92px);line-height:.95;max-width:var(--copyMax,min(14ch,44vw));text-wrap:pretty">Every store starts with an idea. <span style="color:#1E563C">This one starts with yours.</span></h2>
       </div>
       <!-- 3 -->
       <div data-copy="3" style="position:absolute;inset:clamp(40px,7vh,80px) clamp(16px,4vw,40px) clamp(24px,4vh,40px);display:grid;grid-template-rows:auto 1fr;justify-items:center;text-align:center;opacity:0">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(26px,min(3.6vw,6svh),60px);line-height:.98;max-width:22ch;text-wrap:balance">A feed shows you everything. <span style="color:#1E563C">Eura chooses eight.</span></h2>
+        <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(26px,min(3.6vw,6svh),60px);line-height:.98;max-width:22ch;text-wrap:balance">Your references. Your budget. <span style="color:#1E563C">You set the rules.</span></h2>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,16px);padding-bottom:clamp(12px,3vh,30px)">
-          <div class="ui-label" style="font-size:clamp(80px,min(15vw,24svh),240px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
+          <div class="ui-label" style="font-size:clamp(58px,min(12vw,20svh),190px);font-weight:600;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums">{{ bigNum }}</div>
           <div class="ui-label" ref="{{ capRef }}" style="font-size:clamp(10px,.9vw,12px);letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#1E563C">{{ numLine }}</div>
           <div style="display:var(--copyBody,grid);gap:8px;justify-items:center;text-align:center;margin-top:clamp(112px,14vh,150px)">
-            <p class="ui-label" style="font-size:clamp(11px,.95vw,14px);font-weight:600;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#1E563C">A reason for every pick</p>
+            <p class="ui-label" style="font-size:clamp(11px,.95vw,14px);font-weight:600;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#1E563C">Real products. Different retailers. Your direction.</p>
           </div>
         </div>
       </div>
@@ -183,24 +170,24 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
     <div class="rv-panel-stack" style="display:var(--rvPanelsDisp,contents);gap:clamp(48px,10vh,96px)">
       <div data-rv="1" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Eight things worth seeing.</h3>
+          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Turn inspiration into finds.</h3>
         </div>
-        <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-mart-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Eura's Edit: eight picks in the Mart" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
-        <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Tell Eura anything. More running shoes. Italy in October. Nothing navy. She builds your next eight around it.</p>
+        <div data-phone="1" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./assets/marts/demo.mp4" controls="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Concept demo: create a Mart, refine it, and get new finds" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;display:block;background:#F3EFE6;pointer-events:auto"></video></div></div>
+        <p data-desc="1" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Start with an idea, photos, or a board. Your Mart brings together real products from different retailers around what you want. Save your favorites and shop at the source.</p>
       </div>
       <div data-rv="2" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Talk it through. Or type it out.</h3>
+          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Close? Tell it what to change.</h3>
         </div>
-        <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:9/19.5;border-radius:26px;overflow:hidden;background:#1C1A16;transform:translateZ(0)"><video src="./eura-voice-demo.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" autoPlay="{{ true }}" preload="auto" aria-label="Talking to Eura" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block"></video></div></div>
-        <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Where you're going. What you have on. What doesn't feel right. However you ask, Eura tells you what to do next.</p>
+        <div data-phone="2" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:390/844;overflow:hidden;border-radius:26px;background:#F3EFE6"><img src="./assets/marts/refine.png" alt="Concept: refine a Gym Mart with darker clothes under 40 dollars" loading="lazy" style="position:absolute;width:369.230769%;max-width:none;height:auto;left:-134.615385%;top:-14.691943%"></div></div>
+        <p data-desc="2" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">“Darker clothes under $40.” Refine the Mart you’re browsing and see the selection change. Keep the direction you like, adjust what you don’t.</p>
       </div>
       <div data-rv="3" style="position:var(--rvPanelPos,absolute);inset:var(--rvInset,0);display:var(--rvPanelDisp,block);gap:18px">
         <div data-head="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));bottom:var(--rvHeadB,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));display:grid;gap:14px;pointer-events:none">
-          <h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">Inspiration without the impersonation.</h3>
+          <span class="ui-label" style="font-size:10px;letter-spacing:.15em;color:#1E563C">CONCEPT PREVIEW</span><h3 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(30px,min(4.4vw,7.5svh),76px);line-height:.95;text-wrap:pretty">New finds. On your terms.</h3>
         </div>
-        <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><img src="./eura-chat.png" alt="Eura on dressing like Tyler, the Creator" style="display:block;width:100%;aspect-ratio:9/19.5;object-fit:cover;object-position:50% 0;border-radius:26px"></div>
-        <p data-desc="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Bring her an artist, an era or a photo. She pulls out what makes it work and translates it into something you would actually wear.</p>
+        <div data-phone="3" style="position:var(--rvPhPos,absolute);left:var(--rvPhL,50%);top:var(--rvPhT,50%);width:var(--rvPhW,clamp(180px,20vw,290px));background:#171612;border-radius:34px;padding:8px;box-shadow:0 34px 80px rgba(23,22,18,.3);will-change:transform;pointer-events:none;justify-self:var(--rvPhJust,start)"><div style="position:relative;width:100%;aspect-ratio:390/844;overflow:hidden;border-radius:26px;background:#F3EFE6"><img src="./assets/marts/save_mart.png" alt="Concept: Mart controls for references, budget, brands, and new finds" loading="lazy" style="position:absolute;width:258.974359%;max-width:none;height:auto;left:-134.615385%;top:-14.691943%"></div></div>
+        <p data-desc="3" style="position:var(--rvCopyPos,absolute);left:var(--rvCopyL,calc(50% - min(41vw,520px)));top:var(--rvDescT,calc(50% + 10px));max-width:var(--rvCopyMax,min(40vw,520px));font-size:clamp(13px,1.05vw,16px);line-height:1.6;color:rgba(23,22,18,.82);text-wrap:pretty;pointer-events:none">Choose your budget, brands, and how often new finds arrive. Everyday outfits, gym gear, a trip away: each Mart keeps its own references and rules.</p>
       </div>
     </div>
   </div>
@@ -209,19 +196,19 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 <!-- she remembers. one earlier preference, one useful callback. -->
 <section class="memory-section" ref="{{ memRef }}" data-screen-label="Memory" style="position:relative;z-index:1;min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(40px,8vh,80px);padding:clamp(64px,10vh,120px) clamp(16px,4vw,40px)">
   <div class="memory-fade" aria-hidden="true"></div>
-  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">You said it once. <span style="color:#1E563C">Eura remembers.</span></h2>
+  <h2 data-mem style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,min(5.8vw,9svh),98px);line-height:.95;max-width:13ch;text-wrap:balance">Make it yours. <span style="color:#1E563C">Come back for more.</span></h2>
   <div class="memory-card" style="width:min(92vw,720px);display:grid;text-align:left;border-top:1px solid rgba(23,22,18,.28);border-bottom:1px solid rgba(23,22,18,.28)">
     <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / March 12</div>
-      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Nothing with a visible logo. Ever.</div>
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">Your idea</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Everyday outfits inspired by the 90s. Under $150 per item.</div>
     </div>
     <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">You / Today</div>
-      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Find me a jacket for fall.</div>
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(23,22,18,.52);font-weight:600">Your refinement</div>
+      <div style="font-size:clamp(14px,1.2vw,18px);line-height:1.5;color:#171612">Darker colors. Keep the relaxed fit.</div>
     </div>
     <div class="memory-row" data-mem style="display:grid;grid-template-columns:minmax(92px,130px) 1fr;gap:clamp(14px,3vw,34px);padding:clamp(16px,2.4vh,24px) 0;border-top:1px solid rgba(23,22,18,.18)">
-      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#1E563C;font-weight:600">Eura</div>
-      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">I skipped every logo. These three also work with the trousers you wear most.</div>
+      <div class="ui-label" style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#1E563C;font-weight:600">Next time</div>
+      <div style="font-size:clamp(15px,1.3vw,20px);line-height:1.48;color:#1E563C;font-weight:600;text-wrap:pretty">New finds for the same Mart, with your references and changes carried forward.</div>
     </div>
   </div>
 </section>
@@ -229,8 +216,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
 <!-- access -->
 <section class="access-section" id="access" style="position:relative;z-index:1;min-height:70svh;display:grid;grid-template-rows:1fr auto;padding:clamp(72px,10vh,120px) clamp(16px,4vw,40px) 20px">
   <div class="access-inner" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(20px,4vw,64px);align-items:center">
-    <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(44px,7vw,120px);line-height:.95">Get early access.</h2>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.035em;font-size:clamp(44px,7vw,120px);line-height:.95">What would your Mart look like?</h2>
     <div>
+      <p style="font-size:16px;line-height:1.6;margin-bottom:20px;max-width:48ch">Join the early-access list to help shape Eura. We’ll email you when there’s a chance to try your own Mart.</p>
       <form class="access-form" onSubmit="{{ submit }}" style="display:flex;border:1px solid #171612;max-width:560px;background:#F3EFE6">
         <input type="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="you@email.com" value="{{ email }}" onChange="{{ onEmail }}" style="flex:1;min-width:0;font-family:inherit;font-size:16px;padding:16px 18px;background:transparent;border:none;color:#171612;outline:none;min-height:56px">
         <button class="ui-label" type="submit" style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:0 26px;background:#171612;color:#F3EFE6;border:none;cursor:pointer;min-height:56px" style-hover="background:#1E563C">Join</button>
@@ -238,6 +226,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #D09A
       <div class="access-status" role="status" aria-live="polite" style="margin-top:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;font-size:12px;color:rgba(23,22,18,.7)"><span style="color:#1E563C;font-weight:600">{{ status }}</span></div>
     </div>
   </div>
+  <p style="font-size:12px;line-height:1.6;color:rgba(23,22,18,.65);margin-top:24px">Concept preview · The demo and screens show the experience we’re building. Early trials may include human-assisted product selection.</p>
   <div class="ui-label site-footer" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(23,22,18,.6);border-top:1px solid rgba(23,22,18,.25);padding-top:14px;margin-top:40px">
     <span>eura, 2026</span>
     <div style="display:flex;gap:18px"><a href="privacy.html" style="color:inherit">privacy</a><a href="terms.html" style="color:inherit">terms</a><a href="mailto:eurastyleai@gmail.com" style="color:inherit">contact</a></div>
@@ -683,10 +672,10 @@ class Component extends DCLogic {
       soundState: s.muted ? 'MUTED' : 'SOUND ON', muted: s.muted,
       againO: done ? 1 : 0, againPE: done ? 'auto' : 'none',
       playAgain: () => this.beginVoiceBeat(), power: () => this.power(), toggleMute: () => this.toggleMute(),
-      muteDisplay: c2 ? 'flex' : 'none', muteLabel: s.muted ? 'Unmute Eura' : 'Mute Eura', muteColor: s.muted ? '#C9C2B4' : 'var(--ph,#44DD66)',
+      muteDisplay: 'none', muteLabel: s.muted ? 'Unmute Eura' : 'Mute Eura', muteColor: s.muted ? '#C9C2B4' : 'var(--ph,#44DD66)',
       soundWaveO: s.muted ? 0 : 1, muteSlashO: s.muted ? 1 : 0,
       powerBg: on ? 'var(--ph,#44DD66)' : '#5A2A22', powerGlow: on ? '0 0 8px var(--ph,#44DD66)' : 'none',
-      bigNum: s.num >= 1000 ? s.num.toLocaleString('en-US') : String(s.num), numLine: s.num > 200 ? 'things the algorithm shows you' : 'chosen around your taste',
+      bigNum: 'YOURS', numLine: 'A Mart built around your idea',
       email: s.email, status: s.status, onEmail: (e) => this.setState({ email: e.target.value }),
       submit: (e) => {
         e.preventDefault(); const email = s.email.trim(); if (!email) return;
