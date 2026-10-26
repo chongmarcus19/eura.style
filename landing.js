@@ -33,7 +33,6 @@
         else video.pause();
         label();
       };
-      video.addEventListener('click', toggle);
       video.addEventListener('keydown', e => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
         e.preventDefault();
