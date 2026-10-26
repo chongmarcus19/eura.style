@@ -22,6 +22,27 @@
       if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData) play();
       else video.pause();
     };
+    if (name === 'product') {
+      video.controls = false;
+      video.tabIndex = 0;
+      video.setAttribute('role', 'button');
+      const label = () => video.setAttribute('aria-label', `${video.paused ? 'Play' : 'Pause'} product demo`);
+      const toggle = () => {
+        chapter.on = video.paused;
+        if (chapter.on) play();
+        else video.pause();
+        label();
+      };
+      video.addEventListener('click', toggle);
+      video.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        toggle();
+      });
+      video.addEventListener('play', label);
+      video.addEventListener('pause', label);
+      label();
+    }
     const updatePowerLabel = () => {
       if (!power) return;
       const playing = chapter.on && !video.paused;
