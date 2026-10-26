@@ -116,3 +116,7 @@ Restore the previous demo with `git restore --source dc9a440 -- assets/marts/dem
 ## Before restored TV cursor effects
 
 Restore `index.html` and `landing.js` from commit `8e16830` to undo the cursor-effect restoration and replay-button removal.
+
+## Before restored TV power animation
+
+Restore `index.html` and `landing.js` from commit `3eba10f` to undo this power-animation revision.

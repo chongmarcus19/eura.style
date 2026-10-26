@@ -50,15 +50,28 @@
       power.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${name} clip`);
       power.title = power.getAttribute('aria-label');
     };
+    let powerTimers = [];
     power?.addEventListener('click', () => {
-      if (video.paused || !chapter.on) {
+      powerTimers.forEach(clearTimeout);
+      powerTimers = [];
+      tv.classList.remove('is-closing', 'is-opening');
+      if (!chapter.on) {
         chapter.on = true;
         tv.classList.remove('is-off');
+        if (!reducedMotion.matches) {
+          tv.classList.add('is-opening');
+          powerTimers.push(setTimeout(() => tv.classList.remove('is-opening'), 190));
+        }
         play();
       } else {
         chapter.on = false;
-        tv.classList.add('is-off');
         video.pause();
+        if (reducedMotion.matches) tv.classList.add('is-off');
+        else {
+          tv.classList.add('is-closing');
+          powerTimers.push(setTimeout(() => tv.classList.add('is-off'), 150));
+          powerTimers.push(setTimeout(() => tv.classList.remove('is-closing'), 310));
+        }
       }
       updatePowerLabel();
     });

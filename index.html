@@ -79,6 +79,15 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 .opening-screen::after{background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.14) 2px 4px),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.5));z-index:2}
 .tv-wordmark{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(54px,8vw,94px);letter-spacing:-.03em;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55);z-index:1}
 .opening-screen .screen-off{z-index:3}
+.tv-static{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,#292929 0 1px,#050505 1px 3px,#3a3a3a 3px 4px),repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 1px,transparent 1px 5px),#000;background-size:auto,17px 100%;mix-blend-mode:screen}
+.is-closing .tv-static{animation:tv-static-out 150ms steps(2) both,staticshift 80ms steps(2) infinite}.is-opening .tv-static{animation:tv-static-out 190ms steps(2) both,staticshift 80ms steps(2) infinite}
+.tv-power-line{position:absolute;left:10%;right:10%;top:50%;height:2px;margin-top:-1px;z-index:5;pointer-events:none;background:#E9E5D9;box-shadow:0 0 7px #fff,0 0 18px rgba(255,255,255,.75);opacity:0;transform:scaleX(.04)}
+.is-closing .tv-power-line{animation:tv-close-line 310ms ease-in both}.is-opening .tv-power-line{animation:tv-open-line 190ms ease-out both}
+.is-closing .crt-pointer-field,.is-opening .crt-pointer-field{visibility:hidden}.opening-screen .screen-off{transition:none}
+@keyframes tv-static-out{0%,80%{opacity:.95}100%{opacity:0}}
+@keyframes tv-close-line{0%,47%{opacity:0;transform:scaleX(1)}49%,65%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.04)}}
+@keyframes tv-open-line{0%{opacity:1;transform:scaleX(.04)}45%{opacity:1;transform:scaleX(1)}50%,100%{opacity:0;transform:scaleX(1)}}
+
 .product-beat{display:grid;grid-template-columns:1fr;justify-items:center;padding-block:48px 64px}
 .product-demo{width:100%;max-width:560px;justify-self:center;isolation:isolate;background:var(--paper)}.product-player video{width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;background:var(--paper)}
 #product-video[role="button"]{cursor:pointer}#product-video:focus-visible{outline:3px solid var(--gold);outline-offset:5px}
@@ -106,6 +115,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
     <video id="opening-video" src="./eura-hero-reel-loop.mp4" poster="./eura-hero-poster.jpg" width="960" height="720" muted loop playsinline preload="metadata" aria-label="Original Eura fashion opening"></video>
     <div class="tv-wordmark" aria-hidden="true">EURA</div>
     <div class="screen-off" aria-hidden="true"></div>
+    <div class="tv-static" aria-hidden="true"></div><div class="tv-power-line" aria-hidden="true"></div>
     <div class="crt-pointer-field" aria-hidden="true"><div class="crt-pointer-noise"></div><div class="crt-pointer-dot"></div></div>
    </div>
    <div class="tv-controls">
@@ -137,6 +147,6 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  <footer class="site-footer"><span>eura, 2026</span><nav class="footer-links" aria-label="Footer"><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:eurastyleai@gmail.com">Contact</a></nav></footer>
 </section>
 </main>
-<script src="./landing.js?v=20261026-tv-pointer" defer></script>
+<script src="./landing.js?v=20261026-tv-power" defer></script>
 </body>
 </html>
