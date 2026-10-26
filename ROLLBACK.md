@@ -96,3 +96,7 @@ Restore the prior copy and demo size with `git restore --source d5f1efd -- index
 ## Before the “Less for you, more by you” opening
 
 Restore `index.html` from commit `d2ebb7c` to return to the previous slogan and description, then commit and push that file.
+
+## Before the October 26 demo replacement
+
+Restore the previous video, poster, and page with `git restore --source 9a38089 -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
