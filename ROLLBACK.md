@@ -120,3 +120,7 @@ Restore `index.html` and `landing.js` from commit `8e16830` to undo the cursor-e
 ## Before restored TV power animation
 
 Restore `index.html` and `landing.js` from commit `3eba10f` to undo this power-animation revision.
+
+## Before demo revision 35d13291
+
+Restore the preceding demo with `git restore --source 6083161 -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
