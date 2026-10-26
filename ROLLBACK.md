@@ -128,3 +128,7 @@ Restore the preceding demo with `git restore --source 6083161 -- assets/marts/de
 ## Before larger mobile demo
 
 Restore `index.html` and `landing.js` from commit `e7438e8` to return to the previous mobile sizing. The original desktop demo remains unchanged.
+
+## Before proportional TV wordmark and mobile text spacing
+
+Restore `index.html` from commit `9ef3d51` to return to the prior logo sizing and mobile spacing.
