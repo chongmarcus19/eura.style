@@ -90,7 +90,11 @@
       entries.forEach(entry => {
         const chapter = chapters.find(item => item.tv === entry.target);
         if (!chapter) return;
-        chapter.visible = entry.isIntersecting;
+        const visible = entry.isIntersecting && entry.intersectionRatio >= .2;
+        if (visible && !chapter.visible && chapter.tv.dataset.chapter === 'product') {
+          chapter.video.currentTime = 0;
+        }
+        chapter.visible = visible;
         chapter.sync();
         if (chapter.visible && !chapter.viewed) {
           chapter.viewed = true;
