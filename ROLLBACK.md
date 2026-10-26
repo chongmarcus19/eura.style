@@ -77,3 +77,14 @@ git push origin main
 ```
 
 The original demo file is unchanged.
+
+## Before larger TV and simplified waitlist
+
+Restore `index.html` from commit `782108d` to undo this revision:
+
+```sh
+git restore --source 782108d -- index.html
+git add index.html
+git commit -m "Restore previous TV size and waitlist copy"
+git push origin main
+```
