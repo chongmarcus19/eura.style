@@ -91,7 +91,7 @@
         const chapter = chapters.find(item => item.tv === entry.target);
         if (!chapter) return;
         const visible = entry.isIntersecting && entry.intersectionRatio >= .2;
-        if (visible && !chapter.visible && chapter.tv.dataset.chapter === 'product') {
+        if (visible && !chapter.viewed && chapter.tv.dataset.chapter === 'product') {
           chapter.video.currentTime = 0;
         }
         chapter.visible = visible;
