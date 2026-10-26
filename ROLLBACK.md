@@ -64,3 +64,16 @@ git push origin main
 ```
 
 The portrait version plays the original, unedited `eura_demo.mp4` supplied in Documents/eura_mockups. The identical website copy is `assets/marts/demo.mp4`.
+
+## Before responsive opening and unframed demo — October 25, 2026
+
+Restore the preceding page (commit `13f605f`) with:
+
+```sh
+git restore --source 13f605f -- index.html
+git add index.html
+git commit -m "Restore landing page before responsive refinement"
+git push origin main
+```
+
+The original demo file is unchanged.
