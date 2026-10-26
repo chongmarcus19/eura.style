@@ -51,3 +51,16 @@ git push origin main
 ```
 
 This revision changes only the landing-page content, layout, and playback controller. The original fashion reel, edited product demos, signup endpoint, and earlier rollback points remain available.
+
+## Before the portrait demo — October 25, 2026
+
+The three-beat page with the horizontal product player is preserved at tag `landing-before-portrait-demo-2026-10-25` (commit `ec18ea6`). To restore it:
+
+```sh
+git restore --source landing-before-portrait-demo-2026-10-25 -- index.html landing.js
+git add index.html landing.js
+git commit -m "Restore horizontal product demo"
+git push origin main
+```
+
+The portrait version plays the original, unedited `eura_demo.mp4` supplied in Documents/eura_mockups. The identical website copy is `assets/marts/demo.mp4`.

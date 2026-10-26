@@ -10,7 +10,6 @@
     const video = tv.querySelector('video');
     const power = tv.querySelector('[data-power]');
     const replay = tv.querySelector('[data-replay]');
-    const caption = tv.querySelector('[data-caption]');
     const name = tv.dataset.chapter;
     const chapter = { tv, video, power, visible: false, on: true, viewed: false };
     const play = () => {
@@ -51,15 +50,6 @@
       play();
       event('demo_replay', { chapter: name });
     });
-    if (name === 'product') {
-      const cutEnds = [2.16, 4.41, 7.01, 9.44, 11.615, 14.315];
-      const labels = ['YOUR BRIEF', 'YOUR REFERENCES', 'YOUR FINDS', 'REFINE YOUR MART', 'SEE THE CHANGE', 'SET YOUR SCHEDULE', 'COME BACK FOR MORE'];
-      video.addEventListener('timeupdate', () => {
-        const index = cutEnds.findIndex(end => video.currentTime < end);
-        const text = labels[index < 0 ? 6 : index];
-        if (caption.textContent !== text) caption.textContent = text;
-      });
-    }
     return chapter;
   });
   if ('IntersectionObserver' in window) {
