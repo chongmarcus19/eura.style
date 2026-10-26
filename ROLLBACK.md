@@ -104,3 +104,7 @@ Restore the previous video, poster, and page with `git restore --source 9a38089 
 ## Before the revised caption-layout demo
 
 Restore the previous demo with `git restore --source 665f12f -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
+
+## Before the background-matched demo
+
+Restore the previous video and presentation with `git restore --source df34538 -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
