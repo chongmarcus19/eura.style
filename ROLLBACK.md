@@ -38,3 +38,16 @@ git push origin main
 ```
 
 Additional files from the review can remain; the restored page does not reference them.
+
+## Before the three-beat version — October 25, 2026
+
+The complete preceding landing page is preserved at tag `landing-before-three-beats-2026-10-25` (commit `e05aacd`). To restore the previous page and its controller:
+
+```sh
+git restore --source landing-before-three-beats-2026-10-25 -- index.html landing.js
+git add index.html landing.js
+git commit -m "Restore landing page before three-beat revision"
+git push origin main
+```
+
+This revision changes only the landing-page content, layout, and playback controller. The original fashion reel, edited product demos, signup endpoint, and earlier rollback points remain available.

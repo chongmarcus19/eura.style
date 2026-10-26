@@ -3,111 +3,79 @@
   document.documentElement.classList.add('js');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
-  const tv = document.querySelector('#demo-tv');
-  const tvVideo = document.querySelector('#tv-video');
-  const power = document.querySelector('#tv-power');
-  const replay = document.querySelector('#tv-replay');
-  const caption = document.querySelector('#tv-caption');
-  const tabList = document.querySelector('.demo-tabs');
-  const tabs = [...tabList.querySelectorAll('[role="tab"]')];
-  const panels = [...document.querySelectorAll('.demo-panel')];
-  const videos = [...document.querySelectorAll('video')];
-  let activeStep = 0;
-  let tvOn = true;
-  let tvVisible = false;
-  let stageVisible = false;
   const event = (name, data = {}) => {
     if (typeof window.gtag === 'function') window.gtag('event', name, data);
   };
-  function play(video) {
-    if (!video || document.hidden) return;
-    video.muted = true;
-    const result = video.play();
-    if (result && result.catch) result.catch(() => {}); // Posters and native controls remain available.
-  }
-  function syncMedia(userInitiated = false) {
-    const canAutoplay = userInitiated || (!reducedMotion.matches && !saveData);
-    if (tvOn && tvVisible && canAutoplay && !document.hidden) play(tvVideo);
-    else tvVideo.pause();
-    panels.forEach((panel, index) => {
-      const video = panel.querySelector('video');
-      if (index === activeStep && stageVisible && canAutoplay && !document.hidden) play(video);
+  const chapters = [...document.querySelectorAll('[data-playback]')].map(tv => {
+    const video = tv.querySelector('video');
+    const power = tv.querySelector('[data-power]');
+    const replay = tv.querySelector('[data-replay]');
+    const caption = tv.querySelector('[data-caption]');
+    const name = tv.dataset.chapter;
+    const chapter = { tv, video, power, visible: false, on: true, viewed: false };
+    const play = () => {
+      if (document.hidden) return;
+      video.muted = true;
+      const result = video.play();
+      if (result && result.catch) result.catch(() => {});
+    };
+    chapter.sync = () => {
+      if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData) play();
       else video.pause();
+    };
+    const updatePowerLabel = () => {
+      if (!power) return;
+      const playing = chapter.on && !video.paused;
+      power.setAttribute('aria-pressed', String(playing));
+      power.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${name} clip`);
+      power.title = power.getAttribute('aria-label');
+    };
+    power?.addEventListener('click', () => {
+      if (video.paused || !chapter.on) {
+        chapter.on = true;
+        tv.classList.remove('is-off');
+        play();
+      } else {
+        chapter.on = false;
+        tv.classList.add('is-off');
+        video.pause();
+      }
+      updatePowerLabel();
     });
-  }
-  function updatePowerLabel() {
-    const playing = tvOn && !tvVideo.paused;
-    power.setAttribute('aria-pressed', String(playing));
-    power.setAttribute('aria-label', playing ? 'Pause demo' : 'Play demo');
-    power.title = power.getAttribute('aria-label');
-  }
-  power.addEventListener('click', () => {
-    if (tvVideo.paused || !tvOn) {
-      tvOn = true;
+    video.addEventListener('play', updatePowerLabel);
+    video.addEventListener('pause', updatePowerLabel);
+    replay?.addEventListener('click', () => {
+      chapter.on = true;
       tv.classList.remove('is-off');
-      play(tvVideo);
-    } else {
-      tvOn = false;
-      tv.classList.add('is-off');
-      tvVideo.pause();
+      video.currentTime = 0;
+      play();
+      event('demo_replay', { chapter: name });
+    });
+    if (name === 'product') {
+      const cutEnds = [2.16, 4.41, 7.01, 9.44, 11.615, 14.315];
+      const labels = ['YOUR BRIEF', 'YOUR REFERENCES', 'YOUR FINDS', 'REFINE YOUR MART', 'SEE THE CHANGE', 'SET YOUR SCHEDULE', 'COME BACK FOR MORE'];
+      video.addEventListener('timeupdate', () => {
+        const index = cutEnds.findIndex(end => video.currentTime < end);
+        const text = labels[index < 0 ? 6 : index];
+        if (caption.textContent !== text) caption.textContent = text;
+      });
     }
-    updatePowerLabel();
+    return chapter;
   });
-  tvVideo.addEventListener('play', updatePowerLabel);
-  tvVideo.addEventListener('pause', updatePowerLabel);
-  replay.addEventListener('click', () => {
-    tvOn = true;
-    tv.classList.remove('is-off');
-    tvVideo.currentTime = 0;
-    play(tvVideo);
-    event('demo_replay');
-  });
-  const cutEnds = [2.16, 4.41, 7.01, 9.44, 11.615, 14.315];
-  const cutLabels = ['01 / YOUR BRIEF', '02 / YOUR REFERENCES', '03 / YOUR FINDS', '04 / REFINE YOUR MART', '05 / SEE THE CHANGE', '06 / SET YOUR SCHEDULE', '07 / COME BACK FOR MORE'];
-  tvVideo.addEventListener('timeupdate', () => {
-    const index = cutEnds.findIndex(end => tvVideo.currentTime < end);
-    const label = cutLabels[index < 0 ? 6 : index];
-    if (caption.textContent !== label) caption.textContent = label;
-  });
-  function selectStep(index, focus = false) {
-    activeStep = index;
-    tabs.forEach((tab, i) => {
-      const selected = i === index;
-      tab.setAttribute('aria-selected', String(selected));
-      tab.tabIndex = selected ? 0 : -1;
-      panels[i].hidden = !selected;
-    });
-    if (focus) tabs[index].focus();
-    syncMedia(true);
-    event('demo_step', { step: tabs[index].dataset.step });
-  }
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => selectStep(index));
-    tab.addEventListener('keydown', e => {
-      let next;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (index + 1) % tabs.length;
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
-      if (e.key === 'Home') next = 0;
-      if (e.key === 'End') next = tabs.length - 1;
-      if (next == null) return;
-      e.preventDefault();
-      selectStep(next, true);
-    });
-  });
-  const mobile = matchMedia('(max-width: 600px)');
-  const updateTabOrientation = () => tabList.setAttribute('aria-orientation', mobile.matches ? 'horizontal' : 'vertical');
-  mobile.addEventListener('change', updateTabOrientation);
-  updateTabOrientation();
   if ('IntersectionObserver' in window) {
     const mediaObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.target === tv) tvVisible = entry.isIntersecting;
-        else stageVisible = entry.isIntersecting;
+        const chapter = chapters.find(item => item.tv === entry.target);
+        if (!chapter) return;
+        chapter.visible = entry.isIntersecting;
+        chapter.sync();
+        if (chapter.visible && !chapter.viewed) {
+          chapter.viewed = true;
+          event('frame_view', { chapter: chapter.tv.dataset.chapter });
+        }
       });
-      syncMedia();
     }, { threshold: .2 });
-    mediaObserver.observe(tv);
-    mediaObserver.observe(document.querySelector('.demo-stage'));
+    chapters.forEach(chapter => mediaObserver.observe(chapter.tv));
     const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
@@ -115,15 +83,11 @@
     }), { threshold: .12 });
     document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
   } else {
-    tvVisible = stageVisible = true;
+    chapters.forEach(chapter => { chapter.visible = true; chapter.sync(); });
     document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible'));
-    syncMedia();
   }
-  reducedMotion.addEventListener('change', () => syncMedia());
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) videos.forEach(video => video.pause());
-    else syncMedia();
-  });
+  reducedMotion.addEventListener('change', () => chapters.forEach(chapter => chapter.sync()));
+  document.addEventListener('visibilitychange', () => chapters.forEach(chapter => chapter.sync()));
   document.querySelectorAll('[data-cta]').forEach(link => link.addEventListener('click', () => event('access_cta', { placement: link.dataset.cta })));
   const milestones = new Set();
   let scrollFrame = 0;
