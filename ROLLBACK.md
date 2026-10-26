@@ -92,3 +92,7 @@ git push origin main
 ## Before demo-only second beat
 
 Restore the prior copy and demo size with `git restore --source d5f1efd -- index.html`, then commit and push `index.html`.
+
+## Before the “Less for you, more by you” opening
+
+Restore `index.html` from commit `d2ebb7c` to return to the previous slogan and description, then commit and push that file.
