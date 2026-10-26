@@ -97,6 +97,36 @@
     chapters.forEach(chapter => { chapter.visible = true; chapter.sync(); });
     document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible'));
   }
+  const screen = document.querySelector('.opening-screen');
+  const pointerFx = screen.querySelector('.crt-pointer-field');
+  const pointerEnabled = matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)');
+  let previousPoint = null;
+  let pointerFade;
+  const clearPointer = () => {
+    clearTimeout(pointerFade);
+    previousPoint = null;
+    pointerFx.style.opacity = '0';
+  };
+  const movePointer = e => {
+    if (!pointerEnabled.matches || screen.closest('.is-off')) return clearPointer();
+    const r = screen.getBoundingClientRect();
+    const x = Math.max(0, Math.min(screen.clientWidth, (e.clientX - r.left) / (r.width / screen.offsetWidth) - screen.clientLeft));
+    const y = Math.max(0, Math.min(screen.clientHeight, (e.clientY - r.top) / (r.height / screen.offsetHeight) - screen.clientTop));
+    const now = performance.now();
+    const speed = previousPoint ? Math.hypot(x - previousPoint.x, y - previousPoint.y) / Math.max(16, now - previousPoint.t) : 0;
+    pointerFx.style.setProperty('--crt-x', `${x}px`);
+    pointerFx.style.setProperty('--crt-y', `${y}px`);
+    pointerFx.style.opacity = String(Math.min(.62, .3 + speed * .18));
+    previousPoint = { x, y, t: now };
+    clearTimeout(pointerFade);
+    pointerFade = setTimeout(() => { pointerFx.style.opacity = '.3'; }, 90);
+  };
+  screen.addEventListener('pointerenter', movePointer);
+  screen.addEventListener('pointermove', movePointer);
+  screen.addEventListener('pointerleave', clearPointer);
+  screen.addEventListener('pointercancel', clearPointer);
+  pointerEnabled.addEventListener('change', clearPointer);
+  document.addEventListener('visibilitychange', clearPointer);
   reducedMotion.addEventListener('change', () => chapters.forEach(chapter => chapter.sync()));
   document.addEventListener('visibilitychange', () => chapters.forEach(chapter => chapter.sync()));
   document.querySelectorAll('[data-cta]').forEach(link => link.addEventListener('click', () => event('access_cta', { placement: link.dataset.cta })));
