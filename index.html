@@ -73,16 +73,16 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 .opening-screen::after{background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.14) 2px 4px),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.5));z-index:2}
 .tv-wordmark{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(54px,8vw,94px);letter-spacing:-.03em;color:#E0E0D8;text-shadow:0 2px 24px rgba(0,0,0,.55);z-index:1}
 .opening-screen .screen-off{z-index:3}
-.product-beat{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);align-items:center;gap:clamp(40px,6vw,96px);min-height:90svh;padding-block:100px 120px;border-top:1px solid var(--line)}
-.product-copy{max-width:440px}.product-copy .section-intro{margin-top:24px;max-width:38ch}.product-demo{width:100%;max-width:440px;justify-self:center;isolation:isolate;background:var(--paper)}.product-player video{width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;background:var(--paper);filter:brightness(1.06);mix-blend-mode:darken}
+.product-beat{display:grid;grid-template-columns:1fr;justify-items:center;padding-block:48px 64px;border-top:1px solid var(--line)}
+.product-demo{width:100%;max-width:560px;justify-self:center;isolation:isolate;background:var(--paper)}.product-player video{width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;background:var(--paper);filter:brightness(1.06);mix-blend-mode:darken}
 .access{min-height:65svh;display:flex;flex-direction:column;justify-content:space-between}.site-footer{width:100%}
-@media(min-width:1800px){.product-beat{min-height:840px}}
-@media(max-width:1100px){.wrap{width:calc(100% - 64px)}.eura-tv{padding:17px 17px 13px}.product-beat{gap:36px}.product-copy .section-heading{font-size:46px}}
-@media(max-width:900px){.hero{padding-block:28px 40px}.hero-copy{max-width:740px}.hero h1 span{display:block}.hero h1 .green::before{content:none}.product-beat{grid-template-columns:1fr;justify-items:center;gap:36px;text-align:center;padding-block:76px 90px;min-height:0}.product-copy{max-width:560px}.product-copy .section-heading{max-width:none}.product-copy .section-intro{margin-inline:auto}.product-demo{max-width:400px}.access-inner{gap:32px}.access h2{font-size:54px}}
+
+@media(max-width:1100px){.wrap{width:calc(100% - 64px)}.eura-tv{padding:17px 17px 13px}}
+@media(max-width:900px){.hero{padding-block:28px 40px}.hero-copy{max-width:740px}.hero h1 span{display:block}.hero h1 .green::before{content:none}.access-inner{gap:32px}.access h2{font-size:54px}}
 @media(max-width:600px){
  .wrap{width:calc(100% - 36px)}.hero{gap:22px;padding-block:24px 32px;min-height:100svh}.hero h1{font-size:clamp(32px,9.3vw,44px)}.hero-description{font-size:15px;max-width:33ch;margin-top:16px}.hero-actions{margin-top:22px;gap:14px 20px}.button{min-height:50px;padding-inline:18px;font-size:10px}.text-link{font-size:13px}
  .eura-tv{border-radius:22px 22px 18px 18px;padding:13px 13px 11px;box-shadow:0 20px 40px rgba(23,22,18,.18)}.crt-screen{border-radius:24px/20px;border-width:4px}.tv-controls{padding-top:12px;gap:8px}.tv-caption{font-size:8px}.tv-grille{margin-top:10px;height:7px}.tv-wordmark{font-size:clamp(54px,18vw,80px)}
- .product-beat{padding-block:60px 72px;gap:32px}.product-copy .section-heading{font-size:clamp(36px,10vw,48px)}.product-copy .section-intro{font-size:16px;line-height:1.6;margin-top:20px;max-width:33ch}
+ .product-beat.wrap{width:calc(100% - 16px);padding-block:24px 40px}
  .access{min-height:0;padding-top:60px}.access-inner{grid-template-columns:1fr;gap:28px}.access h2{font-size:clamp(42px,12vw,64px);max-width:12ch}.access-description{font-size:16px;margin-bottom:20px}.access-form .button{padding-inline:16px;font-size:10px}.site-footer{margin-top:56px;flex-direction:column;align-items:center;gap:12px}.footer-links{gap:28px}
 }
 @media(max-width:360px){.access-form{flex-direction:column}.access-form .button{margin:-1px;min-height:48px}}
@@ -113,11 +113,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
   <div class="hero-actions"><a class="button" href="#access" data-cta="hero">Get early access</a></div>
  </div>
 </section>
-<section class="product-beat wrap" id="how-it-works" aria-labelledby="how-title" data-beat="product">
- <div class="product-copy" data-reveal>
-  <h2 class="section-heading" id="how-title">You set<br><span class="green">the rules.</span></h2>
-  <p class="section-intro">Make a Mart: a collection of clothes to buy, built around your references and budget. Refine the finds and get more on your schedule.</p>
- </div>
+<section class="product-beat wrap" id="how-it-works" aria-label="See Eura in action" data-beat="product">
  <div class="product-demo" data-playback data-chapter="product">
   <div class="product-player"><video id="product-video" src="./assets/marts/demo.mp4" poster="./assets/marts/original-demo-poster.jpg" width="1080" height="1920" muted loop playsinline controls preload="none" aria-label="Product demo: create a Mart, refine the finds, and return for more"></video></div>
  </div>

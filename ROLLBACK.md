@@ -88,3 +88,7 @@ git add index.html
 git commit -m "Restore previous TV size and waitlist copy"
 git push origin main
 ```
+
+## Before demo-only second beat
+
+Restore the prior copy and demo size with `git restore --source d5f1efd -- index.html`, then commit and push `index.html`.
