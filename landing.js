@@ -23,6 +23,7 @@
       else video.pause();
     };
     if (name === 'product') {
+      if (matchMedia('(max-width: 600px)').matches) video.poster = './assets/marts/demo-mobile-poster.jpg?v=mobile1';
       video.controls = false;
       video.tabIndex = 0;
       video.setAttribute('role', 'button');

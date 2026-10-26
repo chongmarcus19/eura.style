@@ -98,7 +98,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 @media(max-width:600px){
  .wrap{width:calc(100% - 36px)}.hero{gap:22px;padding-block:24px 32px;min-height:100svh}.hero h1{font-size:clamp(32px,9.3vw,44px)}.hero-description{font-size:15px;max-width:33ch;margin-top:16px}.hero-actions{margin-top:22px;gap:14px 20px}.button{min-height:50px;padding-inline:18px;font-size:10px}.text-link{font-size:13px}
  .eura-tv{border-radius:22px 22px 18px 18px;padding:13px 13px 11px;box-shadow:0 20px 40px rgba(23,22,18,.18)}.crt-screen{border-radius:24px/20px;border-width:4px}.tv-controls{padding-top:12px;gap:8px}.tv-caption{font-size:8px}.tv-grille{margin-top:10px;height:7px}.tv-wordmark{font-size:clamp(54px,18vw,80px)}
- .product-beat.wrap{width:calc(100% - 16px);padding-block:24px 40px}
+ .product-beat.wrap{width:100%;padding-block:24px 40px}.product-player video{aspect-ratio:15/32}
  .access{min-height:0;padding-top:60px}.access-inner{grid-template-columns:1fr;gap:28px}.access h2{font-size:clamp(42px,12vw,64px);max-width:12ch}.access-description{font-size:16px;margin-bottom:20px}.access-form .button{padding-inline:16px;font-size:10px}.site-footer{margin-top:56px;flex-direction:column;align-items:center;gap:12px}.footer-links{gap:28px}
 }
 @media(max-width:360px){.access-form{flex-direction:column}.access-form .button{margin:-1px;min-height:48px}}
@@ -132,7 +132,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 </section>
 <section class="product-beat wrap" id="how-it-works" aria-label="See Eura in action" data-beat="product">
  <div class="product-demo" data-playback data-chapter="product">
-  <div class="product-player"><video id="product-video" src="./assets/marts/demo.mp4?v=35d13291" poster="./assets/marts/original-demo-poster.jpg?v=35d13291" width="1080" height="1920" muted loop playsinline controls preload="none" aria-label="Product demo: create a Mart, refine the finds, and return for more"></video></div>
+  <div class="product-player"><video id="product-video" poster="./assets/marts/original-demo-poster.jpg?v=35d13291" width="1080" height="1920" muted loop playsinline controls preload="none" aria-label="Product demo: create a Mart, refine the finds, and return for more"><source src="./assets/marts/demo-mobile.mp4?v=mobile1" media="(max-width: 600px)" type="video/mp4"><source src="./assets/marts/demo.mp4?v=35d13291" type="video/mp4"></video></div>
  </div>
 </section>
 <section class="access wrap" data-beat="waitlist" id="access" aria-labelledby="access-title">
@@ -147,6 +147,6 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  <footer class="site-footer"><span>eura, 2026</span><nav class="footer-links" aria-label="Footer"><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:eurastyleai@gmail.com">Contact</a></nav></footer>
 </section>
 </main>
-<script src="./landing.js?v=20261026-demo-first-entry" defer></script>
+<script src="./landing.js?v=20261026-mobile-crop" defer></script>
 </body>
 </html>

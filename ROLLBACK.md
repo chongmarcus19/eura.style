@@ -124,3 +124,7 @@ Restore `index.html` and `landing.js` from commit `3eba10f` to undo this power-a
 ## Before demo revision 35d13291
 
 Restore the preceding demo with `git restore --source 6083161 -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
+
+## Before larger mobile demo
+
+Restore `index.html` and `landing.js` from commit `e7438e8` to return to the previous mobile sizing. The original desktop demo remains unchanged.
