@@ -100,3 +100,7 @@ Restore `index.html` from commit `d2ebb7c` to return to the previous slogan and 
 ## Before the October 26 demo replacement
 
 Restore the previous video, poster, and page with `git restore --source 9a38089 -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
+
+## Before the revised caption-layout demo
+
+Restore the previous demo with `git restore --source 665f12f -- assets/marts/demo.mp4 assets/marts/original-demo-poster.jpg index.html`, then commit those files and push.
