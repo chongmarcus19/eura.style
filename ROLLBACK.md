@@ -140,3 +140,7 @@ Restore `index.html` from commit `4f71805` to undo the height-specific mobile la
 ## Before subtle desktop demo expansion
 
 Restore `index.html` and `landing.js` from commit `34661ad` to remove the desktop scroll expansion.
+
+## Before TV shutdown scroll handoff
+
+Restore `index.html` and `landing.js` from commit `c98fee0` to return to the desktop demo expansion experiment.

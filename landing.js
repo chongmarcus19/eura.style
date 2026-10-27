@@ -2,8 +2,7 @@
   'use strict';
   document.documentElement.classList.add('js');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const desktopExpansion = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
-  let expansionReady = !desktopExpansion.matches;
+  const desktopTransition = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const event = (name, data = {}) => {
     if (typeof window.gtag === 'function') window.gtag('event', name, data);
@@ -13,7 +12,7 @@
     const power = tv.querySelector('[data-power]');
     const replay = tv.querySelector('[data-replay]');
     const name = tv.dataset.chapter;
-    const chapter = { tv, video, power, visible: false, on: true, viewed: false, started: false };
+    const chapter = { tv, video, power, visible: false, on: true, viewed: false, scrollOff: false };
     const play = () => {
       if (document.hidden) return;
       video.muted = true;
@@ -21,7 +20,7 @@
       if (result && result.catch) result.catch(() => {});
     };
     chapter.sync = () => {
-      if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData && (name !== 'product' || chapter.started || expansionReady)) play();
+      if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData && !chapter.scrollOff) play();
       else video.pause();
     };
     if (name === 'product') {
@@ -41,7 +40,7 @@
         e.preventDefault();
         toggle();
       });
-      video.addEventListener('play', () => { chapter.started = true; label(); });
+      video.addEventListener('play', label);
       video.addEventListener('pause', label);
       label();
     }
@@ -53,28 +52,32 @@
       power.title = power.getAttribute('aria-label');
     };
     let powerTimers = [];
-    power?.addEventListener('click', () => {
+    chapter.renderPower = off => {
       powerTimers.forEach(clearTimeout);
       powerTimers = [];
       tv.classList.remove('is-closing', 'is-opening');
-      if (!chapter.on) {
-        chapter.on = true;
-        tv.classList.remove('is-off');
-        if (!reducedMotion.matches) {
-          tv.classList.add('is-opening');
-          powerTimers.push(setTimeout(() => tv.classList.remove('is-opening'), 190));
-        }
-        play();
-      } else {
-        chapter.on = false;
-        video.pause();
+      if (off) {
+        if (tv.classList.contains('is-off')) return;
         if (reducedMotion.matches) tv.classList.add('is-off');
         else {
           tv.classList.add('is-closing');
           powerTimers.push(setTimeout(() => tv.classList.add('is-off'), 150));
           powerTimers.push(setTimeout(() => tv.classList.remove('is-closing'), 310));
         }
+      } else {
+        const wasOff = tv.classList.contains('is-off');
+        tv.classList.remove('is-off');
+        if (wasOff && !reducedMotion.matches) {
+          tv.classList.add('is-opening');
+          powerTimers.push(setTimeout(() => tv.classList.remove('is-opening'), 190));
+        }
       }
+    };
+    power?.addEventListener('click', () => {
+      chapter.on = !chapter.on;
+      chapter.renderPower(!chapter.on || chapter.scrollOff);
+      if (chapter.on && !chapter.scrollOff) play();
+      else video.pause();
       updatePowerLabel();
     });
     video.addEventListener('play', updatePowerLabel);
@@ -88,22 +91,18 @@
     });
     return chapter;
   });
-  const productBeat = document.querySelector('.product-beat');
-  function updateExpansion() {
-    const top = productBeat.getBoundingClientRect().top;
-    const progress = desktopExpansion.matches ? Math.max(0, Math.min(1, (innerHeight * .95 - top) / (innerHeight * .65))) : 1;
-    const eased = progress * progress * (3 - 2 * progress);
-    const scale = .78 + .22 * eased;
-    productBeat.style.setProperty('--demo-scale', String(scale));
-    const ready = progress >= 1;
-    if (ready !== expansionReady) {
-      expansionReady = ready;
-      chapters.find(chapter => chapter.tv.dataset.chapter === 'product')?.sync();
-    }
+  const hero = document.querySelector('.hero');
+  const opening = chapters.find(chapter => chapter.tv.dataset.chapter === 'opening');
+  function updateTVTransition() {
+    const shouldClose = desktopTransition.matches && hero.getBoundingClientRect().bottom <= innerHeight * .9;
+    if (opening.scrollOff === shouldClose) return;
+    opening.scrollOff = shouldClose;
+    opening.renderPower(!opening.on || shouldClose);
+    opening.sync();
   }
-  updateExpansion();
-  addEventListener('resize', updateExpansion, { passive: true });
-  desktopExpansion.addEventListener('change', updateExpansion);
+  updateTVTransition();
+  addEventListener('resize', updateTVTransition, { passive: true });
+  desktopTransition.addEventListener('change', updateTVTransition);
   if ('IntersectionObserver' in window) {
     const mediaObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -169,7 +168,7 @@
   let scrollFrame = 0;
   function trackScroll() {
     scrollFrame = 0;
-    updateExpansion();
+    updateTVTransition();
     const length = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     const depth = Math.round(scrollY / length * 100);
     [25, 50, 75, 100].forEach(mark => {
