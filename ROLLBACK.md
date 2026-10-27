@@ -168,3 +168,9 @@ Restore `index.html` from commit `8c708f7` to return to the centered mobile para
 ## Before restoring centered mobile supporting text
 
 Restore `index.html` from commit `d8c3922` to return to the left-aligned mobile supporting text.
+
+## Before website and waitlist policy update
+
+Restore `privacy.html` and `terms.html` from commit `bdb84da`, then commit and push those two files. The preceding app policies are also preserved at `privacy-before-marts.html` and `terms-before-marts.html`, with archive labels and links between the corresponding earlier policies. The new website policies use `legal.css`; it can remain when restoring the older standalone pages.
+
+The October 26 policies cover the website and waitlist only. They describe the Mart concept without asserting live app integrations, disclose the current signup and analytics flows, and require an app-specific notice before new Mart trials collect personal information. No signup behavior or tracking settings were changed by this policy update.
