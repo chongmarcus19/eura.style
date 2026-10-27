@@ -160,3 +160,7 @@ Restore `index.html` from commit `ac2fb6a` to return to the previous headline an
 ## Before sale-sections and Pinterest examples
 
 Restore `index.html` from commit `244bac4` to return to the previous supporting copy.
+
+## Before mobile copy layout refinement
+
+Restore `index.html` from commit `8c708f7` to return to the centered mobile paragraph and previous mobile spacing. This revision keeps the approved wording and desktop layout, adds a mobile paragraph break before the examples, and adjusts mobile text width, sizing, and TV height limits.
