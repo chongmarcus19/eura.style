@@ -174,3 +174,7 @@ Restore `index.html` from commit `d8c3922` to return to the left-aligned mobile 
 Restore `privacy.html` and `terms.html` from commit `bdb84da`, then commit and push those two files. The preceding app policies are also preserved at `privacy-before-marts.html` and `terms-before-marts.html`, with archive labels and links between the corresponding earlier policies. The new website policies use `legal.css`; it can remain when restoring the older standalone pages.
 
 The October 26 policies cover the website and waitlist only. They describe the Mart concept without asserting live app integrations, disclose the current signup and analytics flows, and require an app-specific notice before new Mart trials collect personal information. No signup behavior or tracking settings were changed by this policy update.
+
+## Before viewport-aware opening fit
+
+Restore `index.html` and `landing.js` from commit `534660a`, then commit and push those files. This restores the earlier TV sizing, heading sizing, tablet closing layout, and vertical-only landscape opening. The new responsive version measures the copy and remaining viewport height, refits after font loading or resizing, and retains normal scrolling for very small windows. `RESPONSIVE_CHECKS.md` records its 35-size browser verification.

@@ -7,6 +7,35 @@
   const event = (name, data = {}) => {
     if (typeof window.gtag === 'function') window.gtag('event', name, data);
   };
+  const hero = document.querySelector('.hero');
+  const heroCopy = hero.querySelector('.hero-copy');
+  const heroTV = hero.querySelector('.tv-wrap');
+  let fitFrame = 0;
+  function fitOpeningToViewport() {
+    fitFrame = 0;
+    const style = getComputedStyle(hero);
+    // The short landscape layout gives the TV and copy their own columns.
+    if (style.display !== 'flex') {
+      hero.style.removeProperty('--hero-tv-fit');
+      return;
+    }
+    const tv = heroTV.getBoundingClientRect();
+    const viewportHeight = Math.min(innerHeight, parseFloat(style.minHeight) || innerHeight);
+    const copyHeight = heroCopy.getBoundingClientRect().height;
+    const remainingHeight = viewportHeight - copyHeight - parseFloat(style.rowGap) - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    // The screen is 4:3; measure the cabinet and controls instead of guessing
+    // how much room the text, fonts, form feedback, and TV chrome will occupy.
+    const cabinetHeight = tv.height - tv.width * .75;
+    const width = Math.max(Math.min(160, hero.clientWidth), Math.min(580, hero.clientWidth, (remainingHeight - cabinetHeight - 2) / .75));
+    hero.style.setProperty('--hero-tv-fit', `${Math.floor(width)}px`);
+  }
+  function scheduleOpeningFit() {
+    if (!fitFrame) fitFrame = requestAnimationFrame(fitOpeningToViewport);
+  }
+  fitOpeningToViewport();
+  addEventListener('resize', scheduleOpeningFit, { passive: true });
+  if ('ResizeObserver' in window) new ResizeObserver(scheduleOpeningFit).observe(heroCopy);
+  if (document.fonts) document.fonts.ready.then(scheduleOpeningFit);
   const chapters = [...document.querySelectorAll('[data-playback]')].map(tv => {
     const video = tv.querySelector('video');
     const power = tv.querySelector('[data-power]');
@@ -108,7 +137,6 @@
     });
     return chapter;
   });
-  const hero = document.querySelector('.hero');
   const opening = chapters.find(chapter => chapter.tv.dataset.chapter === 'opening');
   function updateTVTransition() {
     const shouldClose = desktopTransition.matches && hero.getBoundingClientRect().top <= -Math.min(24, innerHeight * .02);
