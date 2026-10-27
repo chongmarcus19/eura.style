@@ -132,3 +132,7 @@ Restore `index.html` and `landing.js` from commit `e7438e8` to return to the pre
 ## Before proportional TV wordmark and mobile text spacing
 
 Restore `index.html` from commit `9ef3d51` to return to the prior logo sizing and mobile spacing.
+
+## Before short-phone opening fit
+
+Restore `index.html` from commit `4f71805` to undo the height-specific mobile layout adjustments.
