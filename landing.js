@@ -94,7 +94,7 @@
   const hero = document.querySelector('.hero');
   const opening = chapters.find(chapter => chapter.tv.dataset.chapter === 'opening');
   function updateTVTransition() {
-    const shouldClose = desktopTransition.matches && hero.getBoundingClientRect().bottom <= innerHeight * .9;
+    const shouldClose = desktopTransition.matches && hero.getBoundingClientRect().bottom <= innerHeight * .97;
     if (opening.scrollOff === shouldClose) return;
     opening.scrollOff = shouldClose;
     opening.renderPower(!opening.on || shouldClose);
