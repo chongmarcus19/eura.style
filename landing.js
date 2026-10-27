@@ -91,8 +91,9 @@
   const productBeat = document.querySelector('.product-beat');
   function updateExpansion() {
     const top = productBeat.getBoundingClientRect().top;
-    const progress = desktopExpansion.matches ? Math.max(0, Math.min(1, (innerHeight * .95 - top) / (innerHeight * .6))) : 1;
-    const scale = .9 + .1 * (1 - Math.pow(1 - progress, 3));
+    const progress = desktopExpansion.matches ? Math.max(0, Math.min(1, (innerHeight * .95 - top) / (innerHeight * .65))) : 1;
+    const eased = progress * progress * (3 - 2 * progress);
+    const scale = .78 + .22 * eased;
     productBeat.style.setProperty('--demo-scale', String(scale));
     const ready = progress >= 1;
     if (ready !== expansionReady) {
