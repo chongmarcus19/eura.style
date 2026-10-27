@@ -156,3 +156,7 @@ Restore `index.html`, `landing.js`, `assets/marts/demo-mobile.mp4`, and `assets/
 ## Before the personal clothing store headline
 
 Restore `index.html` from commit `ac2fb6a` to return to the previous headline and supporting text.
+
+## Before sale-sections and Pinterest examples
+
+Restore `index.html` from commit `244bac4` to return to the previous supporting copy.
