@@ -67,7 +67,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 .access-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center}.access h2{font-size:clamp(42px,5.2vw,78px);line-height:1;max-width:12ch}
 .access-description{font-size:17px;line-height:1.65;max-width:36ch;margin-bottom:24px;color:rgba(23,22,18,.8)}
 .access-form{display:flex;align-items:stretch;border:1px solid var(--ink);max-width:520px;background:var(--paper)}.access-form input{min-width:0;flex:1;border:none;border-radius:0;background:transparent;padding:16px;color:var(--ink);font-size:16px}.access-form .button{margin:-1px;min-height:56px;padding-inline:22px}
-.access-status{font-size:14px;line-height:1.5;min-height:42px;padding-top:12px;max-width:42ch;color:var(--green)}.access-status.is-error{color:#8c321d}
+.access-status{font-size:14px;line-height:1.5;min-height:42px;padding-top:12px;max-width:42ch;color:var(--green)}.access-status.is-error{color:#8c321d}.access-status:empty{display:none}.hero-signup{width:100%;max-width:520px;margin-inline:auto}.hero-signup .access-form{width:100%}.hero-signup .access-status{margin-inline:auto;text-align:center;min-height:0}
 .site-footer{display:flex;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:20px;margin-top:88px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(23,22,18,.65)}.footer-links{display:flex;gap:24px}.footer-links a{display:inline-flex;align-items:center;min-height:36px}
 .js [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}.js [data-reveal].is-visible{opacity:1;transform:none}
 
@@ -108,6 +108,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  .hero{gap:16px;padding-block:12px}.hero h1{font-size:30px}.hero-description{font-size:14px;line-height:1.6;margin-top:16px}.hero-actions{margin-top:20px}.hero .button{min-height:48px}.hero .tv-caption{font-size:7px;letter-spacing:.04em;white-space:nowrap}
 }
 @media(max-width:360px){.access-form{flex-direction:column}.access-form .button{margin:-1px;min-height:48px}}
+@media(max-width:600px){.hero-signup .access-form{flex-direction:row}.hero-signup .access-form input{padding:12px 10px;font-size:16px}.hero-signup .access-form .button{font-size:9px;letter-spacing:.06em;padding-inline:12px;min-height:52px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.js [data-reveal]{opacity:1;transform:none}}
 .noscript{font-size:14px;margin-top:12px}
 </style>
@@ -133,7 +134,10 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  <div class="hero-copy">
   <h1 id="hero-title"><span>Less “for you.”</span><span class="green">More “by you.”</span></h1>
   <p class="hero-description">Create shopping feeds around exactly what you want, from vintage sportswear to outfits for Italy. Decide which styles and brands you see, set your budget, and change it all whenever you want.</p>
-  <div class="hero-actions"><a class="button" href="#access" data-cta="hero">Get early access</a></div>
+  <div class="hero-actions"><div class="hero-signup">
+   <form class="access-form" id="hero-form" data-waitlist data-placement="hero" aria-label="Join the waitlist" aria-describedby="hero-status"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="you@email.com" maxlength="254"><button class="button" type="submit">Join the waitlist</button></form>
+   <p class="access-status" id="hero-status" role="status" aria-live="polite"></p>
+  </div></div>
  </div>
 </section>
 <section class="product-beat wrap" id="how-it-works" aria-label="See Eura in action" data-beat="product">
@@ -143,9 +147,9 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 </section>
 <section class="access wrap" data-beat="waitlist" id="access" aria-labelledby="access-title">
  <div class="access-inner">
-  <h2 id="access-title">Get Early Access</h2>
+  <h2 id="access-title">Make it yours.</h2>
   <div>
-   <form class="access-form" id="access-form"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="you@email.com" maxlength="254"><button class="button" type="submit">Get early access</button></form>
+   <form class="access-form" id="access-form" data-waitlist data-placement="footer" aria-label="Join the waitlist" aria-describedby="access-status"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="you@email.com" maxlength="254"><button class="button" type="submit">Join the waitlist</button></form>
    <p class="access-status" id="access-status" role="status" aria-live="polite"></p>
    <noscript><style>.access-form{display:none}</style><p class="noscript">To request early access, email <a href="mailto:eurastyleai@gmail.com">eurastyleai@gmail.com</a>.</p></noscript>
   </div>
@@ -153,6 +157,6 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  <footer class="site-footer"><span>eura, 2026</span><nav class="footer-links" aria-label="Footer"><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:eurastyleai@gmail.com">Contact</a></nav></footer>
 </section>
 </main>
-<script src="./landing.js?v=20261026-tv-handoff-early-v2" defer></script>
+<script src="./landing.js?v=20261026-two-waitlist-forms" defer></script>
 </body>
 </html>

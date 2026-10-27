@@ -144,3 +144,7 @@ Restore `index.html` and `landing.js` from commit `34661ad` to remove the deskto
 ## Before TV shutdown scroll handoff
 
 Restore `index.html` and `landing.js` from commit `c98fee0` to return to the desktop demo expansion experiment.
+
+## Before two waitlist forms
+
+Restore `index.html` and `landing.js` from commit `d33590b` to return to the opening button and single bottom form.

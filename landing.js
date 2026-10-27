@@ -178,18 +178,24 @@
     });
   }
   addEventListener('scroll', () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(trackScroll); }, { passive: true });
-  const form = document.querySelector('#access-form');
-  const status = document.querySelector('#access-status');
-  const input = form.querySelector('input');
-  const submit = form.querySelector('button');
+  const signupForms = [...document.querySelectorAll('[data-waitlist]')].map(form => ({
+    form,
+    status: document.getElementById(form.getAttribute('aria-describedby')),
+    input: form.querySelector('input'),
+    submit: form.querySelector('button')
+  }));
   let sending = false;
-  form.addEventListener('submit', async e => {
+  let joined = false;
+  signupForms.forEach(({ form, status, input }) => form.addEventListener('submit', async e => {
     e.preventDefault();
-    if (sending || !form.reportValidity()) return;
+    if (sending || joined || !form.reportValidity()) return;
     sending = true;
-    submit.disabled = true;
-    submit.textContent = 'Joining…';
-    status.classList.remove('is-error');
+    signupForms.forEach(item => {
+      item.submit.disabled = true;
+      item.submit.textContent = 'Joining…';
+      item.status.classList.remove('is-error');
+      item.status.textContent = '';
+    });
     status.textContent = 'Adding you to the list…';
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -198,12 +204,14 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: input.value.trim() }), signal: controller.signal
       });
-      if (response.ok) {
-        status.textContent = 'You’re on the list. We’ll email you when there’s a chance to try Eura.';
-        input.value = '';
-        event('waitlist_signup');
-      } else if (response.status === 409) {
-        status.textContent = 'You’re already on the list. We’ll be in touch.';
+      if (response.ok || response.status === 409) {
+        joined = true;
+        signupForms.forEach(item => {
+          item.status.textContent = response.status === 409 ? 'You’re already on the list. We’ll be in touch.' : 'You’re on the list. We’ll email you when there’s a chance to try Eura.';
+          item.input.value = '';
+          item.input.disabled = true;
+        });
+        if (response.ok) event('waitlist_signup', { placement: form.dataset.placement });
       } else {
         throw new Error('signup_failed');
       }
@@ -213,8 +221,10 @@
     } finally {
       clearTimeout(timeout);
       sending = false;
-      submit.disabled = false;
-      submit.textContent = 'Get early access';
+      signupForms.forEach(item => {
+        item.submit.disabled = joined;
+        item.submit.textContent = joined ? 'Joined' : 'Join the waitlist';
+      });
     }
-  });
+  }));
 })();
