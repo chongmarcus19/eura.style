@@ -115,6 +115,9 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 @media(min-width:520px) and (max-height:360px){
  .hero{padding-block:12px;gap:20px}.hero h1{font-size:26px}.hero-description{margin-top:12px;line-height:1.5}.hero-examples{display:inline;margin-top:0}.hero-actions{margin-top:16px}
 }
+@media(max-width:600px) and (orientation:portrait){
+ .hero{--hero-tv-fill:1;display:flex;justify-content:flex-start;padding-top:8px}.hero .tv-wrap{width:calc(100% + 20px);max-width:none}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.js [data-reveal]{opacity:1;transform:none}}
 .noscript{font-size:14px;margin-top:12px}
 </style>
@@ -163,6 +166,6 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  <footer class="site-footer"><span>eura, 2026</span><nav class="footer-links" aria-label="Footer"><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:eurastyleai@gmail.com">Contact</a></nav></footer>
 </section>
 </main>
-<script src="./landing.js?v=20261026-responsive-fit" defer></script>
+<script src="./landing.js?v=20261027-mobile-tv" defer></script>
 </body>
 </html>

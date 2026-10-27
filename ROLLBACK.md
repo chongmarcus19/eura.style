@@ -178,3 +178,7 @@ The October 26 policies cover the website and waitlist only. They describe the M
 ## Before viewport-aware opening fit
 
 Restore `index.html` and `landing.js` from commit `534660a`, then commit and push those files. This restores the earlier TV sizing, heading sizing, tablet closing layout, and vertical-only landscape opening. The new responsive version measures the copy and remaining viewport height, refits after font loading or resizing, and retains normal scrolling for very small windows. `RESPONSIVE_CHECKS.md` records its 35-size browser verification.
+
+## Before the larger mobile TV experiment
+
+Restore `index.html` and `landing.js` from commit `f382504`, then commit and push those files. This keeps the newly approved running-clothes and Pinterest examples while restoring the mobile TV's viewport-height fit. The experiment uses an 8 px top and side inset on portrait screens up to 600 px wide; shorter phones scroll naturally to reach the signup form. Desktop and short landscape layouts retain their preceding sizing behavior.

@@ -14,8 +14,9 @@
   function fitOpeningToViewport() {
     fitFrame = 0;
     const style = getComputedStyle(hero);
-    // The short landscape layout gives the TV and copy their own columns.
-    if (style.display !== 'flex') {
+    // Landscape uses separate columns; the mobile portrait experiment gives
+    // the TV the available width and lets the copy scroll naturally below it.
+    if (style.display !== 'flex' || style.getPropertyValue('--hero-tv-fill').trim() === '1') {
       hero.style.removeProperty('--hero-tv-fit');
       return;
     }

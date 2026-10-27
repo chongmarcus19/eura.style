@@ -1,5 +1,15 @@
 # Responsive landing-page checks
 
+## October 27: larger mobile TV experiment
+
+The approved supporting copy now explicitly connects two examples with “you could” and “or.” On portrait screens up to 600 px wide, the TV uses the screen width with 8 px side insets and an 8 px top inset. The height-fit logic remains active for desktop and the two-column landscape layout is retained.
+
+Checked 11 viewport sizes in the in-app browser: 320 × 568, 360 × 640, 375 × 667, 390 × 844, 430 × 932, 600 × 800, 568 × 320, 844 × 390, 601 × 800, 928 × 705, and 1440 × 700. No horizontal page overflow or TV/copy overlap was observed. At 390 × 844 and 430 × 932 the opening signup still fits within the viewport. At shorter portrait sizes and 600 × 800, the taller opening requires normal vertical scrolling, intentionally prioritizing the requested TV size.
+
+The October 26 results below describe the preceding height-fit layout and are preserved as historical verification, rather than claims that the experimental version keeps every signup above the fold.
+
+## October 26: viewport-height fit
+
 Checked October 26, 2026 in the in-app browser using 35 explicit CSS viewport sizes. These are browser viewport checks, not physical-device or cross-browser certification.
 
 ## Results
