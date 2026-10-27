@@ -2,7 +2,7 @@
   'use strict';
   document.documentElement.classList.add('js');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const desktopTransition = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
+  const scrollTransition = matchMedia('(prefers-reduced-motion: no-preference)');
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const event = (name, data = {}) => {
     if (typeof window.gtag === 'function') window.gtag('event', name, data);
@@ -140,7 +140,12 @@
   });
   const opening = chapters.find(chapter => chapter.tv.dataset.chapter === 'opening');
   function updateTVTransition() {
-    const shouldClose = desktopTransition.matches && hero.getBoundingClientRect().top <= -Math.min(24, innerHeight * .02);
+    const compactScreen = innerWidth <= 900;
+    const closeAt = compactScreen ? 8 : Math.min(24, innerHeight * .02);
+    // Start while the mobile screen is fully visible; a small return buffer
+    // avoids flickering if a touch gesture wavers around the closing point.
+    const threshold = compactScreen && opening.scrollOff ? 3 : closeAt;
+    const shouldClose = scrollTransition.matches && hero.getBoundingClientRect().top <= -threshold;
     if (opening.scrollOff === shouldClose) return;
     opening.scrollOff = shouldClose;
     opening.renderPower(!opening.on || shouldClose);
@@ -148,7 +153,7 @@
   }
   updateTVTransition();
   addEventListener('resize', updateTVTransition, { passive: true });
-  desktopTransition.addEventListener('change', updateTVTransition);
+  scrollTransition.addEventListener('change', updateTVTransition);
   if ('IntersectionObserver' in window) {
     const mediaObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {

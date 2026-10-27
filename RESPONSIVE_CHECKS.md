@@ -1,5 +1,11 @@
 # Responsive landing-page checks
 
+## October 27: mobile scroll shutdown experiment
+
+Enabled the existing TV power animation across screen widths when reduced motion is not requested. Mobile and tablet widths up to 900 px close after 8 px of scrolling and reopen within 3 px of the top. Desktop retains its earlier threshold.
+
+Verified shutdown, clip pause, reopening, and clip playback at 320 × 568, 430 × 932, 844 × 390, and 1440 × 700. At 390 × 844 and 12.5 px of scroll, the screen top remained 8.5 px inside the viewport while the `tv-close-line` animation was active with a 0.31 s duration. A partial return to 6 px kept the TV off, and a return to the top reopened it. Manually powering off remained effective after scrolling away and returning. These are browser interaction checks, not a physical iOS/Android performance certification.
+
 ## October 27: larger mobile TV experiment
 
 The approved supporting copy now explicitly connects two examples with “you could” and “or.” On portrait screens up to 600 px wide, the TV uses the screen width with 8 px side insets and an 8 px top inset. The height-fit logic remains active for desktop and the two-column landscape layout is retained.

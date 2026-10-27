@@ -182,3 +182,7 @@ Restore `index.html` and `landing.js` from commit `534660a`, then commit and pus
 ## Before the larger mobile TV experiment
 
 Restore `index.html` and `landing.js` from commit `f382504`, then commit and push those files. This keeps the newly approved running-clothes and Pinterest examples while restoring the mobile TV's viewport-height fit. The experiment uses an 8 px top and side inset on portrait screens up to 600 px wide; shorter phones scroll naturally to reach the signup form. Desktop and short landscape layouts retain their preceding sizing behavior.
+
+## Before mobile TV scroll shutdown
+
+Restore `index.html` and `landing.js` from commit `d2f93b1`, then commit and push those files. This retains the larger mobile TV, approved copy, and centered mobile closer, but returns scroll shutdown to desktop only. The mobile experiment reuses the existing 310 ms shutdown, closes after 8 px of scrolling on screens up to 900 px wide, and reopens within 3 px of the top to avoid repeated toggling around the trigger. Reduced-motion preferences and manual power-off remain respected.
