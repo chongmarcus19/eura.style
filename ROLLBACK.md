@@ -152,3 +152,7 @@ Restore `index.html` and `landing.js` from commit `d33590b` to return to the ope
 ## Before tighter mobile app framing and responsive source switching
 
 Restore `index.html`, `landing.js`, `assets/marts/demo-mobile.mp4`, and `assets/marts/demo-mobile-poster.jpg` from commit `a7579d9` to return to the previous mobile presentation.
+
+## Before the personal clothing store headline
+
+Restore `index.html` from commit `ac2fb6a` to return to the previous headline and supporting text.
