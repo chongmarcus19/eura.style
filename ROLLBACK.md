@@ -164,3 +164,7 @@ Restore `index.html` from commit `244bac4` to return to the previous supporting 
 ## Before mobile copy layout refinement
 
 Restore `index.html` from commit `8c708f7` to return to the centered mobile paragraph and previous mobile spacing. This revision keeps the approved wording and desktop layout, adds a mobile paragraph break before the examples, and adjusts mobile text width, sizing, and TV height limits.
+
+## Before restoring centered mobile supporting text
+
+Restore `index.html` from commit `d8c3922` to return to the left-aligned mobile supporting text.
