@@ -2,6 +2,8 @@
   'use strict';
   document.documentElement.classList.add('js');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const desktopExpansion = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
+  let expansionReady = !desktopExpansion.matches;
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const event = (name, data = {}) => {
     if (typeof window.gtag === 'function') window.gtag('event', name, data);
@@ -11,7 +13,7 @@
     const power = tv.querySelector('[data-power]');
     const replay = tv.querySelector('[data-replay]');
     const name = tv.dataset.chapter;
-    const chapter = { tv, video, power, visible: false, on: true, viewed: false };
+    const chapter = { tv, video, power, visible: false, on: true, viewed: false, started: false };
     const play = () => {
       if (document.hidden) return;
       video.muted = true;
@@ -19,7 +21,7 @@
       if (result && result.catch) result.catch(() => {});
     };
     chapter.sync = () => {
-      if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData) play();
+      if (chapter.on && chapter.visible && !document.hidden && !reducedMotion.matches && !saveData && (name !== 'product' || chapter.started || expansionReady)) play();
       else video.pause();
     };
     if (name === 'product') {
@@ -39,7 +41,7 @@
         e.preventDefault();
         toggle();
       });
-      video.addEventListener('play', label);
+      video.addEventListener('play', () => { chapter.started = true; label(); });
       video.addEventListener('pause', label);
       label();
     }
@@ -86,6 +88,21 @@
     });
     return chapter;
   });
+  const productBeat = document.querySelector('.product-beat');
+  function updateExpansion() {
+    const top = productBeat.getBoundingClientRect().top;
+    const progress = desktopExpansion.matches ? Math.max(0, Math.min(1, (innerHeight * .95 - top) / (innerHeight * .6))) : 1;
+    const scale = .9 + .1 * (1 - Math.pow(1 - progress, 3));
+    productBeat.style.setProperty('--demo-scale', String(scale));
+    const ready = progress >= 1;
+    if (ready !== expansionReady) {
+      expansionReady = ready;
+      chapters.find(chapter => chapter.tv.dataset.chapter === 'product')?.sync();
+    }
+  }
+  updateExpansion();
+  addEventListener('resize', updateExpansion, { passive: true });
+  desktopExpansion.addEventListener('change', updateExpansion);
   if ('IntersectionObserver' in window) {
     const mediaObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -151,6 +168,7 @@
   let scrollFrame = 0;
   function trackScroll() {
     scrollFrame = 0;
+    updateExpansion();
     const length = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     const depth = Math.round(scrollY / length * 100);
     [25, 50, 75, 100].forEach(mark => {

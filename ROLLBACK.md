@@ -136,3 +136,7 @@ Restore `index.html` from commit `9ef3d51` to return to the prior logo sizing an
 ## Before short-phone opening fit
 
 Restore `index.html` from commit `4f71805` to undo the height-specific mobile layout adjustments.
+
+## Before subtle desktop demo expansion
+
+Restore `index.html` and `landing.js` from commit `34661ad` to remove the desktop scroll expansion.
