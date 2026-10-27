@@ -148,3 +148,7 @@ Restore `index.html` and `landing.js` from commit `c98fee0` to return to the des
 ## Before two waitlist forms
 
 Restore `index.html` and `landing.js` from commit `d33590b` to return to the opening button and single bottom form.
+
+## Before tighter mobile app framing and responsive source switching
+
+Restore `index.html`, `landing.js`, `assets/marts/demo-mobile.mp4`, and `assets/marts/demo-mobile-poster.jpg` from commit `a7579d9` to return to the previous mobile presentation.

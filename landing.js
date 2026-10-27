@@ -24,7 +24,23 @@
       else video.pause();
     };
     if (name === 'product') {
-      if (matchMedia('(max-width: 600px)').matches) video.poster = './assets/marts/demo-mobile-poster.jpg?v=mobile1';
+      const mobileDemo = matchMedia('(max-width: 600px)');
+      let sourceVersion = 0;
+      const selectDemoSource = () => {
+        const src = mobileDemo.matches ? './assets/marts/demo-mobile.mp4?v=mobile2' : './assets/marts/demo.mp4?v=35d13291';
+        if (video.getAttribute('src') === src) return;
+        const resumeAt = video.currentTime;
+        const version = ++sourceVersion;
+        video.poster = mobileDemo.matches ? './assets/marts/demo-mobile-poster.jpg?v=mobile2' : './assets/marts/original-demo-poster.jpg?v=35d13291';
+        video.src = src;
+        video.addEventListener('loadedmetadata', () => {
+          if (version !== sourceVersion) return;
+          if (resumeAt > 0) video.currentTime = Math.min(resumeAt, video.duration);
+          chapter.sync();
+        }, { once: true });
+        video.load();
+      };
+      mobileDemo.addEventListener('change', selectDemoSource);
       video.controls = false;
       video.tabIndex = 0;
       video.setAttribute('role', 'button');
@@ -43,6 +59,7 @@
       video.addEventListener('play', label);
       video.addEventListener('pause', label);
       label();
+      selectDemoSource();
     }
     const updatePowerLabel = () => {
       if (!power) return;
