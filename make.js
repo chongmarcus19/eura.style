@@ -263,7 +263,8 @@
         body: JSON.stringify({ lines: labels }), signal: controller.signal
       });
       if (!res.ok) throw new Error(`status_${res.status}`);
-      const data = await res.json();
+      // API envelope: {success, data: {lines, groups}, error}
+      const data = ((await res.json()) || {}).data || {};
       return {
         lines: labels.map((_, i) => {
           const l = (data.lines && data.lines[i]) || {};
