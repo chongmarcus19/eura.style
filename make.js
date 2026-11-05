@@ -48,10 +48,11 @@
 
   const ENDPOINT = 'https://api.eura.style/marts';
   const PARSE_ENDPOINT = 'https://api.eura.style/marts/parse';
-  // Stub mode asks follow-ups locally, logs the submission and shows the
-  // confirmation without sending. Flip to false once both endpoints are live.
-  // Do not deploy ads against stub mode.
-  const STUB_DEFAULT = true;
+  // Live: both endpoints exist on api.eura.style (Mira #771/#772). Add ?stub=1 to
+  // click through without sending anything (local preview, demos). Note the API only
+  // accepts browser calls from https://eura.style, so a localhost preview without
+  // ?stub=1 will show "couldn't send" — that's CORS, not a bug.
+  const STUB_DEFAULT = false;
   const PARSE_TIMEOUT = 6000;
   const MAX_PHOTOS = 6;
   const MAX_BOARDS = 5;
