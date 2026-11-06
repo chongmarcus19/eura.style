@@ -1,4 +1,5 @@
-/* Make-a-mart flow: lines (each its own mart + budget) -> details -> references -> review + email -> confirmation.
+/* Make-a-mart flow: lines (each its own mart + budget, with its follow-up question and any
+ * combine offer inline) -> references -> recap + sizes + email -> confirmation.
  *
  * Mounts into every [data-make-root] on the page (the standalone /make/ page),
  * and wires every [data-make-open] link to a popup <dialog> when one exists
@@ -15,7 +16,7 @@
  * written in the text ("under 40 bucks") sets the line's price unless the person
  * picked one by hand.
  *
- * Backend contracts (proposed; neither endpoint exists yet):
+ * Backend contracts (live on api.eura.style):
  *
  *   POST /marts/parse   JSON {lines:[label]}   (public: rate-limit per IP, cap line length)
  *     -> {lines:[{kind: "trip"|"work"|"gym"|"item"|"general"|...,
@@ -25,7 +26,8 @@
  *     One model call. Ask at most one question per line, and none when the line already
  *     says it; the placeholder is an example answer that fits that line. Groups at or above
  *     COMBINE_MIN_CONFIDENCE become a "Same trip? Combine?" offer (default: keep separate).
- *     Started early (pause in typing / leaving a line) so Next rarely waits.
+ *     Run on a pause in typing or on leaving a line, never on Next; the question shows
+ *     under its line. Submit waits for a parse still in flight (bounded by the timeout).
  *     Failure or >PARSE_TIMEOUT -> no questions, no offer; never stalls.
  *     The result is saved with the submission as `parsed`: it's the structured brief
  *     the 48h review curates from, and later the input to automated sourcing.
@@ -83,16 +85,23 @@
   const SHOE_WORDS = /\b(shoes?|sneakers?|trainers|boots?|loafers?|sandals|heels|flats|slides|cleats)\b/i;
   const CLOTHING_WORDS = /\b(jacket|coat|parka|jeans|pants|trousers|chinos|shorts|shirt|tee|t-shirts?|polo|hoodie|sweater|cardigan|blazer|suit|bag|tote|backpack|belt|hat|cap|dress|skirt|watch|sunglasses)\b/i;
   const ITEM_WORDS = new RegExp(`${SHOE_WORDS.source}|${CLOTHING_WORDS.source}`, 'i');
+  // `topic` drops a chip when the line's follow-up question already asks the same
+  // thing ("What is the dress code?" replaces the dress-code chips).
   const KINDS = [
-    { kind: 'trip', test: /trip|travel|vacation|holiday|honeymoon|getaway|wedding|italy|paris|europe|japan|mexico|beach/i, details: [
-      { t: 'Warm weather', skip: /warm|hot|summer|cold|winter|weather/i },
-      { t: 'Dressy dinners', skip: /dinner|dressy|formal/i },
-      { t: 'Lots of walking', skip: /walk/i },
+    { kind: 'event', test: /wedding|party|gala|graduation|funeral|reception|rehearsal|black tie|cocktail|prom\b|birthday|date night|concert|festival/i, details: [
+      { t: 'Cocktail attire', skip: /cocktail|black tie|formal|casual|dress code|suit/i, topic: /dress|wear|formal|attire/i },
+      { t: 'Outdoor venue', skip: /outdoor|indoor|garden|beach|barn/i, topic: /venue|outdoor|where/i },
+      { t: 'Evening', skip: /evening|night|daytime|brunch/i, topic: /time|day|evening/i },
+      { t: 'Shoes I can stand in', skip: /shoe|heel|comfort/i }] },
+    { kind: 'trip', test: /trip|travel|vacation|holiday|honeymoon|getaway|italy|paris|europe|japan|mexico|beach/i, details: [
+      { t: 'Warm weather', skip: /warm|hot|summer|cold|winter|weather|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|spring|fall|autumn/i, topic: /weather|when|month|season/i },
+      { t: 'Dressy dinners', skip: /dinner|dressy|formal/i, topic: /doing|plan|activit/i },
+      { t: 'Lots of walking', skip: /walk/i, topic: /doing|plan|activit/i },
       { t: 'Packs light', skip: /pack|carry-on|light/i }] },
     { kind: 'work', test: /\bwork|office|job|interview|business|client|conference/i, details: [
-      { t: 'Smart casual', skip: /casual|suit|formal|dressy/i },
-      { t: 'Business casual', skip: /casual|suit|formal|dressy/i },
-      { t: 'Suits', skip: /casual|suit|formal/i },
+      { t: 'Smart casual', skip: /casual|suit|formal|dressy/i, topic: /dress|formal|casual|wear/i },
+      { t: 'Business casual', skip: /casual|suit|formal|dressy/i, topic: /dress|formal|casual|wear/i },
+      { t: 'Suits', skip: /casual|suit|formal/i, topic: /dress|formal|casual|wear/i },
       { t: 'Nothing too stiff', skip: /stiff|relaxed/i }] },
     { kind: 'shoes', test: SHOE_WORDS, details: [
       { t: 'Cushioned', skip: /cushion|comfort|soft/i },
@@ -111,11 +120,14 @@
       { t: 'For lifting', skip: /lift|run/i, notForItem: true },
       { t: 'For running', skip: /run|lift/i, notForItem: true }] },
     { kind: 'general', test: /.*/, details: [
-      { t: 'Inspired by the 90s', skip: /\b(90s|80s|70s|y2k|vintage|retro)\b/i },
-      { t: 'Darker colors', skip: /dark|black|colou?r/i },
+      { t: 'Good basics', skip: /basic|essential/i },
+      { t: 'Neutral colors', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive|dark/i, topic: /colou?r/i },
       { t: 'Nothing too loud', skip: /loud|quiet|minimal|logo/i },
-      { t: 'Good basics', skip: /basic|essential/i }] }
+      { t: 'Classic, not trendy', skip: /classic|trendy|timeless|90s|80s|70s|y2k|vintage|retro/i, topic: /style|look|vibe/i }] }
   ];
+  // The parser's kind for a line, when it has one, beats the regex (it knows
+  // "wedding guest in october" is an event, not a trip).
+  const PARSE_KIND = { everyday: 'general' };
   const MAX_CHIPS = 6;
   const EXAMPLES = {
     italy: { name: 'Italy in June', items: [['italy-shirt', 'Short-sleeve linen shirt'], ['italy-pants', 'Pleated cotton trousers']] },
@@ -150,19 +162,25 @@
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-  const kindsOf = label => {
+  const kindsOf = (label, parsedKind = null) => {
     const hits = KINDS.filter(k => k.kind !== 'general' && k.test.test(label));
+    const pk = parsedKind && KINDS.find(k => k.kind === (PARSE_KIND[parsedKind] || parsedKind));
+    if (pk && pk.kind !== 'general') {
+      // An event isn't a trip just because the regex saw a place in it.
+      return [pk, ...hits.filter(k => k !== pk && !(pk.kind === 'event' && k.kind === 'trip'))];
+    }
     return hits.length ? hits : [KINDS[KINDS.length - 1]];
   };
-  const kindOf = label => kindsOf(label)[0];
-  // Interleave chips from every matching kind, drop ones the line already covers.
-  function detailsFor(label) {
-    const kinds = kindsOf(label);
+  // Interleave chips from every matching kind, drop ones the line already covers
+  // and ones the line's follow-up question already asks about.
+  function detailsFor(label, parsedKind = null, questionText = '') {
+    const kinds = kindsOf(label, parsedKind);
     const isItem = ITEM_WORDS.test(label);
     const lists = kinds.map(k => k.details.filter(d => {
       if (hasPhrase(label, d.t)) return true;
       if (isItem && d.notForItem) return false;
       if (d.onlyIf && !d.onlyIf.test(label)) return false;
+      if (questionText && d.topic && d.topic.test(questionText)) return false;
       return !d.skip.test(label);
     }));
     const out = [];
@@ -233,6 +251,8 @@
       else if (where) question = { text: 'Where are you going?', placeholder: `e.g. Lisbon and Porto` };
       else if (whenMissing) question = { text: 'When is it?', placeholder: 'e.g. mid-June, about a week' };
       else if (!facts.activity) question = { text: 'What will you be doing there?', placeholder: isWork ? 'e.g. client meetings, one dinner out' : 'e.g. lots of walking, two nice dinners' };
+    } else if (kinds.includes('event') && !facts.dates) {
+      question = { text: 'When is it, and how dressy?', placeholder: 'e.g. late October, cocktail' };
     } else if (isWork && !facts.dress_code) {
       question = { text: 'How dressed up is your work?', placeholder: 'e.g. jeans are fine, client days are not' };
     } else if (kinds.includes('gym') && !facts.training && !kinds.includes('item')) {
@@ -325,27 +345,40 @@
     const id = `mk${++uid}`;
     const draft = store.get();
     let nextId = 0;
-    const newPiece = (label = '', price = null, manual = false) =>
-      ({ id: `p${nextId++}`, label, price, manual, question: null, answer: '', group: 0 });
+    // `group` is the id of the piece whose mart this line joins when combined;
+    // `line` is this line's parse result (kind, facts), for the label it was parsed from.
+    const newPiece = (label = '', price = null, manual = false) => {
+      const p = { id: `p${nextId++}`, label, price, manual, question: null, answer: '', line: null, parsedLabel: null };
+      p.group = p.id;
+      return p;
+    };
+    const fromDraft = d => {
+      const p = newPiece(String(d.label || '').slice(0, LABEL_MAX), Number.isFinite(d.price) ? d.price : null, Boolean(d.manual));
+      const q = d.question;
+      if (q && typeof q.text === 'string') p.question = { text: q.text.slice(0, 140), placeholder: String(q.placeholder || '').slice(0, 140) };
+      p.answer = p.question ? String(d.answer || '').slice(0, 160) : '';
+      if (p.question) p.parsedLabel = p.label;
+      return p;
+    };
     const draftPieces = Array.isArray(draft.pieces) ? draft.pieces.slice(0, MAX_PIECES) : [];
     const state = {
       step: 1,
-      pieces: draftPieces.length
-        ? draftPieces.map(p => newPiece(String(p.label || '').slice(0, LABEL_MAX), Number.isFinite(p.price) ? p.price : null, Boolean(p.manual)))
-        : [newPiece()],
+      pieces: draftPieces.length ? draftPieces.map(fromDraft) : [newPiece()],
       activeId: null,
-      parsedFor: null,
+      parsedFor: null,     // key of the lines `parsed` was made from
       parsed: null,        // last parse result applied (saved with the submission)
-      prefetch: null,      // {key, promise} for the parse started ahead of Next
+      prefetch: null,      // {key, promise} for the parse in flight
       combine: false,      // combine lines the parser grouped into one mart
       sizes: draft.sizes || '',
-      boards: Array.isArray(draft.boards) ? draft.boards.filter(b => b && b.url).slice(0, MAX_BOARDS) : [],
+      // A reference points at a piece id (null = not sure). Drafts don't keep
+      // that link: piece ids are new on every load.
+      boards: Array.isArray(draft.boards) ? draft.boards.filter(b => b && b.url).slice(0, MAX_BOARDS).map(b => ({ url: b.url, piece: null })) : [],
       email: draft.email || '',
       photos: [],          // {blob, url, for}
       sending: false
     };
     state.activeId = state.pieces[0].id;
-    const TOTAL = 4;
+    const TOTAL = 3;
 
     root.classList.add('mk');
     root.innerHTML = `
@@ -360,24 +393,13 @@
         <div class="mk-rows" data-rows></div>
         <button type="button" class="mk-addrow" data-add-row>+ Add another thing</button>
         <p class="mk-error" data-rows-err role="alert"></p>
+        <div data-combine></div>
         <p class="mk-note">Short is fine. “dark gym fits, cheap” works.</p>
         <p class="mk-undo" data-undo-bar hidden role="status">Cleared. <button type="button" class="mk-edit" data-undo>Undo</button></p>
         <div class="mk-actions"><button class="mk-back" type="button" data-reset hidden>Start over</button><button class="mk-button" type="submit" data-next1>Next</button></div>
       </form>
 
       <form class="mk-step" data-step="2" novalidate hidden>
-        <h2 class="mk-title" tabindex="-1">A few details.</h2>
-        <p class="mk-sub">Answer what you like and skip the rest. It helps us get it right the first time.</p>
-        <div data-questions></div>
-        <div data-combine></div>
-        <div class="mk-field">
-          <label class="mk-label mk-q-label" for="${id}-sizes"><span class="mk-q-text">Your sizes</span></label>
-          <input class="mk-input" id="${id}-sizes" type="text" maxlength="120" autocomplete="off" placeholder="e.g. M tops, 32x30 jeans, 10 shoes">
-        </div>
-        <div class="mk-actions"><button class="mk-back" type="button" data-back>← Back</button><button class="mk-button" type="submit">Next</button></div>
-      </form>
-
-      <form class="mk-step" data-step="3" novalidate hidden>
         <h2 class="mk-title" tabindex="-1">Show us what you mean.</h2>
         <p class="mk-sub">Photos, screenshots, outfits you’ve saved, or public Pinterest boards. This is the fastest way to show us what you like.</p>
         <div class="mk-field">
@@ -394,13 +416,17 @@
           </div>
           <p class="mk-error" id="${id}-pin-err" role="alert"></p>
         </div>
-        <div class="mk-actions"><button class="mk-back" type="button" data-back>← Back</button><button class="mk-button" type="submit" data-next3>Skip for now</button></div>
+        <div class="mk-actions"><button class="mk-back" type="button" data-back>← Back</button><button class="mk-button" type="submit" data-next2>Skip for now</button></div>
       </form>
 
-      <form class="mk-step" data-step="4" novalidate hidden>
+      <form class="mk-step" data-step="3" novalidate hidden>
         <h2 class="mk-title" tabindex="-1">Where should we send it?</h2>
         <p class="mk-sub">We’ll email your first finds within 48 hours, with a link to see them. No password.</p>
         <div class="mk-recap" data-recap></div>
+        <div class="mk-field">
+          <label class="mk-label mk-mono" for="${id}-sizes"><span>Your sizes</span><span class="mk-opt">Optional</span></label>
+          <input class="mk-input" id="${id}-sizes" type="text" maxlength="120" autocomplete="off" placeholder="e.g. M tops, 32x30 jeans, 10 shoes">
+        </div>
         <div class="mk-field">
           <label class="mk-label mk-mono" for="${id}-email"><span>Email</span></label>
           <input class="mk-input" id="${id}-email" name="email" type="email" required autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" aria-describedby="${id}-email-err">
@@ -420,12 +446,12 @@
       </section>`;
 
     const $ = sel => root.querySelector(sel);
-    const steps = { 1: $('[data-step="1"]'), 2: $('[data-step="2"]'), 3: $('[data-step="3"]'), 4: $('[data-step="4"]'), done: $('[data-step="done"]') };
+    const steps = { 1: $('[data-step="1"]'), 2: $('[data-step="2"]'), 3: $('[data-step="3"]'), done: $('[data-step="done"]') };
+    const STEP_NAMES = { 1: 'lines', 2: 'references', 3: 'email', done: 'done' };
     const rowsEl = $('[data-rows]');
     const rowsErr = $('[data-rows-err]');
     const addRowBtn = $('[data-add-row]');
     const combineEl = $('[data-combine]');
-    const questionsEl = $('[data-questions]');
     const sizes = $(`#${id}-sizes`);
     const pin = $(`#${id}-pin`);
     const email = $(`#${id}-email`);
@@ -434,7 +460,7 @@
     const boardsEl = $('[data-boards]');
     const boardAdder = $('[data-board-adder]');
     const next1 = $('[data-next1]');
-    const next3 = $('[data-next3]');
+    const next2 = $('[data-next2]');
     const submitBtn = $('[data-submit]');
     const progress = $('[data-progress]');
 
@@ -447,7 +473,7 @@
       input.setAttribute('aria-invalid', msg ? 'true' : 'false');
     };
     const snapshot = () => ({
-      pieces: state.pieces.map(p => ({ label: p.label, price: p.price, manual: p.manual })),
+      pieces: state.pieces.map(p => ({ label: p.label, price: p.price, manual: p.manual, answer: p.answer, question: p.question })),
       sizes: state.sizes, boards: state.boards, email: state.email
     });
     const resetBtn = $('[data-reset]');
@@ -455,7 +481,8 @@
     const hasContent = () => state.pieces.some(p => p.label.trim() || p.price != null) || state.boards.length || state.photos.length || state.sizes.trim() || state.email.trim();
     const save = () => { store.set(snapshot()); resetBtn.hidden = !hasContent(); };
     const filled = () => state.pieces.filter(p => p.label.trim());
-    const finalGroups = () => state.pieces.map((p, i) => (state.combine ? p.group : i));
+    // Each line's mart, as the id of the piece that heads it.
+    const finalGroups = () => state.pieces.map(p => (state.combine && state.pieces.some(x => x.id === p.group) ? p.group : p.id));
     const martsOf = () => {
       const g = finalGroups();
       return [...new Set(g)].map(k => state.pieces.filter((_, i) => g[i] === k));
@@ -470,16 +497,24 @@
         root.querySelectorAll('.mk-bar span').forEach((s, i) => s.classList.toggle('is-on', i < step));
       }
       steps[step].querySelector('.mk-title').focus({ preventScroll: true });
+      if (step === 1) regrow();
       const scroller = root.closest('.mk-dialog');
       if (scroller) scroller.scrollTop = 0;
       else window.scrollTo(0, 0);
-      track('make_step', { step: String(step), placement });
+      track('make_step', { step: String(step), step_name: STEP_NAMES[step], placement });
     }
 
     // ---- Step 1: one line per thing; price and detail chips live inside each line.
     const pieceOf = el => state.pieces.find(p => p.id === el.closest('[data-piece]')?.dataset.piece);
     const rowEl = p => rowsEl.querySelector(`[data-piece="${p.id}"]`);
-    const grow = ta => { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight}px`; };
+    // Measured while hidden (the popup before it opens) scrollHeight is 0; setting
+    // that would collapse the box to a sliver, so leave it at its CSS height and
+    // measure again once it's on screen (see regrow).
+    const grow = ta => {
+      ta.style.height = 'auto';
+      if (ta.scrollHeight) ta.style.height = `${ta.scrollHeight}px`;
+    };
+    const regrow = () => rowsEl.querySelectorAll('[data-label]').forEach(grow);
 
     function priceHTML(p, i) {
       const custom = p.price != null && !PRESETS.includes(p.price);
@@ -495,13 +530,31 @@
         return `<div class="mk-label mk-mono"><span>Or start with</span></div>
           <div class="mk-chips">${STARTERS.map(s => `<button type="button" class="mk-chip" data-starter>${esc(s)}</button>`).join('')}</div>`;
       }
-      const details = detailsFor(p.label);
+      const fresh = p.line && p.parsedLabel === p.label.trim() ? p.line : null;
+      const details = detailsFor(p.label, fresh && fresh.kind, p.question ? p.question.text : '');
       if (!details.length) return '';
       return `<div class="mk-label mk-mono"><span>Add details</span><span class="mk-opt">Tap again to remove</span></div>
         <div class="mk-chips">${details.map(d => {
           const on = hasPhrase(p.label, d);
           return `<button type="button" class="mk-chip" data-detail="${esc(d)}" aria-pressed="${on}"><span aria-hidden="true">${on ? '✓' : '+'}</span> ${esc(d)}</button>`;
         }).join('')}</div>`;
+    }
+    // The parser's one follow-up for a line, answered right under it.
+    function questionHTML(p) {
+      if (!p.question) return '';
+      const qid = `${id}-${p.id}-a`;
+      return `<label class="mk-q" for="${qid}"><span class="mk-q-text">${esc(p.question.text)}</span><span class="mk-opt mk-mono">Optional</span></label>
+        <input class="mk-q-input" id="${qid}" data-answer type="text" maxlength="160" autocomplete="off" enterkeyhint="done" placeholder="${esc(p.question.placeholder)}" value="${esc(p.answer)}">`;
+    }
+    function syncQuestion(p) {
+      const slot = rowEl(p)?.querySelector('[data-q-slot]');
+      if (!slot) return;
+      const sig = p.question ? p.question.text : '';
+      if (slot.dataset.sig === sig) return;
+      // Never swap the box out from under someone typing in it.
+      if (slot.contains(document.activeElement)) return;
+      slot.dataset.sig = sig;
+      slot.innerHTML = questionHTML(p);
     }
     function syncRow(p) {
       const el = rowEl(p);
@@ -528,13 +581,14 @@
             ${many ? `<button type="button" class="mk-x" data-remove-piece aria-label="Remove line ${i + 1}">×</button>` : ''}
           </div>
           <div class="mk-counter mk-mono" data-counter hidden></div>
+          <div class="mk-row-q" data-q-slot>${questionHTML(p)}</div>
           <div class="mk-row-body">
             <div data-price-slot>${priceHTML(p, i)}</div>
             <div class="mk-row-chips" data-row-chips hidden></div>
           </div>
         </div>`).join('');
-      state.pieces.forEach(syncRow);
-      rowsEl.querySelectorAll('[data-label]').forEach(grow);
+      state.pieces.forEach(p => { rowEl(p).querySelector('[data-q-slot]').dataset.sig = p.question ? p.question.text : ''; syncRow(p); });
+      regrow();
       addRowBtn.hidden = state.pieces.length >= MAX_PIECES;
       if (focusId) {
         const ta = rowsEl.querySelector(`[data-piece="${focusId}"] [data-label]`);
@@ -573,6 +627,12 @@
       return p;
     }
     rowsEl.addEventListener('input', e => {
+      if (e.target.matches('[data-answer]')) {
+        pieceOf(e.target).answer = e.target.value;
+        renderCombine();
+        save();
+        return;
+      }
       if (e.target.matches('[data-custom]')) {
         const p = pieceOf(e.target);
         e.target.value = e.target.value.replace(/[^\d]/g, '');
@@ -609,13 +669,14 @@
       p.label = e.target.value;
       grow(e.target);
       rowsErr.textContent = '';
+      if (!p.label.trim() && !p.answer.trim()) { p.question = null; syncQuestion(p); }
       priceFromText(p);
       // Chips live outside the text box, so redrawing them doesn't disturb typing.
       syncRow(p);
       save();
     });
     rowsEl.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && e.target.matches('[data-custom]')) { e.preventDefault(); e.target.blur(); return; }
+      if (e.key === 'Enter' && e.target.matches('[data-custom], [data-answer]')) { e.preventDefault(); e.target.blur(); return; }
       // Enter in a line = next line, like a list.
       if (e.key !== 'Enter' || !e.target.matches('[data-label]') || e.shiftKey) return;
       e.preventDefault();
@@ -673,7 +734,7 @@
     let undoData = null;
     let undoTimer = 0;
     function applyDraft(d) {
-      state.pieces = d.pieces.length ? d.pieces.map(p => newPiece(p.label, p.price, p.manual)) : [newPiece()];
+      state.pieces = d.pieces.length ? d.pieces.map(fromDraft) : [newPiece()];
       state.activeId = state.pieces[0].id;
       state.sizes = d.sizes; state.boards = d.boards.map(b => ({ ...b })); state.email = d.email;
       sizes.value = state.sizes; email.value = state.email; pin.value = '';
@@ -707,75 +768,57 @@
       undoData = null;
       undoBar.hidden = true;
     });
-    // Start the parse before Next is tapped (on a pause in typing or leaving a line),
-    // so the details screen usually opens without a wait.
+    // Parse on a pause in typing or on leaving a line, never on Next: each line's
+    // follow-up appears right under it, and the combine offer under the list.
     const labelsKey = labels => JSON.stringify(labels);
+    const parseable = () => filled().filter(p => p.label.trim().length >= 3);
     function parseFor(labels) {
       const key = labelsKey(labels);
       if (!state.prefetch || state.prefetch.key !== key) state.prefetch = { key, promise: fetchParse(labels) };
       return state.prefetch.promise;
     }
-    let prefetchTimer = 0;
-    function schedulePrefetch(delay) {
-      clearTimeout(prefetchTimer);
-      prefetchTimer = setTimeout(() => {
-        const labels = filled().map(p => cap(p.label.trim())).filter(l => l.length >= 3);
-        if (labels.length) parseFor(labels);
-      }, delay);
-    }
-    rowsEl.addEventListener('input', e => { if (e.target.matches('[data-label]')) schedulePrefetch(1200); });
-    rowsEl.addEventListener('focusout', e => { if (e.target.matches('[data-label]')) schedulePrefetch(0); });
-
-    steps[1].addEventListener('submit', async e => {
-      e.preventDefault();
-      const rows = filled();
-      if (!rows.length) { rowsErr.textContent = 'Tell us at least one thing you’re shopping for.'; rowEl(state.pieces[0]).querySelector('[data-label]').focus(); return; }
-      const short = rows.find(p => p.label.trim().length < 3);
-      if (short) { rowsErr.textContent = 'Add a few more words to that line.'; rowEl(short).querySelector('[data-label]').focus(); return; }
-      state.pieces = rows;
-      state.pieces.forEach(p => { p.label = cap(p.label.trim()); });
-      if (!state.pieces.some(p => p.id === state.activeId)) state.activeId = state.pieces[0].id;
-      renderRows();
-      rowsErr.textContent = '';
-      const labels = state.pieces.map(p => p.label);
-      const key = labelsKey(labels);
-      // Only re-apply when the lines changed, so Back -> Next keeps answers.
-      if (state.parsedFor !== key) {
-        next1.disabled = true;
-        next1.textContent = 'Reading…';
-        const result = await parseFor(labels);
-        next1.disabled = false;
-        next1.textContent = 'Next';
-        // Keep answers for lines whose text didn't change.
-        const oldAnswers = new Map(state.pieces.map(p => [p.label, p.answer]));
-        state.pieces.forEach((p, i) => {
-          const line = result && result.lines[i];
-          p.question = line ? line.question : null;
-          p.answer = (p.question && oldAnswers.get(p.label)) || '';
-          p.group = i;
-        });
-        // A suggested group becomes a combine offer; each line still defaults to its own mart.
-        (result ? result.groups : []).forEach(g => {
-          if ((g.confidence ?? 1) < COMBINE_MIN_CONFIDENCE) return;
-          const members = g.lines.filter(i => state.pieces[i]);
-          members.forEach(i => { state.pieces[i].group = members[0]; });
-        });
+    // Apply a result to the lines it was made from. A line that changed since
+    // keeps what it had; a question someone already answered is never replaced.
+    function applyParse(pieces, labels, result) {
+      if (!result) return;
+      pieces.forEach((p, i) => {
+        if (!state.pieces.includes(p) || cap(p.label.trim()) !== labels[i]) return;
+        const line = result.lines[i] || null;
+        p.line = line;
+        p.parsedLabel = p.label.trim();
+        if (!p.answer.trim()) p.question = line ? line.question : null;
+        p.group = p.id;
+        syncQuestion(p);
+        syncRow(p);
+      });
+      result.groups.forEach(g => {
+        if ((g.confidence ?? 1) < COMBINE_MIN_CONFIDENCE) return;
+        const members = g.lines.map(i => pieces[i]).filter(p => p && state.pieces.includes(p) && p.parsedLabel === p.label.trim());
+        if (members.length > 1) members.forEach(p => { p.group = members[0].id; });
+      });
+      if (labelsKey(filled().map(p => cap(p.label.trim()))) === labelsKey(labels)) {
         state.parsed = result;
-        state.combine = false;
-        state.parsedFor = key;
-        renderDetails();
+        state.parsedFor = labelsKey(labels);
       }
-      save();
-      show(2);
-    });
-    renderRows();
-    resetBtn.hidden = !hasContent();
+      renderCombine();
+    }
+    function runParse() {
+      const pieces = parseable();
+      const labels = pieces.map(p => cap(p.label.trim()));
+      if (!labels.length) return Promise.resolve();
+      return parseFor(labels).then(result => applyParse(pieces, labels, result));
+    }
+    let parseTimer = 0;
+    function scheduleParse(delay) {
+      clearTimeout(parseTimer);
+      parseTimer = setTimeout(runParse, delay);
+    }
+    rowsEl.addEventListener('input', e => { if (e.target.matches('[data-label]')) scheduleParse(1200); });
+    rowsEl.addEventListener('focusout', e => { if (e.target.matches('[data-label]')) scheduleParse(0); });
 
-    // ---- Step 2: follow-ups, a combine offer when lines look like the same thing, sizes
     // What a line says about where/when, from the parse facts or the person's answer.
     function factOf(p, key, re) {
-      const line = state.parsed && state.parsed.lines[state.pieces.indexOf(p)];
-      const fromFacts = line && line.facts && line.facts[key];
+      const fromFacts = p.line && p.parsedLabel === p.label.trim() && p.line.facts && p.line.facts[key];
       if (fromFacts) return String(fromFacts).toLowerCase();
       const m = p.answer.toLowerCase().match(re);
       return m ? m[0].toLowerCase() : null;
@@ -784,48 +827,64 @@
       const vals = set.map(p => factOf(p, key, key === 'dates' ? MONTHS : PLACES)).filter(Boolean);
       return new Set(vals).size > 1;
     });
-    function renderDetails() { renderQuestions(); renderCombine(); }
-    // Shown after the questions, and only while the answers don't contradict it:
-    // once two trips turn out to have different dates or places, the offer goes away.
+    // Lines the parser thinks are one thing, while nothing contradicts it: once two
+    // trips turn out to have different dates or places, the offer goes away.
+    function sharedSets() {
+      const live = filled();
+      const keys = [...new Set(live.map(p => p.group))];
+      return keys.map(k => live.filter(p => p.group === k)).filter(set => set.length > 1 && !conflicts(set));
+    }
     function renderCombine() {
-      const g = state.pieces.map(p => p.group);
-      const shared = [...new Set(g)].map(k => state.pieces.filter(p => p.group === k)).filter(set => set.length > 1 && !conflicts(set));
-      if (!shared.length && state.combine) { state.combine = false; }
+      const shared = sharedSets();
+      if (!shared.length) state.combine = false;
       // Ask, don't assert: the parser's grouping is a guess.
-      const allTrips = shared.every(set => set.every(p => kindsOf(p.label).some(k => k.kind === 'trip')));
+      const allTrips = shared.every(set => set.every(p => kindsOf(p.label, p.line && p.line.kind).some(k => k.kind === 'trip')));
       combineEl.innerHTML = !shared.length ? '' : `
         <div class="mk-split" role="radiogroup" aria-label="Combine lines">
           <p class="mk-split-q"><span class="mk-split-h">${allTrips ? 'Same trip?' : 'Same thing?'}</span>
-            ${shared.map(set => set.map(p => `<strong>${esc(p.label)}</strong>`).join(' and ')).join('; ')}.
+            ${shared.map(set => set.map(p => `<strong>${esc(cap(p.label.trim()))}</strong>`).join(' and ')).join('; ')}.
             Combined, it’s one mart, and each line’s budget still applies to the pieces we find for that line.</p>
           <button type="button" class="mk-seg" role="radio" data-combine-choice="0" aria-checked="${!state.combine}">Keep separate</button>
           <button type="button" class="mk-seg" role="radio" data-combine-choice="1" aria-checked="${state.combine}">Combine into one mart</button>
         </div>`;
     }
-    function renderQuestions() {
-      questionsEl.innerHTML = state.pieces.filter(p => p.question).map(p => `
-        <div class="mk-field">
-          <label class="mk-label mk-q-label" for="${id}-${p.id}-a"><span class="mk-q-for mk-mono">${esc(p.label)}</span><span class="mk-q-text">${esc(p.question.text)}</span></label>
-          <input class="mk-input" id="${id}-${p.id}-a" data-piece="${p.id}" data-answer type="text" maxlength="160" autocomplete="off" placeholder="${esc(p.question.placeholder)}" value="${esc(p.answer)}">
-        </div>`).join('');
-    }
-    questionsEl.addEventListener('input', e => {
-      if (!e.target.matches('[data-answer]')) return;
-      pieceOf(e.target).answer = e.target.value;
-      renderCombine();
-    });
-    questionsEl.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-answer]')) e.preventDefault(); });
     combineEl.addEventListener('click', e => {
       const btn = e.target.closest('[data-combine-choice]');
       if (!btn) return;
       state.combine = btn.dataset.combineChoice === '1';
       combineEl.querySelectorAll('[data-combine-choice]').forEach(b => b.setAttribute('aria-checked', String(b === btn)));
-      renderRefs();
+      track('make_combine', { choice: state.combine ? 'combine' : 'separate' });
     });
-    sizes.addEventListener('input', () => { state.sizes = sizes.value; save(); });
-    steps[2].addEventListener('submit', e => { e.preventDefault(); renderRefs(); show(3); });
 
-    // ---- Step 3: references, each tagged to a mart when there's more than one
+    steps[1].addEventListener('submit', e => {
+      e.preventDefault();
+      const rows = filled();
+      if (!rows.length) { rowsErr.textContent = 'Tell us at least one thing you’re shopping for.'; rowEl(state.pieces[0]).querySelector('[data-label]').focus(); return; }
+      const short = rows.find(p => p.label.trim().length < 3);
+      if (short) { rowsErr.textContent = 'Add a few more words to that line.'; rowEl(short).querySelector('[data-label]').focus(); return; }
+      state.pieces = rows;
+      state.pieces.forEach(p => {
+        const trimmed = cap(p.label.trim());
+        if (p.parsedLabel === p.label.trim()) p.parsedLabel = trimmed;
+        p.label = trimmed;
+      });
+      if (!state.pieces.some(p => p.id === state.activeId)) state.activeId = state.pieces[0].id;
+      // Don't wait on the parse here; submit catches up with it.
+      clearTimeout(parseTimer);
+      runParse();
+      renderRows();
+      renderCombine();
+      rowsErr.textContent = '';
+      save();
+      renderRefs();
+      show(2);
+    });
+    renderRows();
+    renderCombine();
+    resetBtn.hidden = !hasContent();
+    sizes.addEventListener('input', () => { state.sizes = sizes.value; save(); });
+
+    // ---- Step 2: references, each tagged to a mart (by the id of the line heading it)
     const marts = () => martsOf();
     const martLabel = set => set.map(p => p.label).join(' + ');
     // With several marts, a reference defaults to "Not sure": it isn't counted
@@ -835,12 +894,12 @@
       const ms = marts();
       if (ms.length < 2) return '';
       return `<select class="mk-for" ${attr} aria-label="${esc(label)}">
-        <option value="">Match it for me</option>
-        ${ms.map(set => { const i = state.pieces.indexOf(set[0]); return `<option value="${i}" ${value === i ? 'selected' : ''}>For ${esc(clip(martLabel(set), 26))}</option>`; }).join('')}
+        <option value="">Not sure, match it for me</option>
+        ${ms.map(set => `<option value="${set[0].id}" ${value === set[0].id ? 'selected' : ''}>For ${esc(clip(martLabel(set), 26))}</option>`).join('')}
       </select>`;
     }
     const pinValid = () => Boolean(normalizeBoard(pin.value));
-    const syncNext3 = () => { next3.textContent = state.photos.length || state.boards.length || pinValid() ? 'Next' : 'Skip for now'; };
+    const syncNext2 = () => { next2.textContent = state.photos.length || state.boards.length || pinValid() ? 'Next' : 'Skip for now'; };
     function renderPhotos() {
       const tiles = state.photos.map((p, i) => `
         <div class="mk-photo">
@@ -853,7 +912,7 @@
           <span class="mk-tile-add"><b aria-hidden="true">+</b><span class="mk-mono">Add photo</span></span></label></div>`);
       }
       photosEl.innerHTML = tiles.join('');
-      syncNext3();
+      syncNext2();
     }
     function renderBoards() {
       boardsEl.innerHTML = state.boards.map((b, i) => `
@@ -862,11 +921,11 @@
           <button type="button" class="mk-x" data-remove-board="${i}" aria-label="Remove board ${i + 1}">×</button></li>`).join('');
       boardsEl.hidden = !state.boards.length;
       boardAdder.hidden = state.boards.length >= MAX_BOARDS;
-      syncNext3();
+      syncNext2();
     }
     function renderRefs() {
       // Drop tags that point at a mart that no longer exists.
-      const valid = new Set(marts().map(set => state.pieces.indexOf(set[0])));
+      const valid = new Set(marts().map(set => set[0].id));
       state.photos.forEach(p => { if (!valid.has(p.for)) p.for = null; });
       state.boards.forEach(b => { if (!valid.has(b.piece)) b.piece = null; });
       renderPhotos();
@@ -883,7 +942,7 @@
     });
     photosEl.addEventListener('change', async e => {
       const sel = e.target.closest('[data-photo-for]');
-      if (sel) { state.photos[+sel.dataset.photoFor].for = sel.value === '' ? null : +sel.value; return; }
+      if (sel) { state.photos[+sel.dataset.photoFor].for = sel.value || null; return; }
       const input = e.target.closest('[data-file]');
       if (!input) return;
       const files = [...input.files].filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
@@ -914,10 +973,10 @@
     }
     $('[data-add-board]').addEventListener('click', () => { if (addBoardFromInput() && !boardAdder.hidden) pin.focus(); });
     pin.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (addBoardFromInput() && !boardAdder.hidden) pin.focus(); } });
-    pin.addEventListener('input', () => { err(pin, ''); syncNext3(); });
+    pin.addEventListener('input', () => { err(pin, ''); syncNext2(); });
     boardsEl.addEventListener('change', e => {
       const sel = e.target.closest('[data-board-for]');
-      if (sel) { state.boards[+sel.dataset.boardFor].piece = sel.value === '' ? null : +sel.value; save(); }
+      if (sel) { state.boards[+sel.dataset.boardFor].piece = sel.value || null; save(); }
     });
     boardsEl.addEventListener('click', e => {
       const btn = e.target.closest('[data-remove-board]');
@@ -927,24 +986,24 @@
       renderBoards();
       pin.focus();
     });
-    steps[3].addEventListener('submit', e => {
+    steps[2].addEventListener('submit', e => {
       e.preventDefault();
       // A link typed but not added still counts; a bad one blocks with the error shown.
       if (!addBoardFromInput()) return;
       renderRecap();
-      show(4);
+      show(3);
     });
     renderRefs();
 
-    // ---- Step 4: recap + email + submit
+    // ---- Step 3: recap + sizes + email + submit
     const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
     function renderRecap() {
       const ms = marts();
       const single = ms.length < 2;
       const refCount = set => {
         if (single) return state.photos.length + state.boards.length;
-        const i = state.pieces.indexOf(set[0]);
-        return state.photos.filter(p => p.for === i).length + state.boards.filter(b => b.piece === i).length;
+        const head = set[0].id;
+        return state.photos.filter(p => p.for === head).length + state.boards.filter(b => b.piece === head).length;
       };
       const unassigned = single ? 0 : state.photos.filter(p => p.for === null).length + state.boards.filter(b => b.piece === null).length;
       $('[data-recap]').innerHTML = `
@@ -958,14 +1017,13 @@
             ${answers.length ? `<span class="mk-recap-meta">${esc(answers.join(' · '))}</span>` : ''}</li>`;
         }).join('')}
         </ul>
-        ${unassigned ? `<p class="mk-recap-extra">${plural(unassigned, 'reference')} we’ll match to the right mart</p>` : ''}
-        ${state.sizes.trim() ? `<p class="mk-recap-extra">Sizes: ${esc(state.sizes.trim())}</p>` : ''}`;
+        ${unassigned ? `<p class="mk-recap-extra">${plural(unassigned, 'reference')} we’ll match to the right mart</p>` : ''}`;
       $('[data-edit]').addEventListener('click', () => show(1));
       submitBtn.textContent = buildLabel();
     }
     const buildLabel = () => (marts().length > 1 ? `Build my ${marts().length} marts` : 'Build my mart');
     email.addEventListener('input', () => { state.email = email.value; err(email, ''); save(); });
-    steps[4].addEventListener('submit', async e => {
+    steps[3].addEventListener('submit', async e => {
       e.preventDefault();
       if (state.sending) return;
       const address = email.value.trim();
@@ -976,19 +1034,25 @@
       submitBtn.textContent = 'Sending…';
       err(email, '');
 
+      // The parse normally finished long ago; if Next beat it, wait for it here
+      // (fetchParse gives up after PARSE_TIMEOUT) so review gets the structured brief.
+      const labels = state.pieces.map(p => p.label);
+      if (state.parsedFor !== labelsKey(labels)) await runParse();
       const groups = finalGroups();
+      const indexOf = pid => { const i = state.pieces.findIndex(p => p.id === pid); return i < 0 ? null : i; };
       const body = new FormData();
-      body.append('brief', state.pieces.map(p => p.label).join('\n'));
+      body.append('brief', labels.join('\n'));
       body.append('pieces', JSON.stringify(state.pieces.map((p, i) => ({
-        label: p.label, group: groups[i], max_price_usd: p.price,
-        question: p.question ? p.question.text : null, answer: p.answer.trim() || null
+        label: p.label, group: indexOf(groups[i]) ?? i, max_price_usd: p.price,
+        question: p.question ? p.question.text : null,
+        answer: p.answer.trim() || null
       }))));
       if (state.sizes.trim()) body.append('sizes', state.sizes.trim());
-      body.append('boards', JSON.stringify(state.boards));
+      body.append('boards', JSON.stringify(state.boards.map(b => ({ url: b.url, piece: b.piece ? indexOf(b.piece) : null }))));
       state.photos.forEach((p, i) => body.append('references', p.blob, `reference-${i + 1}.jpg`));
-      body.append('references_for', JSON.stringify(state.photos.map(p => p.for)));
+      body.append('references_for', JSON.stringify(state.photos.map(p => (p.for ? indexOf(p.for) : null))));
       // The structured brief (kinds, facts, groups) is what gets curated from in review.
-      if (state.parsed) body.append('parsed', JSON.stringify(state.parsed));
+      if (state.parsed && state.parsedFor === labelsKey(labels)) body.append('parsed', JSON.stringify(state.parsed));
       body.append('email', address);
       if (hook) body.append('hook', hook);
       body.append('placement', placement);
@@ -1025,6 +1089,14 @@
     });
 
     root.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => show(state.step - 1)));
+    // A textarea sized while hidden (before the popup opened, or on another step)
+    // gets measured again whenever line 1 comes into view, and when the width changes.
+    let lastWidth = 0;
+    window.addEventListener('resize', () => {
+      if (root.offsetWidth === lastWidth) return;
+      lastWidth = root.offsetWidth;
+      if (state.step === 1) regrow();
+    });
 
     function renderDone(address, ms) {
       $('[data-done-title]').textContent = ms.length > 1 ? `Your ${ms.length} marts are being built.` : 'Your mart is being built.';
@@ -1043,7 +1115,12 @@
       $('[data-done-close]')?.addEventListener('click', onClose);
     }
 
-    const api = { focus: () => steps[state.step].querySelector('.mk-title').focus({ preventScroll: true }) };
+    const api = {
+      focus: () => {
+        if (state.step === 1) regrow();
+        steps[state.step].querySelector('.mk-title').focus({ preventScroll: true });
+      }
+    };
     root._mk = api;
     return api;
   }
