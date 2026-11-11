@@ -109,6 +109,40 @@
 .mk-list-text{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
 .mk-x{flex:0 0 40px;width:40px;height:40px;border:none;background:transparent;color:var(--ink);cursor:pointer;font-size:20px;line-height:1}
 
+/* Connect Pinterest + picked boards */
+.mk-connect{display:grid;gap:2px;margin-bottom:14px}
+.mk-connect .mk-note{margin-top:6px}
+.mk-pin-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;width:100%;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.mk-pin-btn::before{content:'';width:10px;height:10px;border-radius:50%;background:#E60023}
+.mk-pin-btn:disabled{cursor:wait;opacity:.7}
+.mk-pin-msg{font-size:14px;line-height:1.5;color:var(--soft);margin:0 0 12px}
+.mk-picked{margin-bottom:6px}
+.mk-picked-row{padding-left:6px}
+.mk-picked-cover{flex:0 0 34px;width:34px;height:34px;object-fit:cover;background:var(--line)}
+.mk-pin-edit{margin:2px 0 4px}
+.mk-paste-label{margin-top:18px}
+.mk-sheet{position:fixed;inset:0;z-index:2147483000;background:rgba(23,22,18,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.mk-sheet[hidden]{display:none}
+.mk-sheet-panel{width:min(620px,100%);max-height:min(86svh,820px);overflow:auto;overscroll-behavior:contain;background:var(--paper);border:1px solid var(--ink);padding:20px 20px 0}
+.mk-sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mk-sheet-title{font-family:Syne,sans-serif;font-weight:700;letter-spacing:-.03em;font-size:24px;margin:0}
+.mk-sheet-title:focus{outline:none}
+.mk-sheet-count{margin:6px 0 14px}
+.mk-board-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mk-board{display:grid;gap:4px;align-content:start;text-align:left;border:1px solid var(--line);background:#fff;padding:0 0 10px;cursor:pointer;color:var(--ink);min-width:0}
+.mk-board[aria-pressed="true"]{border:2px solid var(--green)}
+.mk-board-cover{position:relative;display:grid;place-items:center;aspect-ratio:1;background:#EDE7DA;overflow:hidden}
+.mk-board-cover img{width:100%;height:100%;object-fit:cover}
+.mk-board-cover b{font-family:Syne,sans-serif;font-size:34px;color:var(--line)}
+.mk-board-check{position:absolute;top:8px;right:8px;width:26px;height:26px;display:none;place-items:center;background:var(--green);color:var(--paper);font-size:14px}
+.mk-board[aria-pressed="true"] .mk-board-check{display:grid}
+.mk-board-name{padding:0 10px;font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.mk-board-meta{padding:0 10px;font-size:10px;color:var(--soft)}
+.mk-sheet-foot{position:sticky;bottom:0;background:var(--paper);display:flex;justify-content:flex-end;padding:14px 0 18px;margin-top:14px;border-top:1px solid var(--line)}
+@media(min-width:640px){.mk-board-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.mk-sheet{align-items:flex-end;padding:0}.mk-sheet-panel{max-height:88svh;border-left:none;border-right:none;border-bottom:none}}
+@media(hover:hover){.mk-pin-btn:hover:not(:disabled){border-color:var(--green);color:var(--green)}.mk-board:hover{border-color:var(--green)}}
+
 /* Step 3: recap */
 .mk-recap{margin-top:26px;border:1px solid var(--line);background:var(--paper);padding:14px 16px}
 .mk-recap .mk-label{margin-bottom:8px}

@@ -50,6 +50,22 @@
 
   const ENDPOINT = 'https://api.eura.style/marts';
   const PARSE_ENDPOINT = 'https://api.eura.style/marts/parse';
+  // "Connect Pinterest": an anonymous, read-only, 24h link held by the API (never a token
+  // in the browser). The browser only keeps the link's `state`, in sessionStorage.
+  // ?pinapi= works on localhost only (local end-to-end tests), never on the live site.
+  const LOCAL_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  const PIN_API_OVERRIDE = (() => {
+    if (!LOCAL_HOST) return null;
+    let v = new URLSearchParams(location.search).get('pinapi');
+    try { if (v) sessionStorage.setItem('eura-make-pinapi', v); else v = sessionStorage.getItem('eura-make-pinapi'); } catch (_) {}
+    return v;
+  })();
+  const API_ORIGIN = PIN_API_OVERRIDE ? new URL(PIN_API_OVERRIDE).origin : 'https://api.eura.style';
+  const PINTEREST_API = `${API_ORIGIN}/marts/pinterest`;
+  const PIN_KEY = 'eura-make-pinterest';
+  const PIN_WAIT_MS = 10 * 60 * 1000;
+  // OAuth inside these in-app browsers fails or strands people; send them to paste instead.
+  const IN_APP = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|TikTok|musical_ly|BytedanceWebview|Pinterest\//i.test(navigator.userAgent || '');
   // Live: both endpoints exist on api.eura.style (Mira #771/#772). Add ?stub=1 to
   // click through without sending anything (local preview, demos). Note the API only
   // accepts browser calls from https://eura.style, so a localhost preview without
@@ -375,6 +391,9 @@
       boards: Array.isArray(draft.boards) ? draft.boards.filter(b => b && b.url).slice(0, MAX_BOARDS).map(b => ({ url: b.url, piece: null })) : [],
       email: draft.email || '',
       photos: [],          // {blob, url, for}
+      // Connect Pinterest: `state` is the link (sessionStorage only); picked boards are
+      // {id, name, cover, piece}; `boards` is the account's list once loaded.
+      pin: { state: null, username: null, boards: null, picked: [], waiting: false, done: null },
       sending: false
     };
     state.activeId = state.pieces[0].id;
@@ -408,7 +427,15 @@
           <p class="mk-error" data-photo-err role="alert"></p>
         </div>
         <div class="mk-field">
-          <label class="mk-label mk-mono" for="${id}-pin"><span>Pinterest boards</span><span class="mk-opt">Up to ${MAX_BOARDS}</span></label>
+          <div class="mk-label mk-mono"><span>Pinterest boards</span><span class="mk-opt">Up to ${MAX_BOARDS}</span></div>
+          <div class="mk-connect" data-pin-connect>
+            <button type="button" class="mk-pin-btn" data-pin-btn>Connect Pinterest</button>
+            <p class="mk-note">Pick boards straight from your account. We only read them.</p>
+          </div>
+          <p class="mk-pin-msg" data-pin-msg role="status" hidden></p>
+          <ul class="mk-list mk-picked" data-picked hidden></ul>
+          <button type="button" class="mk-edit mk-pin-edit" data-pin-edit hidden>Edit boards</button>
+          <label class="mk-label mk-mono mk-paste-label" for="${id}-pin"><span>Or paste a public board link</span></label>
           <ul class="mk-list" data-boards></ul>
           <div class="mk-adder" data-board-adder>
             <input class="mk-input" id="${id}-pin" type="url" inputmode="url" autocomplete="off" placeholder="pinterest.com/yourname/board" aria-describedby="${id}-pin-err">
@@ -443,7 +470,17 @@
         <ul class="mk-done-list" data-done-list></ul>
         <div class="mk-example" data-example></div>
         <div class="mk-actions" data-done-actions></div>
-      </section>`;
+      </section>
+
+      <div class="mk-sheet" data-pin-sheet hidden role="dialog" aria-modal="true" aria-labelledby="${id}-pin-title">
+        <div class="mk-sheet-panel">
+          <div class="mk-sheet-head"><h3 class="mk-sheet-title" id="${id}-pin-title" tabindex="-1">Your Pinterest boards</h3>
+            <button type="button" class="mk-x" data-pin-close aria-label="Close">×</button></div>
+          <p class="mk-note mk-sheet-count" data-pin-count></p>
+          <div class="mk-board-grid" data-pin-grid></div>
+          <div class="mk-sheet-foot"><button class="mk-button" type="button" data-pin-done>Done</button></div>
+        </div>
+      </div>`;
 
     const $ = sel => root.querySelector(sel);
     const steps = { 1: $('[data-step="1"]'), 2: $('[data-step="2"]'), 3: $('[data-step="3"]'), done: $('[data-step="done"]') };
@@ -478,7 +515,7 @@
     });
     const resetBtn = $('[data-reset]');
     const undoBar = $('[data-undo-bar]');
-    const hasContent = () => state.pieces.some(p => p.label.trim() || p.price != null) || state.boards.length || state.photos.length || state.sizes.trim() || state.email.trim();
+    const hasContent = () => state.pieces.some(p => p.label.trim() || p.price != null) || state.boards.length || state.pin.picked.length || state.photos.length || state.sizes.trim() || state.email.trim();
     const save = () => { store.set(snapshot()); resetBtn.hidden = !hasContent(); };
     const filled = () => state.pieces.filter(p => p.label.trim());
     // Each line's mart, as the id of the piece that heads it.
@@ -739,6 +776,7 @@
       state.sizes = d.sizes; state.boards = d.boards.map(b => ({ ...b })); state.email = d.email;
       sizes.value = state.sizes; email.value = state.email; pin.value = '';
       state.parsedFor = null; state.parsed = null; state.prefetch = null; state.combine = false;
+      if (!d.pieces.length) { state.pin.picked = []; }
       rowsErr.textContent = '';
       renderRows();
       renderRefs();
@@ -899,7 +937,9 @@
       </select>`;
     }
     const pinValid = () => Boolean(normalizeBoard(pin.value));
-    const syncNext2 = () => { next2.textContent = state.photos.length || state.boards.length || pinValid() ? 'Next' : 'Skip for now'; };
+    const boardsUsed = () => state.boards.length + state.pin.picked.length;
+    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+    const syncNext2 = () => { next2.textContent = state.photos.length || boardsUsed() || pinValid() ? 'Next' : 'Skip for now'; };
     function renderPhotos() {
       const tiles = state.photos.map((p, i) => `
         <div class="mk-photo">
@@ -920,7 +960,8 @@
           ${forSelect(b.piece, `data-board-for="${i}"`, `Which mart is board ${i + 1} for?`)}
           <button type="button" class="mk-x" data-remove-board="${i}" aria-label="Remove board ${i + 1}">×</button></li>`).join('');
       boardsEl.hidden = !state.boards.length;
-      boardAdder.hidden = state.boards.length >= MAX_BOARDS;
+      boardAdder.hidden = boardsUsed() >= MAX_BOARDS;
+      renderPicked();
       syncNext2();
     }
     function renderRefs() {
@@ -928,6 +969,7 @@
       const valid = new Set(marts().map(set => set[0].id));
       state.photos.forEach(p => { if (!valid.has(p.for)) p.for = null; });
       state.boards.forEach(b => { if (!valid.has(b.piece)) b.piece = null; });
+      state.pin.picked.forEach(b => { if (!valid.has(b.piece)) b.piece = null; });
       renderPhotos();
       renderBoards();
     }
@@ -963,12 +1005,14 @@
       if (!pin.value.trim()) return true;
       const url = normalizeBoard(pin.value);
       if (!url) { err(pin, 'That doesn’t look like a Pinterest link. Paste the board’s address.'); pin.focus(); return false; }
+      if (boardsUsed() >= MAX_BOARDS) { err(pin, `That’s the limit of ${MAX_BOARDS} boards.`); return false; }
       if (!state.boards.some(b => b.url === url)) state.boards.push({ url, piece: null });
       pin.value = '';
       err(pin, '');
       save();
       renderBoards();
       track('make_board', { count: String(state.boards.length) });
+      track('board_url_pasted');
       return true;
     }
     $('[data-add-board]').addEventListener('click', () => { if (addBoardFromInput() && !boardAdder.hidden) pin.focus(); });
@@ -986,6 +1030,263 @@
       renderBoards();
       pin.focus();
     });
+    // ---- Connect Pinterest (step 2). Popup first: the form never leaves the page, so
+    // photos and lines stay put. The popup's callback page records the outcome against
+    // `state`; we poll for it (Pinterest's COOP can cut window.opener, so postMessage is
+    // only a nudge to poll sooner). Blocked popup -> full redirect, draft restored on return.
+    const pinBtn = $('[data-pin-btn]');
+    const pinMsgEl = $('[data-pin-msg]');
+    const pickedEl = $('[data-picked]');
+    const pinEditBtn = $('[data-pin-edit]');
+    const sheet = $('[data-pin-sheet]');
+    const sheetGrid = $('[data-pin-grid]');
+    const sheetCount = $('[data-pin-count]');
+    const session = {
+      get() { try { return JSON.parse(sessionStorage.getItem(PIN_KEY)) || null; } catch (_) { return null; } },
+      set(v) { try { sessionStorage.setItem(PIN_KEY, JSON.stringify(v)); } catch (_) {} },
+      clear() { try { sessionStorage.removeItem(PIN_KEY); } catch (_) {} }
+    };
+    const pinSave = (extra = {}) => session.set({
+      state: state.pin.state, username: state.pin.username, placement,
+      picked: state.pin.picked.map(b => ({ id: b.id, name: b.name, cover: b.cover })), ...extra
+    });
+    function pinMsg(text, retry = false) {
+      pinMsgEl.hidden = !text;
+      pinMsgEl.textContent = text || '';
+      if (retry) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'mk-edit'; b.textContent = 'Try again';
+        b.addEventListener('click', connectPinterest);
+        pinMsgEl.append(' ', b);
+      }
+    }
+    const httpsUrl = v => (typeof v === 'string' && /^https:\/\//.test(v) ? v : null);
+    function renderPicked() {
+      pickedEl.innerHTML = state.pin.picked.map((b, i) => `
+        <li class="mk-list-row mk-picked-row">${httpsUrl(b.cover) ? `<img class="mk-picked-cover" src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer">` : '<span class="mk-picked-cover" aria-hidden="true"></span>'}
+          <span class="mk-list-text">${esc(b.name)}</span>
+          ${forSelect(b.piece, `data-picked-for="${i}"`, `Which mart is the board ${b.name} for?`)}
+          <button type="button" class="mk-x" data-remove-picked="${i}" aria-label="Remove board ${esc(b.name)}">×</button></li>`).join('');
+      pickedEl.hidden = !state.pin.picked.length;
+      pinEditBtn.hidden = !(state.pin.state && state.pin.done === 'connected');
+      if (IN_APP) {
+        $('[data-pin-connect]').hidden = true;
+        if (!state.pin.picked.length) pinMsg('To connect Pinterest, open this page in Safari or Chrome. Or paste a board link below.');
+      } else {
+        $('[data-pin-connect]').hidden = state.pin.done === 'connected';
+      }
+    }
+    pickedEl.addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-picked]');
+      if (!btn) return;
+      state.pin.picked.splice(+btn.dataset.removePicked, 1);
+      pinSave();
+      renderBoards();
+    });
+    pickedEl.addEventListener('change', e => {
+      const sel = e.target.closest('[data-picked-for]');
+      if (sel) state.pin.picked[+sel.dataset.pickedFor].piece = sel.value || null;
+    });
+
+    let pollTimer = 0;
+    let pollUntil = 0;
+    let pinPopup = null;
+    function setWaiting(on) {
+      state.pin.waiting = on;
+      pinBtn.disabled = on;
+      pinBtn.textContent = on ? 'Waiting for Pinterest…' : 'Connect Pinterest';
+      if (!on) { clearTimeout(pollTimer); pollTimer = 0; }
+    }
+    async function connectPinterest() {
+      if (state.pin.waiting) return;
+      track('pinterest_connect_clicked', { placement });
+      if (IN_APP) { track('inapp_browser_blocked'); renderPicked(); return; }
+      pinMsg('');
+      // Open synchronously inside the tap, or iOS blocks it; point it at Pinterest after /start.
+      pinPopup = STUB ? null : window.open('', 'eura_pinterest', 'popup,width=520,height=760');
+      const mode = STUB || pinPopup ? 'popup' : 'redirect';
+      if (pinPopup) { try { pinPopup.document.title = 'Connecting Pinterest…'; pinPopup.document.body.textContent = 'Opening Pinterest…'; } catch (_) {} }
+      setWaiting(true);
+      try {
+        let data;
+        if (STUB) {
+          data = { state: `stub-${Date.now()}`, authorize_url: null };
+        } else {
+          const res = await fetch(`${PINTEREST_API}/start`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, cache: 'no-store',
+            body: JSON.stringify({ mode, return_to: placement === 'popup' ? 'popup' : 'page' })
+          });
+          if (!res.ok) throw new Error(`status_${res.status}`);
+          data = ((await res.json()) || {}).data || {};
+          const okUrl = /^https:\/\/www\.pinterest\.com\//.test(data.authorize_url || '') || (PIN_API_OVERRIDE && (data.authorize_url || '').startsWith(API_ORIGIN));
+          if (!data.state || !okUrl) throw new Error('shape');
+        }
+        state.pin = { ...state.pin, state: data.state, boards: null, done: null };
+        if (mode === 'redirect') {
+          // Popup blocked: the page itself goes to Pinterest. The draft (lines, budgets,
+          // links, email) is in localStorage; photos can't survive, so remember the count.
+          pinSave({ returning: true, photos: state.photos.length });
+          save();
+          location.assign(data.authorize_url);
+          return;
+        }
+        pinSave();
+        if (STUB) { setTimeout(() => onPinOutcome('connected'), 400); return; }
+        pinPopup.location.href = data.authorize_url;
+        pinMsg('Finish in the Pinterest window. Your form stays here.');
+        pollUntil = Date.now() + PIN_WAIT_MS;
+        pollTimer = setTimeout(pollStatus, 2000);
+      } catch (_) {
+        try { pinPopup && pinPopup.close(); } catch (_) {}
+        setWaiting(false);
+        track('pinterest_oauth_failed', { reason: 'start' });
+        pinMsg('We couldn’t reach Pinterest just now. Paste a board link below, or', true);
+      }
+    }
+    async function pollStatus() {
+      clearTimeout(pollTimer);
+      if (!state.pin.waiting || !state.pin.state) return;
+      try {
+        const res = await fetch(`${PINTEREST_API}/status`, { headers: { 'X-Pinterest-State': state.pin.state }, cache: 'no-store' });
+        if (res.status === 404) { onPinOutcome('failed'); return; }
+        const st = (((await res.json()) || {}).data || {}).status;
+        if (st && st !== 'pending') { onPinOutcome(st); return; }
+      } catch (_) {}
+      if (Date.now() < pollUntil) pollTimer = setTimeout(pollStatus, 2000);
+      else { setWaiting(false); pinMsg('Pinterest didn’t finish connecting.', true); }
+    }
+    function onPinOutcome(outcome) {
+      if (state.pin.done && state.pin.done === outcome) return;
+      setWaiting(false);
+      state.pin.done = outcome;
+      try { pinPopup && !pinPopup.closed && pinPopup.close(); } catch (_) {}
+      if (outcome === 'connected') {
+        track('pinterest_oauth_completed', { placement });
+        pinMsg('');
+        pinSave();
+        renderPicked();
+        openPicker();
+        return;
+      }
+      state.pin.state = null;
+      session.clear();
+      if (outcome === 'denied') {
+        track('pinterest_oauth_cancelled');
+        pinMsg('Pinterest wasn’t connected. That’s fine: paste a board link below, or', true);
+      } else {
+        track('pinterest_oauth_failed', { reason: outcome });
+        pinMsg('We couldn’t connect Pinterest. Paste a board link below, or', true);
+      }
+      renderPicked();
+    }
+    window.addEventListener('message', e => {
+      if (e.origin === API_ORIGIN && e.data && e.data.type === 'eura-pinterest' && state.pin.waiting) pollStatus();
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && state.pin.waiting) pollStatus(); });
+    pinBtn.addEventListener('click', connectPinterest);
+    pinEditBtn.addEventListener('click', openPicker);
+
+    // ---- The board picker
+    let sheetOpener = null;
+    const STUB_BOARDS = [
+      { id: '9001', name: 'Fall fits', pin_count: 42, privacy: 'PUBLIC', cover: null },
+      { id: '9002', name: 'Rings and chains', pin_count: 12, privacy: 'SECRET', cover: null },
+      { id: '9003', name: 'Denim', pin_count: 88, privacy: 'PUBLIC', cover: null }
+    ];
+    async function loadBoards() {
+      if (STUB) return { username: 'stub.user', boards: STUB_BOARDS };
+      const res = await fetch(`${PINTEREST_API}/boards`, { headers: { 'X-Pinterest-State': state.pin.state }, cache: 'no-store' });
+      if (res.status === 404) throw Object.assign(new Error('expired'), { expired: true });
+      if (!res.ok) throw new Error(`status_${res.status}`);
+      return ((await res.json()) || {}).data || {};
+    }
+    function sheetNote() {
+      const left = MAX_BOARDS - boardsUsed();
+      sheetCount.textContent = state.pin.picked.length
+        ? `${plural(state.pin.picked.length, 'board')} chosen. ${left ? `You can add ${left} more.` : `That’s the limit of ${MAX_BOARDS}.`}`
+        : `Choose up to ${MAX_BOARDS - state.boards.length}.`;
+    }
+    function renderSheet() {
+      const boards = state.pin.boards || [];
+      if (!boards.length) {
+        sheetGrid.innerHTML = '<p class="mk-note">No boards on this Pinterest account yet. Add photos instead, or paste a board link.</p>';
+        sheetCount.textContent = '';
+        return;
+      }
+      sheetGrid.innerHTML = boards.map(b => {
+        const on = state.pin.picked.some(x => x.id === b.id);
+        const cover = httpsUrl(b.cover);
+        return `<button type="button" class="mk-board" data-board-id="${esc(b.id)}" aria-pressed="${on}">
+          <span class="mk-board-cover">${cover ? `<img src="${esc(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<b aria-hidden="true">${esc((b.name || '·').charAt(0).toUpperCase())}</b>`}<span class="mk-board-check" aria-hidden="true">✓</span></span>
+          <span class="mk-board-name">${esc(b.name)}</span>
+          <span class="mk-board-meta mk-mono">${b.pin_count != null ? plural(b.pin_count, 'pin') : ''}${b.privacy === 'SECRET' ? ' · Secret' : ''}</span>
+        </button>`;
+      }).join('');
+      sheetNote();
+    }
+    async function openPicker() {
+      sheetOpener = document.activeElement;
+      sheet.hidden = false;
+      document.body.classList.add('mk-locked');
+      $('.mk-sheet-title').focus({ preventScroll: true });
+      if (state.pin.boards) { renderSheet(); return; }
+      sheetGrid.innerHTML = '<p class="mk-note">Loading your boards…</p>';
+      sheetCount.textContent = '';
+      try {
+        const data = await loadBoards();
+        state.pin.username = data.username || null;
+        state.pin.boards = Array.isArray(data.boards) ? data.boards : [];
+        pinSave();
+        renderSheet();
+      } catch (e) {
+        if (e.expired) {
+          closePicker();
+          state.pin = { ...state.pin, state: null, done: null, boards: null };
+          session.clear();
+          renderPicked();
+          pinMsg('Your Pinterest connection expired. Connect again, or paste a board link below.', true);
+          return;
+        }
+        sheetGrid.innerHTML = '';
+        const p = document.createElement('p');
+        p.className = 'mk-note';
+        p.textContent = 'We couldn’t load your boards. ';
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'mk-edit'; b.textContent = 'Try again';
+        b.addEventListener('click', openPicker);
+        p.append(b, ' Or close this and paste a board link.');
+        sheetGrid.append(p);
+        track('pinterest_oauth_failed', { reason: 'boards' });
+      }
+    }
+    function closePicker() {
+      if (sheet.hidden) return;
+      sheet.hidden = true;
+      if (!root.closest('dialog[open]')) document.body.classList.remove('mk-locked');
+      renderBoards();
+      (sheetOpener && sheetOpener.isConnected ? sheetOpener : pinEditBtn).focus?.();
+    }
+    sheetGrid.addEventListener('click', e => {
+      const btn = e.target.closest('[data-board-id]');
+      if (!btn) return;
+      const b = (state.pin.boards || []).find(x => x.id === btn.dataset.boardId);
+      if (!b) return;
+      const i = state.pin.picked.findIndex(x => x.id === b.id);
+      if (i >= 0) state.pin.picked.splice(i, 1);
+      else if (boardsUsed() >= MAX_BOARDS) { sheetCount.textContent = `That’s the limit of ${MAX_BOARDS} boards in total. Remove one to add another.`; return; }
+      else state.pin.picked.push({ id: b.id, name: b.name, cover: httpsUrl(b.cover), piece: null });
+      btn.setAttribute('aria-pressed', String(i < 0));
+      pinSave();
+      sheetNote();
+    });
+    $('[data-pin-done]').addEventListener('click', () => {
+      track('boards_selected', { count: String(state.pin.picked.length) });
+      closePicker();
+    });
+    $('[data-pin-close]').addEventListener('click', closePicker);
+    sheet.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePicker(); } });
+    sheet.addEventListener('click', e => { if (e.target === sheet) closePicker(); });
+
     steps[2].addEventListener('submit', e => {
       e.preventDefault();
       // A link typed but not added still counts; a bad one blocks with the error shown.
@@ -995,17 +1296,42 @@
     });
     renderRefs();
 
+    (function restorePinterest() {
+      const saved = session.get();
+      const outcome = params.get('pinterest');
+      if (!saved || saved.placement !== placement || !saved.state) {
+        if (outcome) history.replaceState(null, '', location.pathname + (placement === 'popup' ? '#make' : ''));
+        return;
+      }
+      state.pin.state = saved.state;
+      state.pin.username = saved.username || null;
+      state.pin.picked = (Array.isArray(saved.picked) ? saved.picked : []).slice(0, MAX_BOARDS)
+        .filter(b => b && /^[0-9]{1,30}$/.test(String(b.id)))
+        .map(b => ({ id: String(b.id), name: String(b.name || 'Pinterest board').slice(0, 200), cover: httpsUrl(b.cover), piece: null }));
+      if (!outcome && !saved.returning) { state.pin.done = 'connected'; renderBoards(); return; }
+      // Back from Pinterest via the redirect fallback.
+      history.replaceState(null, '', location.pathname + (placement === 'popup' ? '#make' : ''));
+      session.set({ ...saved, returning: false });
+      if (filled().length) {
+        renderRefs();
+        show(2);
+        if (saved.photos > 0) photoErr.textContent = `Your ${saved.photos === 1 ? 'photo' : `${saved.photos} photos`} didn’t come back from Pinterest. Please add ${saved.photos === 1 ? 'it' : 'them'} again.`;
+      }
+      onPinOutcome(['connected', 'denied', 'failed'].includes(outcome) ? outcome : 'failed');
+    })();
+
     // ---- Step 3: recap + sizes + email + submit
-    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
     function renderRecap() {
       const ms = marts();
       const single = ms.length < 2;
       const refCount = set => {
-        if (single) return state.photos.length + state.boards.length;
+        if (single) return state.photos.length + boardsUsed();
         const head = set[0].id;
-        return state.photos.filter(p => p.for === head).length + state.boards.filter(b => b.piece === head).length;
+        return state.photos.filter(p => p.for === head).length + state.boards.filter(b => b.piece === head).length
+          + state.pin.picked.filter(b => b.piece === head).length;
       };
-      const unassigned = single ? 0 : state.photos.filter(p => p.for === null).length + state.boards.filter(b => b.piece === null).length;
+      const unassigned = single ? 0 : state.photos.filter(p => p.for === null).length + state.boards.filter(b => b.piece === null).length
+        + state.pin.picked.filter(b => b.piece === null).length;
       $('[data-recap]').innerHTML = `
         <div class="mk-label mk-mono"><span>${single ? 'Your mart' : `${ms.length} marts`}</span><button type="button" class="mk-edit" data-edit>Edit</button></div>
         <ul class="mk-recap-list">${ms.map(set => {
@@ -1049,6 +1375,13 @@
       }))));
       if (state.sizes.trim()) body.append('sizes', state.sizes.trim());
       body.append('boards', JSON.stringify(state.boards.map(b => ({ url: b.url, piece: b.piece ? indexOf(b.piece) : null }))));
+      if (state.pin.state && state.pin.picked.length) {
+        // The API reads these boards' pins with the link, then deletes the link.
+        body.append('pinterest', JSON.stringify({
+          state: state.pin.state, username: state.pin.username,
+          boards: state.pin.picked.map(b => ({ id: b.id, name: b.name, piece: b.piece ? indexOf(b.piece) : null }))
+        }));
+      }
       state.photos.forEach((p, i) => body.append('references', p.blob, `reference-${i + 1}.jpg`));
       body.append('references_for', JSON.stringify(state.photos.map(p => (p.for ? indexOf(p.for) : null))));
       // The structured brief (kinds, facts, groups) is what gets curated from in review.
@@ -1074,8 +1407,9 @@
           if (!res.ok && res.status !== 409) throw new Error(`status_${res.status}`);
         }
         store.clear();
+        session.clear();
         const ms = marts();
-        track('make_submit', { placement, hook: hook || 'none', pieces: String(state.pieces.length), marts: String(ms.length), photos: String(state.photos.length), boards: String(state.boards.length) });
+        track('make_submit', { placement, hook: hook || 'none', pieces: String(state.pieces.length), marts: String(ms.length), photos: String(state.photos.length), boards: String(state.boards.length), picked_boards: String(state.pin.picked.length) });
         renderDone(address, ms);
         show('done');
       } catch (error) {
