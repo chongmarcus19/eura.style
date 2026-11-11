@@ -50,7 +50,8 @@
   const httpUrl = v => {
     try { const u = new URL(String(v)); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; }
   };
-  const money = n => (Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`);
+  // $1,990 / $39.90
+  const money = n => `$${n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })}`;
   const budget = max => (max == null ? 'Any price' : `Up to ${money(+max)} a piece`);
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
   const shopHost = url => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (_) { return ''; } };
