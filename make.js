@@ -1091,11 +1091,36 @@
     let pollTimer = 0;
     let pollUntil = 0;
     let pinPopup = null;
+    let pinAuthUrl = null;
+    let hintTimer = 0;
     function setWaiting(on) {
       state.pin.waiting = on;
       pinBtn.disabled = on;
       pinBtn.textContent = on ? 'Waiting for Pinterest…' : 'Connect Pinterest';
-      if (!on) { clearTimeout(pollTimer); pollTimer = 0; }
+      if (!on) { clearTimeout(pollTimer); pollTimer = 0; clearTimeout(hintTimer); }
+    }
+    // Pinterest's login often drops the access request and lands people on their feed
+    // (seen 2026-11-10). Once they're logged in, opening the same link again goes straight
+    // to "Give access", so offer exactly that, plus a way out.
+    function showWaitingHelp() {
+      if (!state.pin.waiting || !pinAuthUrl) return;
+      pinMsg('Logged in but ended up on your Pinterest feed? ');
+      const again = document.createElement('button');
+      again.type = 'button'; again.className = 'mk-edit'; again.textContent = 'Open Pinterest again';
+      again.addEventListener('click', () => {
+        // Synchronous, inside the tap: reuses the same named window (or opens one).
+        pinPopup = window.open(pinAuthUrl, 'eura_pinterest', 'popup,width=520,height=760') || pinPopup;
+        track('pinterest_reopen');
+      });
+      const cancel = document.createElement('button');
+      cancel.type = 'button'; cancel.className = 'mk-edit'; cancel.textContent = 'Cancel';
+      cancel.addEventListener('click', () => {
+        setWaiting(false);
+        try { pinPopup && !pinPopup.closed && pinPopup.close(); } catch (_) {}
+        pinMsg('');
+        track('pinterest_oauth_cancelled', { where: 'form' });
+      });
+      pinMsgEl.append(again, ' · ', cancel);
     }
     async function connectPinterest() {
       if (state.pin.waiting) return;
@@ -1133,7 +1158,10 @@
         pinSave();
         if (STUB) { setTimeout(() => onPinOutcome('connected'), 400); return; }
         pinPopup.location.href = data.authorize_url;
+        pinAuthUrl = data.authorize_url;
         pinMsg('Finish in the Pinterest window. Your form stays here.');
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(showWaitingHelp, 8000);
         pollUntil = Date.now() + PIN_WAIT_MS;
         pollTimer = setTimeout(pollStatus, 2000);
       } catch (_) {
