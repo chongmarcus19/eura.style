@@ -157,8 +157,6 @@
 
   const track = (name, data = {}) => {
     try { if (typeof window.gtag === 'function') window.gtag('event', name, data); } catch (_) {}
-    // Meta pixel isn't installed yet; this is a no-op until it is.
-    try { if (name === 'make_submit' && typeof window.fbq === 'function') window.fbq('track', 'Lead'); } catch (_) {}
   };
 
   // localStorage (not session) so a draft survives iOS discarding the tab while
@@ -1416,6 +1414,7 @@
         } else {
           const res = await fetch(ENDPOINT, { method: 'POST', body, signal: controller.signal });
           if (!res.ok && res.status !== 409) throw new Error(`status_${res.status}`);
+          try { if (res.ok && typeof window.fbq === 'function') window.fbq('track', 'Lead'); } catch (_) {}
         }
         store.clear();
         session.clear();
