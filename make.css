@@ -49,6 +49,12 @@
 .mk-rows{display:grid;gap:10px;margin-top:26px}
 .mk-row{border:1px solid var(--ink);background:var(--paper)}
 .mk-row.is-active{box-shadow:inset 3px 0 0 var(--green)}
+.mk-row-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;border:0;background:transparent;color:var(--ink);padding:16px;text-align:left;cursor:pointer;min-height:64px}
+.mk-summary-copy{display:grid;gap:5px;min-width:0}
+.mk-summary-number,.mk-summary-price{color:var(--soft);font-size:11px}
+.mk-summary-label{font-size:16px;line-height:1.4;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mk-summary-arrow{font-size:22px;color:var(--green)}
+
 .mk-row-top{display:flex;align-items:flex-start;gap:4px;padding:4px 4px 0 0}
 .mk-row-top:focus-within{outline:2px solid var(--green);outline-offset:-2px}
 .mk-row-n{flex:0 0 auto;padding:14px 0 0 14px;color:var(--soft)}
@@ -111,16 +117,18 @@
 
 /* Connect Pinterest + picked boards */
 .mk-connect{display:grid;gap:2px;margin-bottom:14px}
-.mk-connect .mk-note{margin-top:6px}
-.mk-pin-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;width:100%;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-.mk-pin-btn::before{content:'';width:10px;height:10px;border-radius:50%;background:#E60023}
+.mk-pin-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;width:100%;border:1px solid #E60023;background:#E60023;color:#fff;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.mk-pin-logo{width:24px;height:24px;flex:0 0 24px;fill:currentColor}
 .mk-pin-btn:disabled{cursor:wait;opacity:.7}
 .mk-pin-msg{font-size:14px;line-height:1.5;color:var(--soft);margin:0 0 12px}
 .mk-picked{margin-bottom:6px}
 .mk-picked-row{padding-left:6px}
 .mk-picked-cover{flex:0 0 34px;width:34px;height:34px;object-fit:cover;background:var(--line)}
 .mk-pin-edit{margin:2px 0 4px}
-.mk-paste-label{margin-top:18px}
+.mk-paste{margin-top:18px}
+.mk-paste summary{cursor:pointer;font-size:13px;color:var(--soft);padding:8px 0;text-underline-offset:3px}
+.mk-paste summary:hover{text-decoration:underline}
+.mk-paste[open] summary{margin-bottom:8px}
 .mk-sheet{position:fixed;inset:0;z-index:2147483000;background:rgba(23,22,18,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .mk-sheet[hidden]{display:none}
 .mk-sheet-panel{width:min(620px,100%);max-height:min(86svh,820px);overflow:auto;overscroll-behavior:contain;background:var(--paper);border:1px solid var(--ink);padding:20px 20px 0}
@@ -141,18 +149,10 @@
 .mk-sheet-foot{position:sticky;bottom:0;background:var(--paper);display:flex;justify-content:flex-end;padding:14px 0 18px;margin-top:14px;border-top:1px solid var(--line)}
 @media(min-width:640px){.mk-board-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.mk-sheet{align-items:flex-end;padding:0}.mk-sheet-panel{max-height:88svh;border-left:none;border-right:none;border-bottom:none}}
-@media(hover:hover){.mk-pin-btn:hover:not(:disabled){border-color:var(--green);color:var(--green)}.mk-board:hover{border-color:var(--green)}}
+@media(hover:hover){.mk-pin-btn:hover:not(:disabled){border-color:#AD001B;background:#AD001B}.mk-board:hover{border-color:var(--green)}}
 
-/* Step 3: recap */
-.mk-recap{margin-top:26px;border:1px solid var(--line);background:var(--paper);padding:14px 16px}
-.mk-recap .mk-label{margin-bottom:8px}
 .mk-edit{background:none;border:none;padding:0;cursor:pointer;color:var(--green);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
-.mk-recap-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.mk-recap-list li{display:grid;gap:2px;border-left:3px solid var(--green);padding-left:12px}
-.mk-recap-name{font-size:15px;font-weight:500}
-.mk-recap-meta{font-size:13px;color:var(--soft)}
 .mk-undo{font-size:14px;margin-top:12px;color:var(--ink)}
-.mk-recap-extra{font-size:13px;color:var(--soft);margin-top:10px}
 
 .mk-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:34px}
 .mk-button{display:inline-flex;align-items:center;justify-content:center;min-height:54px;background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:0 28px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:background .2s,border-color .2s;text-decoration:none}

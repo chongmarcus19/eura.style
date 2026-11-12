@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eura | A store that starts with you.</title>
-<meta name="description" content="Create your own personal clothing stores, each with its own rules. You could make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
+<meta name="description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
 <link rel="canonical" href="https://eura.style/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Eura | A store that starts with you.">
-<meta property="og:description" content="Create your own personal clothing stores, each with its own rules. You could make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
+<meta property="og:description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
 <meta property="og:url" content="https://eura.style/">
 <meta property="og:image" content="https://eura.style/eura-og-preview.png">
 <meta property="og:image:type" content="image/png">
@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&family=Outfit:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./make.css?v=20261110a">
+<link rel="stylesheet" href="./make.css?v=20261111c">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BVDCWB00GN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BVDCWB00GN');</script>
 <style>
@@ -95,6 +95,10 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 #product-video:focus-visible{outline:3px solid var(--gold);outline-offset:5px}
 .access{min-height:65svh;display:flex;flex-direction:column;justify-content:space-between}.site-footer{width:100%}
 
+/* Keep the TV prominent on laptops instead of shrinking it to fit the signup above the fold. */
+@media(min-width:901px) and (min-height:561px){
+ .hero{--hero-tv-fill:1}.hero .tv-wrap{width:min(100%,clamp(440px,42vw,580px));max-width:none}
+}
 @media(max-width:1100px){.wrap{width:calc(100% - 64px)}.eura-tv{padding:17px 17px 13px}}
 @media(max-width:900px){.hero-copy{max-width:740px}.hero h1 span{display:block}.hero h1 .green::before{content:none}.access-inner{grid-template-columns:1fr;gap:28px}.access h2{font-size:54px}}
 @media(max-width:600px){
@@ -145,11 +149,11 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
   </div></div>
  <div class="hero-copy">
   <h1 id="hero-title"><span>A store that</span><span class="green">starts with you.</span></h1>
-  <p class="hero-description">Create your own personal clothing stores, each with its own rules. <span class="hero-examples">You could make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.</span></p>
+  <p class="hero-description">Create your own personal clothing stores. <span class="hero-examples">Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.</span></p>
   <div class="hero-actions"><div class="hero-signup">
    <form class="access-form" id="hero-form" data-waitlist data-placement="hero" aria-label="Join the waitlist" aria-describedby="hero-status"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="Email address" maxlength="254"><button class="button" type="submit">Join the waitlist</button></form>
    <p class="access-status" id="hero-status" role="status" aria-live="polite"></p>
-   <a class="make-link" href="./make/" data-make-open="hero">Or make your first mart now <span aria-hidden="true">→</span></a>
+   <a class="make-link" href="./make/" data-make-open="hero">Or try making a mart <span aria-hidden="true">→</span></a>
   </div></div>
  </div>
 </section>
@@ -176,7 +180,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
   <div data-make-popup-root></div>
  </div>
 </dialog>
-<script src="./make.js?v=20261110b" defer></script>
-<script src="./landing.js?v=20261027-mobile-tv-scroll" defer></script>
+<script src="./make.js?v=20261111d" defer></script>
+<script src="./landing.js?v=20261111-laptop-tv" defer></script>
 </body>
 </html>

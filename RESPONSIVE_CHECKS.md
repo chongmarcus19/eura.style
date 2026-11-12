@@ -1,5 +1,11 @@
 # Responsive landing-page checks
 
+## November 11: laptop TV sizing
+
+The opening TV no longer shrinks to fit the entire signup into one viewport on screens at least 901 px wide and 561 px tall. It now scales with viewport width between 440 and 580 px; the centered opening scrolls naturally when necessary. Portrait-phone and short-landscape sizing retain their existing rules.
+
+Browser checks at 1366 × 768 measured the TV at 574 px wide, up from 361 px. Also checked 1280 × 600 (538 px), 1440 × 900 (580 px), 1920 × 1080 (580 px), 901 × 700 (440 px), 844 × 390 (293 px), and 390 × 844 (359 px). No horizontal overflow or overlap between the TV and copy was observed. Temporary viewport overrides were reset after verification.
+
 ## October 27: mobile scroll shutdown experiment
 
 Enabled the existing TV power animation across screen widths when reduced motion is not requested. Mobile and tablet widths up to 900 px close after 8 px of scrolling and reopen within 3 px of the top. Desktop retains its earlier threshold.

@@ -1,5 +1,5 @@
 /* Make-a-mart flow: lines (each its own mart + budget, with its follow-up question and any
- * combine offer inline) -> references -> recap + sizes + email -> confirmation.
+ * combine offer inline) -> references -> email -> confirmation.
  *
  * Mounts into every [data-make-root] on the page (the standalone /make/ page),
  * and wires every [data-make-open] link to a popup <dialog> when one exists
@@ -36,7 +36,6 @@
  *     brief            string, the lines joined by newlines (raw, kept for review)
  *     pieces           JSON [{label, group, max_price_usd|null, question|null, answer|null}]
  *                      one mart per distinct group
- *     sizes            string, optional
  *     boards           JSON [{url, piece: index|null}]  (null = not sure; match it in review), 0-5
  *     references       0-6 image files (JPEG, longest edge <= 1600px)
  *     references_for   JSON [index|null], aligned with the files (null = not sure)
@@ -87,13 +86,13 @@
   const STUB = params.has('stub') ? params.get('stub') !== '0' : STUB_DEFAULT;
 
   const HOOKS = {
-    italy: 'e.g. Italy in June, linen, nothing that wrinkles',
+    italy: 'e.g. Clothes for my trip to Italy',
     '90s': 'e.g. everyday outfits inspired by the 90s',
-    gym: 'e.g. gym clothes in darker colors'
+    gym: 'e.g. Clothes for the gym'
   };
-  const PLACEHOLDER = 'e.g. Italy in June, linen, nothing that wrinkles';
-  const NEXT_PLACEHOLDER = 'e.g. white sneakers';
-  const STARTERS = ['Everyday outfits', 'A trip', 'Gym clothes', 'Something for work'];
+  const PLACEHOLDER = 'e.g. Clothes from my favorite brands, on sale';
+  const NEXT_PLACEHOLDER = 'e.g. Clothes for my next trip';
+  const STARTERS = ['Brands on sale', 'Clothes for a trip', 'Vintage finds', 'Everyday clothes'];
   // Detail chips fit what the line is about. A line can match several kinds
   // ("work trip" gets both); `skip` hides a chip when the line already says it
   // (unless the chip itself put it there, so it can still be tapped off).
@@ -109,42 +108,42 @@
       { t: 'Outdoor venue', skip: /outdoor|indoor|garden|beach|barn/i, topic: /venue|outdoor|where/i },
       { t: 'Evening', skip: /evening|night|daytime|brunch/i, topic: /time|day|evening/i },
       { t: 'Shoes I can stand in', skip: /shoe|heel|comfort/i }] },
+    { kind: 'sale', test: /\b(sales?|discounts?|discounted|markdowns?)\b|on sale|%\s*off/i, details: [
+      { t: 'At least 30% off', skip: /\d+\s*%|percent|half[ -]price/i },
+      { t: 'Secondhand too', skip: /second[ -]?hand|pre[ -]?(owned|loved)|resale|used only|new only/i },
+      { t: 'No big logos', skip: /logo/i }] },
     { kind: 'trip', test: /trip|travel|vacation|holiday|honeymoon|getaway|italy|paris|europe|japan|mexico|beach/i, details: [
-      { t: 'Warm weather', skip: /warm|hot|summer|cold|winter|weather|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|spring|fall|autumn/i, topic: /weather|when|month|season/i },
-      { t: 'Dressy dinners', skip: /dinner|dressy|formal/i, topic: /doing|plan|activit/i },
-      { t: 'Lots of walking', skip: /walk/i, topic: /doing|plan|activit/i },
-      { t: 'Packs light', skip: /pack|carry-on|light/i }] },
+      { t: 'Carry-on only', skip: /carry[ -]?on|pack|luggage/i },
+      { t: 'Walking all day', skip: /walk/i, topic: /doing|plan|activit/i },
+      { t: 'Dinner out', skip: /dinner|dressy|formal/i, topic: /doing|plan|activit/i }] },
     { kind: 'work', test: /\bwork|office|job|interview|business|client|conference/i, details: [
-      { t: 'Smart casual', skip: /casual|suit|formal|dressy/i, topic: /dress|formal|casual|wear/i },
-      { t: 'Business casual', skip: /casual|suit|formal|dressy/i, topic: /dress|formal|casual|wear/i },
-      { t: 'Suits', skip: /casual|suit|formal/i, topic: /dress|formal|casual|wear/i },
-      { t: 'Nothing too stiff', skip: /stiff|relaxed/i }] },
+      { t: 'Jeans allowed', skip: /jeans|formal|suit|black tie/i, topic: /dress|formal|casual|wear/i },
+      { t: 'Machine washable', skip: /wash|dry[ -]clean/i },
+      { t: 'Comfortable shoes', skip: /shoe|heel|comfort/i, notForItem: true }] },
     { kind: 'shoes', test: SHOE_WORDS, details: [
       { t: 'Cushioned', skip: /cushion|comfort|soft/i },
       { t: 'Wide fit', skip: /wide|narrow/i },
       { t: 'For everyday', skip: /everyday|daily|casual|race|racing/i },
       { t: 'For racing', skip: /race|racing|everyday|daily|casual/i, onlyIf: /run|race|marathon|track/i },
-      { t: 'Neutral colors', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive/i }] },
+      { t: 'Secondhand too', skip: /second[ -]?hand|pre[ -]?(owned|loved)|resale|new only/i }] },
     { kind: 'item', test: CLOTHING_WORDS, details: [
-      { t: 'Neutral colors', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive/i },
-      { t: 'Minimal logos', skip: /logo/i },
-      { t: 'Classic, not trendy', skip: /classic|trendy|timeless/i },
-      { t: 'Built to last', skip: /last|durable|quality/i }] },
+      { t: 'Vintage', skip: /vintage|retro|second[ -]?hand|new only/i },
+      { t: 'More color', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive|dark|neutral/i, topic: /colou?r/i },
+      { t: 'Oversized fits', skip: /oversized|loose|fitted|slim|tight|fit\b/i, onlyIf: /jacket|coat|parka|jeans|pants|trousers|chinos|shorts|shirt|tee|polo|hoodie|sweater|cardigan|blazer|dress|skirt/i }] },
     { kind: 'gym', test: /gym|train(?!ers)|workout|lift|\brun|yoga|sport|athlet/i, details: [
       { t: 'Darker colors', skip: /dark|black|colou?r/i },
       { t: 'Loose fit', skip: /loose|fitted|tight|fit\b/i, notForItem: true },
       { t: 'For lifting', skip: /lift|run/i, notForItem: true },
       { t: 'For running', skip: /run|lift/i, notForItem: true }] },
     { kind: 'general', test: /.*/, details: [
-      { t: 'Good basics', skip: /basic|essential/i },
-      { t: 'Neutral colors', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive|dark/i, topic: /colou?r/i },
-      { t: 'Nothing too loud', skip: /loud|quiet|minimal|logo/i },
-      { t: 'Classic, not trendy', skip: /classic|trendy|timeless|90s|80s|70s|y2k|vintage|retro/i, topic: /style|look|vibe/i }] }
+      { t: 'Vintage', skip: /vintage|retro|second[ -]?hand|new only/i, topic: /style|look|vibe/i },
+      { t: 'More color', skip: /colou?r|black|white|navy|grey|gray|brown|beige|cream|olive|dark|neutral/i, topic: /colou?r/i },
+      { t: 'Oversized fits', skip: /oversized|loose|fitted|slim|tight|fit\b/i }] }
   ];
   // The parser's kind for a line, when it has one, beats the regex (it knows
   // "wedding guest in october" is an event, not a trip).
   const PARSE_KIND = { everyday: 'general' };
-  const MAX_CHIPS = 6;
+  const MAX_CHIPS = 3;
   const EXAMPLES = {
     italy: { name: 'Italy in June', items: [['italy-shirt', 'Short-sleeve linen shirt'], ['italy-pants', 'Pleated cotton trousers']] },
     '90s': { name: 'Everyday 90s', items: [['90s-jacket', 'Vintage windbreaker'], ['90s-jeans', 'Straight-leg jeans']] },
@@ -190,7 +189,10 @@
   // Interleave chips from every matching kind, drop ones the line already covers
   // and ones the line's follow-up question already asks about.
   function detailsFor(label, parsedKind = null, questionText = '') {
-    const kinds = kindsOf(label, parsedKind);
+    const matched = kindsOf(label, parsedKind);
+    // Keep mission-specific choices when a detail mentions an item (e.g. work shoes).
+    const contextual = matched.filter(k => !['general', 'item', 'shoes'].includes(k.kind));
+    const kinds = contextual.length ? contextual : matched;
     const isItem = ITEM_WORDS.test(label);
     const lists = kinds.map(k => k.details.filter(d => {
       if (hasPhrase(label, d.t)) return true;
@@ -385,7 +387,6 @@
       parsed: null,        // last parse result applied (saved with the submission)
       prefetch: null,      // {key, promise} for the parse in flight
       combine: false,      // combine lines the parser grouped into one mart
-      sizes: draft.sizes || '',
       // A reference points at a piece id (null = not sure). Drafts don't keep
       // that link: piece ids are new on every load.
       boards: Array.isArray(draft.boards) ? draft.boards.filter(b => b && b.url).slice(0, MAX_BOARDS).map(b => ({ url: b.url, piece: null })) : [],
@@ -408,19 +409,17 @@
 
       <form class="mk-step" data-step="1" novalidate>
         <h2 class="mk-title" tabindex="-1">What are you shopping for?</h2>
-        <p class="mk-sub">One line per thing. Each line becomes its own mart, with its own budget.</p>
         <div class="mk-rows" data-rows></div>
-        <button type="button" class="mk-addrow" data-add-row>+ Add another thing</button>
+        <button type="button" class="mk-addrow" data-add-row>+ Add another mart</button>
         <p class="mk-error" data-rows-err role="alert"></p>
         <div data-combine></div>
-        <p class="mk-note">Short is fine. “dark gym fits, cheap” works.</p>
         <p class="mk-undo" data-undo-bar hidden role="status">Cleared. <button type="button" class="mk-edit" data-undo>Undo</button></p>
         <div class="mk-actions"><button class="mk-back" type="button" data-reset hidden>Start over</button><button class="mk-button" type="submit" data-next1>Next</button></div>
       </form>
 
       <form class="mk-step" data-step="2" novalidate hidden>
-        <h2 class="mk-title" tabindex="-1">Show us what you mean.</h2>
-        <p class="mk-sub">Photos, screenshots, outfits you’ve saved, or public Pinterest boards. This is the fastest way to show us what you like.</p>
+        <h2 class="mk-title" tabindex="-1">Show us what you like.</h2>
+        <p class="mk-sub">Add photos or Pinterest boards.</p>
         <div class="mk-field">
           <div class="mk-label mk-mono"><span>Photos</span><span class="mk-opt">Up to ${MAX_PHOTOS}</span></div>
           <div class="mk-photos" data-photos></div>
@@ -429,31 +428,27 @@
         <div class="mk-field">
           <div class="mk-label mk-mono"><span>Pinterest boards</span><span class="mk-opt">Up to ${MAX_BOARDS}</span></div>
           <div class="mk-connect" data-pin-connect>
-            <button type="button" class="mk-pin-btn" data-pin-btn>Connect Pinterest</button>
-            <p class="mk-note">Pick boards straight from your account. We only read them.</p>
+            <button type="button" class="mk-pin-btn" data-pin-btn><svg class="mk-pin-logo" aria-hidden="true" focusable="false" fill="currentColor" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg><span data-pin-btn-label>Connect Pinterest</span></button>
           </div>
           <p class="mk-pin-msg" data-pin-msg role="status" hidden></p>
           <ul class="mk-list mk-picked" data-picked hidden></ul>
           <button type="button" class="mk-edit mk-pin-edit" data-pin-edit hidden>Edit boards</button>
-          <label class="mk-label mk-mono mk-paste-label" for="${id}-pin"><span>Or paste a public board link</span></label>
           <ul class="mk-list" data-boards></ul>
-          <div class="mk-adder" data-board-adder>
-            <input class="mk-input" id="${id}-pin" type="url" inputmode="url" autocomplete="off" placeholder="pinterest.com/yourname/board" aria-describedby="${id}-pin-err">
-            <button class="mk-add" type="button" data-add-board>Add</button>
-          </div>
-          <p class="mk-error" id="${id}-pin-err" role="alert"></p>
+          <details class="mk-paste" data-paste-board>
+            <summary>Or paste a public board link</summary>
+            <div class="mk-adder" data-board-adder>
+              <input class="mk-input" id="${id}-pin" type="url" inputmode="url" autocomplete="off" placeholder="pinterest.com/yourname/board" aria-label="Public Pinterest board link" aria-describedby="${id}-pin-err">
+              <button class="mk-add" type="button" data-add-board>Add</button>
+            </div>
+            <p class="mk-error" id="${id}-pin-err" role="alert"></p>
+          </details>
         </div>
         <div class="mk-actions"><button class="mk-back" type="button" data-back>← Back</button><button class="mk-button" type="submit" data-next2>Skip for now</button></div>
       </form>
 
       <form class="mk-step" data-step="3" novalidate hidden>
-        <h2 class="mk-title" tabindex="-1">Where should we send it?</h2>
-        <p class="mk-sub">We’ll email your first finds within 48 hours, with a link to see them. No password.</p>
-        <div class="mk-recap" data-recap></div>
-        <div class="mk-field">
-          <label class="mk-label mk-mono" for="${id}-sizes"><span>Your sizes</span><span class="mk-opt">Optional</span></label>
-          <input class="mk-input" id="${id}-sizes" type="text" maxlength="120" autocomplete="off" placeholder="e.g. M tops, 32x30 jeans, 10 shoes">
-        </div>
+        <h2 class="mk-title" tabindex="-1">Where should we send your mart?</h2>
+        <p class="mk-sub">We’ll email your mart link within 48 hours.</p>
         <div class="mk-field">
           <label class="mk-label mk-mono" for="${id}-email"><span>Email</span></label>
           <input class="mk-input" id="${id}-email" name="email" type="email" required autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" aria-describedby="${id}-email-err">
@@ -489,19 +484,18 @@
     const rowsErr = $('[data-rows-err]');
     const addRowBtn = $('[data-add-row]');
     const combineEl = $('[data-combine]');
-    const sizes = $(`#${id}-sizes`);
     const pin = $(`#${id}-pin`);
     const email = $(`#${id}-email`);
     const photosEl = $('[data-photos]');
     const photoErr = $('[data-photo-err]');
     const boardsEl = $('[data-boards]');
     const boardAdder = $('[data-board-adder]');
+    const pasteBoard = $('[data-paste-board]');
     const next1 = $('[data-next1]');
     const next2 = $('[data-next2]');
     const submitBtn = $('[data-submit]');
     const progress = $('[data-progress]');
 
-    sizes.value = state.sizes;
     email.value = state.email;
 
     const err = (input, msg) => {
@@ -511,11 +505,11 @@
     };
     const snapshot = () => ({
       pieces: state.pieces.map(p => ({ label: p.label, price: p.price, manual: p.manual, answer: p.answer, question: p.question })),
-      sizes: state.sizes, boards: state.boards, email: state.email
+      boards: state.boards, email: state.email
     });
     const resetBtn = $('[data-reset]');
     const undoBar = $('[data-undo-bar]');
-    const hasContent = () => state.pieces.some(p => p.label.trim() || p.price != null) || state.boards.length || state.pin.picked.length || state.photos.length || state.sizes.trim() || state.email.trim();
+    const hasContent = () => state.pieces.some(p => p.label.trim() || p.price != null) || state.boards.length || state.pin.picked.length || state.photos.length || state.email.trim();
     const save = () => { store.set(snapshot()); resetBtn.hidden = !hasContent(); };
     const filled = () => state.pieces.filter(p => p.label.trim());
     // Each line's mart, as the id of the piece that heads it.
@@ -598,6 +592,12 @@
       if (!el) return;
       const isActive = p.id === state.activeId;
       el.classList.toggle('is-active', isActive);
+      const opener = el.querySelector('[data-open-piece]');
+      opener.hidden = isActive;
+      opener.setAttribute('aria-expanded', String(isActive));
+      el.querySelector('[data-collapsed-label]').textContent = p.label.trim() || 'Untitled mart';
+      el.querySelector('[data-collapsed-price]').textContent = money(p.price);
+      el.querySelector('[data-piece-editor]').hidden = !isActive;
       const n = p.label.length;
       const counter = el.querySelector('[data-counter]');
       counter.hidden = n < COUNT_FROM;
@@ -612,9 +612,14 @@
       const many = state.pieces.length > 1;
       rowsEl.innerHTML = state.pieces.map((p, i) => `
         <div class="mk-row" data-piece="${p.id}">
+          <button type="button" class="mk-row-summary" data-open-piece aria-expanded="false" aria-controls="${id}-${p.id}-editor">
+            <span class="mk-summary-copy"><span class="mk-mono mk-summary-number">Mart ${i + 1}</span><span class="mk-summary-label" data-collapsed-label></span><span class="mk-summary-price" data-collapsed-price></span></span>
+            <span class="mk-summary-arrow" aria-hidden="true">⌄</span>
+          </button>
+          <div id="${id}-${p.id}-editor" data-piece-editor>
           <div class="mk-row-top">
-            ${many ? `<span class="mk-row-n mk-mono" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>` : ''}
-            <textarea class="mk-row-input" data-label rows="1" maxlength="${LABEL_MAX}" aria-label="Line ${i + 1}: what you're shopping for" placeholder="${esc(i === 0 ? (HOOKS[hook] || PLACEHOLDER) : NEXT_PLACEHOLDER)}">${esc(p.label)}</textarea>
+            ${many ? `<span class="mk-row-n mk-mono" aria-hidden="true">Mart ${i + 1}</span>` : ''}
+            <textarea class="mk-row-input" data-label rows="1" maxlength="${LABEL_MAX}" aria-label="Mart ${i + 1}: what you're shopping for" placeholder="${esc(i === 0 ? (HOOKS[hook] || PLACEHOLDER) : NEXT_PLACEHOLDER)}">${esc(p.label)}</textarea>
             ${many ? `<button type="button" class="mk-x" data-remove-piece aria-label="Remove line ${i + 1}">×</button>` : ''}
           </div>
           <div class="mk-counter mk-mono" data-counter hidden></div>
@@ -622,6 +627,7 @@
           <div class="mk-row-body">
             <div data-price-slot>${priceHTML(p, i)}</div>
             <div class="mk-row-chips" data-row-chips hidden></div>
+          </div>
           </div>
         </div>`).join('');
       state.pieces.forEach(p => { rowEl(p).querySelector('[data-q-slot]').dataset.sig = p.question ? p.question.text : ''; syncRow(p); });
@@ -638,6 +644,7 @@
       state.activeId = p.id;
       if (prev) syncRow(prev);
       syncRow(p);
+      grow(rowEl(p).querySelector('[data-label]'));
     }
     // Text is the source of truth for price too, unless the person picked one by hand.
     function priceFromText(p) {
@@ -723,11 +730,15 @@
       if (after) { setActive(after); rowEl(after).querySelector('[data-label]').focus(); }
       else addRow();
     });
-    rowsEl.addEventListener('focusin', e => setActive(pieceOf(e.target)));
+    rowsEl.addEventListener('focusin', e => { if (!e.target.closest('[data-open-piece]')) setActive(pieceOf(e.target)); });
     rowsEl.addEventListener('click', e => {
       const p = pieceOf(e.target);
       if (!p) return;
       setActive(p);
+      if (e.target.closest('[data-open-piece]')) {
+        rowEl(p).querySelector('[data-label]').focus({ preventScroll: true });
+        return;
+      }
       const priceBtn = e.target.closest('[data-price]');
       if (priceBtn) {
         p.price = priceBtn.dataset.price ? +priceBtn.dataset.price : null;
@@ -773,8 +784,8 @@
     function applyDraft(d) {
       state.pieces = d.pieces.length ? d.pieces.map(fromDraft) : [newPiece()];
       state.activeId = state.pieces[0].id;
-      state.sizes = d.sizes; state.boards = d.boards.map(b => ({ ...b })); state.email = d.email;
-      sizes.value = state.sizes; email.value = state.email; pin.value = '';
+      state.boards = d.boards.map(b => ({ ...b })); state.email = d.email;
+      email.value = state.email; pin.value = '';
       state.parsedFor = null; state.parsed = null; state.prefetch = null; state.combine = false;
       if (!d.pieces.length) { state.pin.picked = []; }
       rowsErr.textContent = '';
@@ -785,7 +796,7 @@
     resetBtn.addEventListener('click', () => {
       undoData = { ...snapshot(), photos: state.photos };
       state.photos = [];
-      applyDraft({ pieces: [], sizes: '', boards: [], email: '' });
+      applyDraft({ pieces: [], boards: [], email: '' });
       store.clear();
       resetBtn.hidden = true;
       undoBar.hidden = false;
@@ -897,9 +908,9 @@
     steps[1].addEventListener('submit', e => {
       e.preventDefault();
       const rows = filled();
-      if (!rows.length) { rowsErr.textContent = 'Tell us at least one thing you’re shopping for.'; rowEl(state.pieces[0]).querySelector('[data-label]').focus(); return; }
+      if (!rows.length) { rowsErr.textContent = 'Tell us at least one thing you’re shopping for.'; setActive(state.pieces[0]); rowEl(state.pieces[0]).querySelector('[data-label]').focus(); return; }
       const short = rows.find(p => p.label.trim().length < 3);
-      if (short) { rowsErr.textContent = 'Add a few more words to that line.'; rowEl(short).querySelector('[data-label]').focus(); return; }
+      if (short) { rowsErr.textContent = 'Add a few more words to that mart.'; setActive(short); rowEl(short).querySelector('[data-label]').focus(); return; }
       state.pieces = rows;
       state.pieces.forEach(p => {
         const trimmed = cap(p.label.trim());
@@ -920,7 +931,6 @@
     renderRows();
     renderCombine();
     resetBtn.hidden = !hasContent();
-    sizes.addEventListener('input', () => { state.sizes = sizes.value; save(); });
 
     // ---- Step 2: references, each tagged to a mart (by the id of the line heading it)
     const marts = () => martsOf();
@@ -1004,7 +1014,7 @@
     function addBoardFromInput() {
       if (!pin.value.trim()) return true;
       const url = normalizeBoard(pin.value);
-      if (!url) { err(pin, 'That doesn’t look like a Pinterest link. Paste the board’s address.'); pin.focus(); return false; }
+      if (!url) { pasteBoard.open = true; err(pin, 'That doesn’t look like a Pinterest link. Paste the board’s address.'); pin.focus(); return false; }
       if (boardsUsed() >= MAX_BOARDS) { err(pin, `That’s the limit of ${MAX_BOARDS} boards.`); return false; }
       if (!state.boards.some(b => b.url === url)) state.boards.push({ url, piece: null });
       pin.value = '';
@@ -1028,7 +1038,7 @@
       state.boards.splice(+btn.dataset.removeBoard, 1);
       save();
       renderBoards();
-      pin.focus();
+      (pasteBoard.open ? pin : pasteBoard.querySelector('summary')).focus();
     });
     // ---- Connect Pinterest (step 2). Popup first: the form never leaves the page, so
     // photos and lines stay put. The popup's callback page records the outcome against
@@ -1096,7 +1106,7 @@
     function setWaiting(on) {
       state.pin.waiting = on;
       pinBtn.disabled = on;
-      pinBtn.textContent = on ? 'Waiting for Pinterest…' : 'Connect Pinterest';
+      $('[data-pin-btn-label]').textContent = on ? 'Waiting for Pinterest…' : 'Connect Pinterest';
       if (!on) { clearTimeout(pollTimer); pollTimer = 0; clearTimeout(hintTimer); }
     }
     // Pinterest's login often drops the access request and lands people on their feed
@@ -1319,7 +1329,7 @@
       e.preventDefault();
       // A link typed but not added still counts; a bad one blocks with the error shown.
       if (!addBoardFromInput()) return;
-      renderRecap();
+      submitBtn.textContent = buildLabel();
       show(3);
     });
     renderRefs();
@@ -1348,33 +1358,7 @@
       onPinOutcome(['connected', 'denied', 'failed'].includes(outcome) ? outcome : 'failed');
     })();
 
-    // ---- Step 3: recap + sizes + email + submit
-    function renderRecap() {
-      const ms = marts();
-      const single = ms.length < 2;
-      const refCount = set => {
-        if (single) return state.photos.length + boardsUsed();
-        const head = set[0].id;
-        return state.photos.filter(p => p.for === head).length + state.boards.filter(b => b.piece === head).length
-          + state.pin.picked.filter(b => b.piece === head).length;
-      };
-      const unassigned = single ? 0 : state.photos.filter(p => p.for === null).length + state.boards.filter(b => b.piece === null).length
-        + state.pin.picked.filter(b => b.piece === null).length;
-      $('[data-recap]').innerHTML = `
-        <div class="mk-label mk-mono"><span>${single ? 'Your mart' : `${ms.length} marts`}</span><button type="button" class="mk-edit" data-edit>Edit</button></div>
-        <ul class="mk-recap-list">${ms.map(set => {
-          const meta = [set.map(p => money(p.price)).join(' · ')];
-          if (refCount(set)) meta.push(plural(refCount(set), 'reference'));
-          const answers = set.filter(p => p.answer.trim()).map(p => `“${p.answer.trim()}”`);
-          return `<li><span class="mk-recap-name">${esc(martLabel(set))}</span>
-            <span class="mk-recap-meta">${esc(meta.join(' · '))}</span>
-            ${answers.length ? `<span class="mk-recap-meta">${esc(answers.join(' · '))}</span>` : ''}</li>`;
-        }).join('')}
-        </ul>
-        ${unassigned ? `<p class="mk-recap-extra">${plural(unassigned, 'reference')} we’ll match to the right mart</p>` : ''}`;
-      $('[data-edit]').addEventListener('click', () => show(1));
-      submitBtn.textContent = buildLabel();
-    }
+    // ---- Step 3: email + submit
     const buildLabel = () => (marts().length > 1 ? `Build my ${marts().length} marts` : 'Build my mart');
     email.addEventListener('input', () => { state.email = email.value; err(email, ''); save(); });
     steps[3].addEventListener('submit', async e => {
@@ -1401,7 +1385,6 @@
         question: p.question ? p.question.text : null,
         answer: p.answer.trim() || null
       }))));
-      if (state.sizes.trim()) body.append('sizes', state.sizes.trim());
       body.append('boards', JSON.stringify(state.boards.map(b => ({ url: b.url, piece: b.piece ? indexOf(b.piece) : null }))));
       if (state.pin.state && state.pin.picked.length) {
         // The API reads these boards' pins with the link, then deletes the link.
