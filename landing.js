@@ -14,8 +14,8 @@
   function fitOpeningToViewport() {
     fitFrame = 0;
     const style = getComputedStyle(hero);
-    // Landscape uses separate columns; portrait phones and laptop layouts give
-    // the TV a prominent width and let the copy scroll naturally below it.
+    // Landscape uses separate columns; portrait phones use the available width.
+    // Other stacked layouts fit the TV around the measured copy and signup.
     if (style.display !== 'flex' || style.getPropertyValue('--hero-tv-fill').trim() === '1') {
       hero.style.removeProperty('--hero-tv-fit');
       return;

@@ -99,9 +99,13 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 #product-video:focus-visible{outline:3px solid var(--gold);outline-offset:5px}
 .access{min-height:65svh;display:flex;flex-direction:column;justify-content:space-between}.site-footer{width:100%}
 
-/* Keep the TV prominent on laptops instead of shrinking it to fit the signup above the fold. */
+/* Fit the complete opening on laptops, using tighter spacing before scaling the TV. */
 @media(min-width:901px) and (min-height:561px){
- .hero{--hero-tv-fill:1}.hero .tv-wrap{width:min(100%,clamp(440px,42vw,580px));max-width:none}
+ .hero{gap:clamp(12px,2svh,20px);padding-block:clamp(12px,2svh,24px)}
+ .hero .tv-wrap{max-width:580px}
+ .hero h1{font-size:clamp(36px,min(4.5vw,6svh),54px)}
+ .hero-description{margin-top:12px}
+ .hero-actions{margin-top:16px}
 }
 @media(max-width:1100px){.wrap{width:calc(100% - 64px)}.eura-tv{padding:17px 17px 13px}}
 @media(max-width:900px){.hero-copy{max-width:740px}.hero h1 span{display:block}.hero h1 .green::before{content:none}.access-inner{grid-template-columns:1fr;gap:28px}.access h2{font-size:54px}}
@@ -185,6 +189,6 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
  </div>
 </dialog>
 <script src="./make.js?v=20261111f" defer></script>
-<script src="./landing.js?v=20261111-horizontal-static" defer></script>
+<script src="./landing.js?v=20261112-laptop-fit" defer></script>
 </body>
 </html>

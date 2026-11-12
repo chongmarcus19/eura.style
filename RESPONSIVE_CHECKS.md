@@ -1,5 +1,11 @@
 # Responsive landing-page checks
 
+## November 12: restore the complete opening within the laptop viewport
+
+Supersedes the November 11 laptop sizing experiment below. Restored measured TV height fitting on laptops and tightened heading sizing, spacing, and padding so the signup and secondary Mart link remain visible with the TV and copy. Portrait-phone and short-landscape rules remain unchanged.
+
+Verified settled browser layouts at 1440 × 780, 1366 × 680, 1280 × 700, 1280 × 600, 1512 × 850, and 901 × 650. In every laptop case, the bottom of the hero copy (including both calls to action) fit inside the viewport, without horizontal overflow or TV/copy overlap. TV widths were respectively 454, 345, 367, 258, 530, and 310 px. Also checked 390 × 844 portrait: the opening fit without overlap or horizontal overflow. Temporary viewport overrides were reset.
+
 ## November 11: laptop TV sizing
 
 The opening TV no longer shrinks to fit the entire signup into one viewport on screens at least 901 px wide and 561 px tall. It now scales with viewport width between 440 and 580 px; the centered opening scrolls naturally when necessary. Portrait-phone and short-landscape sizing retain their existing rules.
