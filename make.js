@@ -407,6 +407,7 @@
 
       <form class="mk-step" data-step="1" novalidate>
         <h2 class="mk-title" tabindex="-1">What are you shopping for?</h2>
+        <p class="mk-sub">Tell us what you’re looking for. We’ll build your personal mart and email your first finds within 48 hours.</p>
         <div class="mk-rows" data-rows></div>
         <button type="button" class="mk-addrow" data-add-row>+ Add another mart</button>
         <p class="mk-error" data-rows-err role="alert"></p>
