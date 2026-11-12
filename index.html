@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eura | A store that starts with you.</title>
-<meta name="description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
+<meta name="description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what you see.">
 <link rel="canonical" href="https://eura.style/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Eura | A store that starts with you.">
-<meta property="og:description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.">
+<meta property="og:description" content="Create your own personal clothing stores. Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what you see.">
 <meta property="og:url" content="https://eura.style/">
 <meta property="og:image" content="https://eura.style/eura-og-preview.png">
 <meta property="og:image:type" content="image/png">
@@ -45,9 +45,12 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 .button:hover{background:var(--green);border-color:var(--green);color:var(--paper)}
 .text-link{display:inline-flex;gap:10px;align-items:center;font-size:14px;min-height:44px}.text-link span{color:var(--green)}
 @keyframes staticshift{0%{background-position:0 0}25%{background-position:9px -13px}50%{background-position:-7px 8px}75%{background-position:13px 4px}100%{background-position:-4px -9px}}
-.crt-pointer-field{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;display:none;transition:opacity .12s linear}
-.crt-pointer-noise{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.52) 0 1px,rgba(0,0,0,.62) 1px 3px),repeating-linear-gradient(90deg,transparent 0 4px,color-mix(in srgb,var(--ph,#44DD66) 48%,transparent) 4px 5px),linear-gradient(90deg,transparent 0 44%,color-mix(in srgb,var(--ph,#44DD66) 34%,transparent) 48% 52%,transparent 56%);-webkit-mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mask-image:radial-gradient(circle 112px at var(--crt-x,50%) var(--crt-y,50%),#000 0%,rgba(0,0,0,.92) 42%,transparent 100%);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
-.crt-pointer-dot{position:absolute;left:var(--crt-x,50%);top:var(--crt-y,50%);width:9px;height:9px;border:1px solid color-mix(in srgb,var(--ph,#44DD66) 90%,white);border-radius:1px;background:color-mix(in srgb,var(--ph,#44DD66) 82%,transparent);box-shadow:0 0 8px var(--ph,#44DD66),0 0 20px color-mix(in srgb,var(--ph,#44DD66) 72%,transparent);transform:translate(-50%,-50%)}
+.crt-pointer-field{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;display:none;transition:opacity .18s ease-out}
+.crt-pointer-noise{position:absolute;left:0;right:0;top:var(--crt-y,50%);height:56px;transform:translateY(-50%);background:repeating-linear-gradient(0deg,rgba(255,255,255,.8) 0 1px,rgba(0,0,0,.7) 1px 3px),repeating-linear-gradient(90deg,transparent 0 3px,rgba(255,255,255,.4) 3px 4px);-webkit-mask-image:linear-gradient(transparent,#000 35% 65%,transparent);mask-image:linear-gradient(transparent,#000 35% 65%,transparent);mix-blend-mode:screen;animation:staticshift .08s steps(2) infinite}
+.crt-pointer-field::after{content:'';position:absolute;left:-4%;width:108%;top:var(--crt-y,50%);height:20px;transform:translateY(-50%);background:linear-gradient(0deg,transparent,rgba(255,255,255,.15) 35%,rgba(255,255,255,.65) 48%,rgba(0,0,0,.8) 53%,transparent 80%);mix-blend-mode:screen;animation:crt-tracking .23s steps(2) infinite}
+@keyframes crt-tracking{0%,100%{translate:-6px -2px}35%{translate:8px 3px}70%{translate:-3px 1px}}
+@keyframes crt-picture-jitter{0%,100%{transform:none}18%{transform:translateX(3px) skewX(.3deg)}36%{transform:translateX(-2px)}55%{transform:translateX(1px)}75%{transform:none}}
+.opening-screen.is-interfering video{animation:crt-picture-jitter .22s steps(1) both}
 @media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.crt-pointer-field{display:block}}
 .is-off .crt-pointer-field{visibility:hidden}
 .tv-wrap{width:100%;max-width:620px;justify-self:center}
@@ -139,7 +142,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
     <div class="tv-wordmark" aria-hidden="true">EURA</div>
     <div class="screen-off" aria-hidden="true"></div>
     <div class="tv-static" aria-hidden="true"></div><div class="tv-power-line" aria-hidden="true"></div>
-    <div class="crt-pointer-field" aria-hidden="true"><div class="crt-pointer-noise"></div><div class="crt-pointer-dot"></div></div>
+    <div class="crt-pointer-field" aria-hidden="true"><div class="crt-pointer-noise"></div></div>
    </div>
    <div class="tv-controls">
     <button class="power-button" type="button" data-power aria-label="Play opening clip" aria-pressed="false" title="Play opening clip"><span class="power-light" aria-hidden="true"></span></button>
@@ -148,8 +151,8 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
    <div class="tv-grille" aria-hidden="true"></div>
   </div></div>
  <div class="hero-copy">
-  <h1 id="hero-title"><span>A store that</span><span class="green">starts with you.</span></h1>
-  <p class="hero-description">Create your own personal clothing stores. <span class="hero-examples">Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what belongs in each.</span></p>
+  <h1 id="hero-title"><span>A store that</span><span class="green">starts with you</span></h1>
+  <p class="hero-description">Create your own personal clothing stores. <span class="hero-examples">Make one for discounted running clothes from your favorite brands, or build another around your Pinterest board with nothing over $60. Have complete control over what you see.</span></p>
   <div class="hero-actions"><div class="hero-signup">
    <form class="access-form" id="hero-form" data-waitlist data-placement="hero" aria-label="Join the waitlist" aria-describedby="hero-status"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="Email address" maxlength="254"><button class="button" type="submit">Join the waitlist</button></form>
    <p class="access-status" id="hero-status" role="status" aria-live="polite"></p>
@@ -164,7 +167,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
 </section>
 <section class="access wrap" data-beat="waitlist" id="access" aria-labelledby="access-title">
  <div class="access-inner">
-  <h2 id="access-title">A store on your terms.</h2>
+  <h2 id="access-title">A store on your terms</h2>
   <div>
    <form class="access-form" id="access-form" data-waitlist data-placement="footer" aria-label="Join the waitlist" aria-describedby="access-status"><input type="email" name="email" required autocomplete="email" inputmode="email" aria-label="Email address" placeholder="Email address" maxlength="254"><button class="button" type="submit">Join the waitlist</button></form>
    <p class="access-status" id="access-status" role="status" aria-live="polite"></p>
@@ -180,7 +183,7 @@ h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Syne,sans-serif;font-weight:700;letter-
   <div data-make-popup-root></div>
  </div>
 </dialog>
-<script src="./make.js?v=20261111d" defer></script>
-<script src="./landing.js?v=20261111-laptop-tv" defer></script>
+<script src="./make.js?v=20261111e" defer></script>
+<script src="./landing.js?v=20261111-horizontal-static" defer></script>
 </body>
 </html>

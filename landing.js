@@ -191,6 +191,7 @@
     clearTimeout(pointerFade);
     previousPoint = null;
     pointerFx.style.opacity = '0';
+    screen.classList.remove('is-interfering');
   };
   const movePointer = e => {
     if (!pointerEnabled.matches || screen.closest('.is-off')) return clearPointer();
@@ -199,12 +200,15 @@
     const y = Math.max(0, Math.min(screen.clientHeight, (e.clientY - r.top) / (r.height / screen.offsetHeight) - screen.clientTop));
     const now = performance.now();
     const speed = previousPoint ? Math.hypot(x - previousPoint.x, y - previousPoint.y) / Math.max(16, now - previousPoint.t) : 0;
-    pointerFx.style.setProperty('--crt-x', `${x}px`);
     pointerFx.style.setProperty('--crt-y', `${y}px`);
-    pointerFx.style.opacity = String(Math.min(.62, .3 + speed * .18));
+    pointerFx.style.opacity = String(Math.min(.95, .58 + speed * .24));
+    screen.classList.add('is-interfering');
     previousPoint = { x, y, t: now };
     clearTimeout(pointerFade);
-    pointerFade = setTimeout(() => { pointerFx.style.opacity = '.3'; }, 90);
+    pointerFade = setTimeout(() => {
+      pointerFx.style.opacity = '0';
+      screen.classList.remove('is-interfering');
+    }, 220);
   };
   screen.addEventListener('pointerenter', movePointer);
   screen.addEventListener('pointermove', movePointer);

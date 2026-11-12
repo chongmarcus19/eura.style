@@ -418,7 +418,7 @@
       </form>
 
       <form class="mk-step" data-step="2" novalidate hidden>
-        <h2 class="mk-title" tabindex="-1">Show us what you like.</h2>
+        <h2 class="mk-title" tabindex="-1">Show us what you like</h2>
         <p class="mk-sub">Add photos or Pinterest boards.</p>
         <div class="mk-field">
           <div class="mk-label mk-mono"><span>Photos</span><span class="mk-opt">Up to ${MAX_PHOTOS}</span></div>
