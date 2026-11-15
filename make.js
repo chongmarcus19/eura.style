@@ -90,7 +90,13 @@
     '90s': 'e.g. everyday outfits inspired by the 90s',
     gym: 'e.g. Clothes for the gym'
   };
-  const PLACEHOLDER = 'e.g. Clothes from my favorite brands, on sale';
+  const EXAMPLE_REQUESTS = [
+    'Nike and Adidas running shorts on sale, 5-inch inseam',
+    'Vintage Levi’s jeans, relaxed fit, no distressing',
+    'Patagonia and The North Face fleeces in earth tones',
+    'Reformation dresses for a summer wedding, floral or solid colors'
+  ];
+  const PLACEHOLDER = `e.g. ${EXAMPLE_REQUESTS[0]}`;
   const NEXT_PLACEHOLDER = 'e.g. Clothes for my next trip';
   const STARTERS = ['Brands on sale', 'Clothes for a trip', 'Vintage finds', 'Everyday clothes'];
   // Detail chips fit what the line is about. A line can match several kinds
@@ -364,12 +370,13 @@
     // `group` is the id of the piece whose mart this line joins when combined;
     // `line` is this line's parse result (kind, facts), for the label it was parsed from.
     const newPiece = (label = '', price = null, manual = false) => {
-      const p = { id: `p${nextId++}`, label, price, manual, question: null, answer: '', line: null, parsedLabel: null };
+      const p = { id: `p${nextId++}`, label, price, manual, category: '', question: null, answer: '', line: null, parsedLabel: null };
       p.group = p.id;
       return p;
     };
     const fromDraft = d => {
       const p = newPiece(String(d.label || '').slice(0, LABEL_MAX), Number.isFinite(d.price) ? d.price : null, Boolean(d.manual));
+      p.category = ['women', 'men', 'both'].includes(d.category) ? d.category : '';
       const q = d.question;
       if (q && typeof q.text === 'string') p.question = { text: q.text.slice(0, 140), placeholder: String(q.placeholder || '').slice(0, 140) };
       p.answer = p.question ? String(d.answer || '').slice(0, 160) : '';
@@ -409,7 +416,8 @@
         <h2 class="mk-title" tabindex="-1">What are you shopping for?</h2>
         <p class="mk-sub">Tell us what you’re looking for. We’ll build your personal mart and email your first finds within 48 hours.</p>
         <div class="mk-rows" data-rows></div>
-        <button type="button" class="mk-addrow" data-add-row>+ Add another mart</button>
+        <p class="mk-undo" data-remove-undo-bar hidden role="status">Mart removed. <button type="button" class="mk-edit" data-remove-undo>Undo</button></p>
+        <button type="button" class="mk-addrow" data-add-row>+ Add a separate mart</button>
         <p class="mk-error" data-rows-err role="alert"></p>
         <div data-combine></div>
         <p class="mk-undo" data-undo-bar hidden role="status">Cleared. <button type="button" class="mk-edit" data-undo>Undo</button></p>
@@ -503,7 +511,7 @@
       input.setAttribute('aria-invalid', msg ? 'true' : 'false');
     };
     const snapshot = () => ({
-      pieces: state.pieces.map(p => ({ label: p.label, price: p.price, manual: p.manual, answer: p.answer, question: p.question })),
+      pieces: state.pieces.map(p => ({ label: p.label, price: p.price, manual: p.manual, category: p.category, answer: p.answer, question: p.question })),
       boards: state.boards, email: state.email
     });
     const resetBtn = $('[data-reset]');
@@ -592,8 +600,10 @@
       const isActive = p.id === state.activeId;
       el.classList.toggle('is-active', isActive);
       const opener = el.querySelector('[data-open-piece]');
-      opener.hidden = isActive;
+      opener.hidden = state.pieces.length < 2;
       opener.setAttribute('aria-expanded', String(isActive));
+      el.querySelector('.mk-summary-arrow').textContent = isActive ? '⌃' : '⌄';
+      el.querySelector('[data-summary-details]').hidden = isActive;
       el.querySelector('[data-collapsed-label]').textContent = p.label.trim() || 'Untitled mart';
       el.querySelector('[data-collapsed-price]').textContent = money(p.price);
       el.querySelector('[data-piece-editor]').hidden = !isActive;
@@ -612,20 +622,20 @@
       rowsEl.innerHTML = state.pieces.map((p, i) => `
         <div class="mk-row" data-piece="${p.id}">
           <button type="button" class="mk-row-summary" data-open-piece aria-expanded="false" aria-controls="${id}-${p.id}-editor">
-            <span class="mk-summary-copy"><span class="mk-mono mk-summary-number">Mart ${i + 1}</span><span class="mk-summary-label" data-collapsed-label></span><span class="mk-summary-price" data-collapsed-price></span></span>
+            <span class="mk-summary-copy"><span class="mk-mono mk-summary-number">Mart ${i + 1}</span><span data-summary-details><span class="mk-summary-label" data-collapsed-label></span><span class="mk-summary-price" data-collapsed-price></span></span></span>
             <span class="mk-summary-arrow" aria-hidden="true">⌄</span>
           </button>
           <div id="${id}-${p.id}-editor" data-piece-editor>
           <div class="mk-row-top">
-            ${many ? `<span class="mk-row-n mk-mono" aria-hidden="true">Mart ${i + 1}</span>` : ''}
-            <textarea class="mk-row-input" data-label rows="1" maxlength="${LABEL_MAX}" aria-label="Mart ${i + 1}: what you're shopping for" placeholder="${esc(i === 0 ? (HOOKS[hook] || PLACEHOLDER) : NEXT_PLACEHOLDER)}">${esc(p.label)}</textarea>
-            ${many ? `<button type="button" class="mk-x" data-remove-piece aria-label="Remove line ${i + 1}">×</button>` : ''}
+            <label class="mk-description"><span class="mk-label mk-mono">Describe your mart</span><textarea class="mk-row-input" data-label rows="1" maxlength="${LABEL_MAX}" placeholder="${esc(i === 0 ? (HOOKS[hook] || PLACEHOLDER) : NEXT_PLACEHOLDER)}">${esc(p.label)}</textarea></label>
           </div>
           <div class="mk-counter mk-mono" data-counter hidden></div>
           <div class="mk-row-q" data-q-slot>${questionHTML(p)}</div>
           <div class="mk-row-body">
+            <div class="mk-category"><div class="mk-label mk-mono mk-price-label">Shop</div><div class="mk-categories" role="radiogroup" aria-label="Clothing to shop">${[['women', 'Women’s'], ['men', 'Men’s'], ['both', 'Both']].map(([value, label]) => `<button type="button" class="mk-seg" role="radio" data-category="${value}" aria-checked="${p.category === value}">${label}</button>`).join('')}</div></div>
             <div data-price-slot>${priceHTML(p, i)}</div>
             <div class="mk-row-chips" data-row-chips hidden></div>
+            ${many ? `<button type="button" class="mk-remove-mart" data-remove-piece>Remove Mart</button>` : ''}
           </div>
           </div>
         </div>`).join('');
@@ -690,25 +700,6 @@
       }
       if (!e.target.matches('[data-label]')) return;
       const p = pieceOf(e.target);
-      // Pasting a multi-line list splits it into lines.
-      if (e.target.value.includes('\n')) {
-        const [first, ...rest] = e.target.value.split(/\n+/).map(s => s.trim()).filter(Boolean);
-        p.label = (first || '').slice(0, LABEL_MAX);
-        priceFromText(p);
-        let lastId = p.id;
-        let at = state.pieces.indexOf(p) + 1;
-        rest.forEach(label => {
-          if (state.pieces.length >= MAX_PIECES) return;
-          const n = newPiece(label.slice(0, LABEL_MAX));
-          n.price = priceInText(n.label);
-          state.pieces.splice(at++, 0, n);
-          lastId = n.id;
-        });
-        state.activeId = lastId;
-        renderRows(lastId);
-        save();
-        return;
-      }
       p.label = e.target.value;
       grow(e.target);
       rowsErr.textContent = '';
@@ -720,22 +711,29 @@
     });
     rowsEl.addEventListener('keydown', e => {
       if (e.key === 'Enter' && e.target.matches('[data-custom], [data-answer]')) { e.preventDefault(); e.target.blur(); return; }
-      // Enter in a line = next line, like a list.
-      if (e.key !== 'Enter' || !e.target.matches('[data-label]') || e.shiftKey) return;
-      e.preventDefault();
-      const p = pieceOf(e.target);
-      if (!p.label.trim()) return;
-      const after = state.pieces[state.pieces.indexOf(p) + 1];
-      if (after) { setActive(after); rowEl(after).querySelector('[data-label]').focus(); }
-      else addRow();
     });
     rowsEl.addEventListener('focusin', e => { if (!e.target.closest('[data-open-piece]')) setActive(pieceOf(e.target)); });
+    let removedPiece = null;
+    let removeTimer = 0;
+    const removeUndoBar = $('[data-remove-undo-bar]');
     rowsEl.addEventListener('click', e => {
       const p = pieceOf(e.target);
       if (!p) return;
-      setActive(p);
       if (e.target.closest('[data-open-piece]')) {
-        rowEl(p).querySelector('[data-label]').focus({ preventScroll: true });
+        if (p.id === state.activeId) {
+          state.activeId = null;
+          syncRow(p);
+        } else {
+          setActive(p);
+        }
+        return;
+      }
+      setActive(p);
+      const category = e.target.closest('[data-category]');
+      if (category) {
+        p.category = category.dataset.category;
+        category.parentElement.querySelectorAll('[data-category]').forEach(button => button.setAttribute('aria-checked', String(button === category)));
+        save();
         return;
       }
       const priceBtn = e.target.closest('[data-price]');
@@ -765,6 +763,10 @@
       }
       if (e.target.closest('[data-remove-piece]')) {
         const i = state.pieces.indexOf(p);
+        removedPiece = { piece: p, index: i };
+        clearTimeout(removeTimer);
+        removeUndoBar.hidden = false;
+        removeTimer = setTimeout(() => { removedPiece = null; removeUndoBar.hidden = true; }, 8000);
         state.pieces.splice(i, 1);
         const focus = state.pieces[Math.max(0, i - 1)];
         state.activeId = focus.id;
@@ -774,7 +776,26 @@
         track('make_piece_remove');
       }
     });
-    addRowBtn.addEventListener('click', () => { addRow(); track('make_piece_add'); });
+    $('[data-remove-undo]').addEventListener('click', () => {
+      if (!removedPiece || state.pieces.length >= MAX_PIECES) return;
+      clearTimeout(removeTimer);
+      state.pieces.splice(Math.min(removedPiece.index, state.pieces.length), 0, removedPiece.piece);
+      state.activeId = removedPiece.piece.id;
+      removedPiece = null;
+      removeUndoBar.hidden = true;
+      renderRows();
+      save();
+      rowEl(state.pieces.find(p => p.id === state.activeId)).querySelector('[data-open-piece]').focus();
+    });
+    addRowBtn.addEventListener('click', () => {
+      addRow();
+      if (state.pieces.length >= MAX_PIECES) {
+        clearTimeout(removeTimer);
+        removedPiece = null;
+        removeUndoBar.hidden = true;
+      }
+      track('make_piece_add');
+    });
 
     // Start over: drafts are saved for a week, so returning visitors (or the next
     // person on a shared device) need a way out. Undo covers a mis-tap.
@@ -793,6 +814,9 @@
       save();
     }
     resetBtn.addEventListener('click', () => {
+      clearTimeout(removeTimer);
+      removedPiece = null;
+      removeUndoBar.hidden = true;
       undoData = { ...snapshot(), photos: state.photos };
       state.photos = [];
       applyDraft({ pieces: [], boards: [], email: '' });
@@ -910,6 +934,9 @@
       if (!rows.length) { rowsErr.textContent = 'Tell us at least one thing you’re shopping for.'; setActive(state.pieces[0]); rowEl(state.pieces[0]).querySelector('[data-label]').focus(); return; }
       const short = rows.find(p => p.label.trim().length < 3);
       if (short) { rowsErr.textContent = 'Add a few more words to that mart.'; setActive(short); rowEl(short).querySelector('[data-label]').focus(); return; }
+      clearTimeout(removeTimer);
+      removedPiece = null;
+      removeUndoBar.hidden = true;
       state.pieces = rows;
       state.pieces.forEach(p => {
         const trimmed = cap(p.label.trim());
@@ -929,6 +956,22 @@
     });
     renderRows();
     renderCombine();
+    // Stop rotating as soon as the shopper adds a request.
+    let exampleIndex = 0;
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.setInterval(() => {
+        const input = rowsEl.querySelector('[data-label]');
+        if (!input || input.value || document.hidden || state.step !== 1) return;
+        input.classList.add('is-changing-example');
+        window.setTimeout(() => {
+          if (input.isConnected && !input.value && !document.hidden && state.step === 1) {
+            exampleIndex = (exampleIndex + 1) % EXAMPLE_REQUESTS.length;
+            input.placeholder = `e.g. ${EXAMPLE_REQUESTS[exampleIndex]}`;
+          }
+          input.classList.remove('is-changing-example');
+        }, 350);
+      }, 4000);
+    }
     resetBtn.hidden = !hasContent();
 
     // ---- Step 2: references, each tagged to a mart (by the id of the line heading it)
@@ -1381,6 +1424,7 @@
       body.append('brief', labels.join('\n'));
       body.append('pieces', JSON.stringify(state.pieces.map((p, i) => ({
         label: p.label, group: indexOf(groups[i]) ?? i, max_price_usd: p.price,
+        clothing_category: p.category || null,
         question: p.question ? p.question.text : null,
         answer: p.answer.trim() || null
       }))));
