@@ -109,17 +109,11 @@
     document.title = `${mart.name} | Eura`;
     const items = Array.isArray(mart.items) ? mart.items : [];
     const lines = Array.isArray(mart.lines) ? mart.lines : [];
-    const meta = [plural(items.length, 'find')];
-    if (lines.length === 1) meta.push(budget(lines[0].max_price_usd));
-    if (mart.delivered_at) {
-      const d = new Date(mart.delivered_at);
-      if (!Number.isNaN(+d)) meta.push(`Picked ${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`);
-    }
+
 
     const body = [
-      h('p', { class: 'eyebrow' }, 'Your mart · first finds'),
-      h('h1', { class: 'title' }, mart.name),
-      h('div', { class: 'meta' }, meta.map(m => h('span', { class: 'pill' }, m)))
+      h('div', { class: 'mart-intro' },
+        h('h1', { class: 'title' }, mart.name))
     ];
 
     // One section per line when the mart holds several (each keeps its own budget).
@@ -143,11 +137,75 @@
         items.length ? h('ul', { class: 'grid' }, items.map(card)) : h('p', { class: 'empty' }, 'No finds here right now.')));
     }
 
-    body.push(h('div', { class: 'next' },
-      h('p', { class: 'next-h' }, 'Not quite right?'),
-      h('p', { class: 'soft' }, 'Reply to the email with what to change, like “less formal” or “nothing over $60”, and the next batch will follow it.')));
+    {
+      body.push(h('section', { class: 'mart-actions', 'aria-label': 'Feedback and updates' },
+        h('form', { class: 'action-panel', id: 'feedback-form' },
+          h('h2', { class: 'action-title' }, 'Any feedback?'),
+          h('p', { class: 'action-copy' }, 'Tell us what you like or want to change in your mart.'),
+          h('label', { class: 'sr-only', for: 'feedback' }, 'Any feedback?'),
+          h('textarea', { id: 'feedback', class: 'feedback-input', rows: '3', maxlength: '1000', placeholder: 'e.g. More like the second pair, less sporty' }),
+          h('button', { class: 'action-button', type: 'submit' }, 'Send feedback'),
+          h('p', { class: 'action-status', id: 'feedback-status', role: 'status' })),
+        h('div', { class: 'action-panel updates-panel' },
+          h('h2', { class: 'action-title' }, 'Keep this mart updated'),
+          h('p', { class: 'action-copy' }, 'We’ll keep looking for new finds for this mart and email you as it updates.'),
+          h('button', { class: 'action-button action-button-outline', id: 'updates-toggle', type: 'button', 'aria-pressed': String(Boolean(mart.updates_enabled)) }, mart.updates_enabled ? '✓ Updates on' : 'Keep me updated'),
+          h('p', { class: 'action-status', id: 'updates-status', role: 'status' }))));
+    }
 
     main.replaceChildren(...body);
+    {
+      const feedback = main.querySelector('#feedback');
+      const examples = [
+        'More like the second pair, less sporty',
+        'I love the first pair. Show me more like those',
+        'Show me darker colors and fewer logos',
+        'Keep everything under $100'
+      ];
+      let exampleIndex = 0;
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.setInterval(() => {
+          if (!feedback.isConnected || feedback.value || document.hidden) return;
+          feedback.classList.add('is-changing-example');
+          window.setTimeout(() => {
+            if (feedback.isConnected && !feedback.value && !document.hidden) {
+              exampleIndex = (exampleIndex + 1) % examples.length;
+              feedback.placeholder = `e.g. ${examples[exampleIndex]}`;
+            }
+            feedback.classList.remove('is-changing-example');
+          }, 350);
+        }, 4000);
+      }
+      main.querySelector('#feedback-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const message = feedback.value.trim();
+        const status = main.querySelector('#feedback-status');
+        if (!message) { status.textContent = 'Add a note first.'; return; }
+        const button = event.currentTarget.querySelector('button');
+        button.disabled = true;
+        try {
+          const res = await fetch(`${API}/marts/${encodeURIComponent(id)}/feedback`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Mart-Token': token }, body: JSON.stringify({ message }) });
+          if (!res.ok) throw new Error('feedback');
+          feedback.value = '';
+          status.textContent = 'Thanks. Your feedback was sent.';
+        } catch (_) { status.textContent = 'Could not send feedback. Please try again.'; }
+        finally { button.disabled = false; }
+      });
+      const toggle = main.querySelector('#updates-toggle');
+      toggle.addEventListener('click', async () => {
+        const active = toggle.getAttribute('aria-pressed') !== 'true';
+        toggle.disabled = true;
+        const status = main.querySelector('#updates-status');
+        try {
+          const res = await fetch(`${API}/marts/${encodeURIComponent(id)}/updates`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Mart-Token': token }, body: JSON.stringify({ enabled: active }) });
+          if (!res.ok) throw new Error('updates');
+          toggle.setAttribute('aria-pressed', String(active));
+          toggle.textContent = active ? '✓ Updates on' : 'Keep me updated';
+          status.textContent = active ? 'Updates are on.' : 'Updates are off.';
+        } catch (_) { status.textContent = 'Could not save your choice. Please try again.'; }
+        finally { toggle.disabled = false; }
+      });
+    }
     main.querySelector('.title').setAttribute('tabindex', '-1');
     track('mart_view', { finds: String(items.length) });
   }
