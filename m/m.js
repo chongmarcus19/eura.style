@@ -22,11 +22,26 @@
   const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   const main = document.getElementById('main');
+  const INTERNAL_KEY = 'eura-internal-activity';
+  const internalControl = params.get('internal');
+  if (!params.has('id') && (internalControl === '1' || internalControl === '0')) {
+    try {
+      if (internalControl === '1') localStorage.setItem(INTERNAL_KEY, '1');
+      else localStorage.removeItem(INTERNAL_KEY);
+      main.textContent = internalControl === '1'
+        ? 'Internal mode is on for this browser. Mart views and clicks will be excluded from shopper totals.'
+        : 'Internal mode is off for this browser. Mart views and clicks will count as shopper activity.';
+    } catch (_) { main.textContent = 'Could not change internal mode. Enable browser storage and try again.'; }
+    return;
+  }
+  let isInternal = false;
+  try { isInternal = localStorage.getItem(INTERNAL_KEY) === '1'; } catch (_) { /* storage unavailable */ }
+
 
   // ---- analytics (no inline script: the page's CSP forbids it)
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() { window.dataLayer.push(arguments); };
-  if (!LOCAL) {
+  if (!LOCAL && !isInternal) {
     window.gtag('js', new Date());
     window.gtag('config', GA_ID, { page_location: `${location.origin}/m/`, page_title: 'Mart' });
     const s = document.createElement('script');
@@ -78,6 +93,16 @@
   const token = fragment.get('t') || (UUID.test(id) ? store.get(id) : null);
   if (!UUID.test(id) || !token) { broken(); track('mart_view_error', { reason: 'bad_link' }); return; }
 
+  function recordEngagement(eventType, itemId = null) {
+    try {
+      fetch(`${API}/marts/${encodeURIComponent(id)}/engagement`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Mart-Token': token },
+        body: JSON.stringify({ event_type: eventType, item_id: itemId, is_internal: isInternal }),
+        keepalive: true, credentials: 'omit', referrerPolicy: 'no-referrer'
+      }).catch(() => {});
+    } catch (_) { /* measurement must never interrupt shopping */ }
+  }
+
   // ---- render
   function card(item) {
     const url = httpUrl(item.url);
@@ -101,7 +126,7 @@
     const el = url
       ? h('a', { class: 'card', href: url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${label} (opens the shop in a new tab)` }, inner)
       : h('div', { class: 'card' }, inner);
-    if (url) el.addEventListener('click', () => track('mart_click', { shop: shopHost(url) }));
+    if (url) el.addEventListener('click', () => { track('mart_click', { shop: shopHost(url) }); recordEngagement('click', item.id); });
     return h('li', null, el);
   }
 
@@ -208,6 +233,7 @@
     }
     main.querySelector('.title').setAttribute('tabindex', '-1');
     track('mart_view', { finds: String(items.length) });
+    recordEngagement('view');
   }
 
   async function load() {
