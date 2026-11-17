@@ -169,8 +169,23 @@
 /* Done */
 .mk-done-mark{display:inline-flex;align-items:center;gap:10px;color:var(--green);margin-bottom:22px}
 .mk-done-mark::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(30,86,60,.15)}
-.mk-done-list{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px}
-.mk-done-list li{border-left:3px solid var(--green);padding:6px 0 6px 12px;font-size:15px}
+.mk [data-step="done"]{text-align:center;padding-block:clamp(32px,8vh,92px)}
+.mk-success-check{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 22px;border-radius:50%;background:var(--green);color:var(--paper);font-size:34px}
+@media (prefers-reduced-motion: no-preference){
+ .mk-success-check{animation:mk-happy-hop .85s .22s ease-out both}
+ @keyframes mk-happy-hop{
+  0%,100%{transform:none}
+  20%{transform:translateY(2px) scale(1.06,.94)}
+  48%{transform:translateY(-10px) rotate(-9deg)}
+  72%{transform:translateY(1px) rotate(5deg)}
+ }
+}
+.mk [data-step="done"] .mk-sub{margin:16px auto 0}
+.mk-success-email{display:inline-block;margin-top:6px;font-size:.88em;overflow-wrap:anywhere}
+.mk [data-step="done"] .mk-actions{justify-content:center;margin-top:36px}
+.mk a.mk-done-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px;border-radius:24px;background:#e4eade;color:var(--green);font-size:14px;font-weight:500;text-decoration:none}
+.mk a.mk-done-link:hover{background:#d8e3d2}
+.mk a.mk-done-link:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 .mk-example{margin-top:40px;border-top:1px solid var(--line);padding-top:22px}
 .mk-example-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
 .mk-example-name{font-family:Syne,sans-serif;font-weight:700;letter-spacing:-.03em;font-size:24px}

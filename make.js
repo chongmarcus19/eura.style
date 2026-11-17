@@ -466,12 +466,12 @@
       </form>
 
       <section class="mk-step" data-step="done" hidden aria-live="polite">
-        <p class="mk-done-mark mk-mono">Received</p>
-        <h2 class="mk-title" tabindex="-1" data-done-title>Your mart is being built.</h2>
+        <span class="mk-success-check" aria-hidden="true">✓</span>
+        <h2 class="mk-title" tabindex="-1" data-done-title>You made a mart!</h2>
         <p class="mk-sub" data-done-sub></p>
-        <ul class="mk-done-list" data-done-list></ul>
-        <div class="mk-example" data-example></div>
-        <div class="mk-actions" data-done-actions></div>
+        <div class="mk-actions">
+          ${onClose ? '<button class="mk-button" type="button" data-done-close>Done</button>' : '<a class="mk-done-link" href="/">Explore Eura <span aria-hidden="true">→</span></a>'}
+        </div>
       </section>
 
       <div class="mk-sheet" data-pin-sheet hidden role="dialog" aria-modal="true" aria-labelledby="${id}-pin-title">
@@ -1488,19 +1488,8 @@
     });
 
     function renderDone(address, ms) {
-      $('[data-done-title]').textContent = ms.length > 1 ? `Your ${ms.length} marts are being built.` : 'Your mart is being built.';
-      $('[data-done-sub]').innerHTML = `First finds within 48 hours. We’ll send them to <strong>${esc(address)}</strong>.`;
-      $('[data-done-list]').innerHTML = ms.map(set => `<li>${esc(martLabel(set))}</li>`).join('');
-      const ex = pickExample(state.pieces.map(p => p.label).join(' '));
-      $('[data-example]').innerHTML = `
-        <div class="mk-example-head"><span class="mk-example-name">${esc(ex.name)}</span><span class="mk-tag mk-mono">Example</span></div>
-        <p class="mk-note">This is an example of a finished mart, not yours. Yours is built from what you told us.</p>
-        <div class="mk-items">${ex.items.map(([img, label]) => `
-          <figure class="mk-item" style="margin:0"><picture><source srcset="${ASSET}${img}.webp" type="image/webp"><img src="${ASSET}${img}.${img.startsWith('gym') ? 'png' : 'jpg'}" alt="" loading="lazy"></picture><p>${esc(label)}</p></figure>`).join('')}
-        </div>`;
-      $('[data-done-actions]').innerHTML = onClose
-        ? '<button class="mk-button" type="button" data-done-close>Done</button>'
-        : '<a class="mk-button" href="/">Back to Eura</a>';
+      $('[data-done-title]').textContent = ms.length > 1 ? `You made ${ms.length} marts!` : 'You made a mart!';
+      $('[data-done-sub]').innerHTML = `We’ll email your first finds within 48 hours.<br><span class="mk-success-email">Sending to <strong>${esc(address)}</strong></span>`;
       $('[data-done-close]')?.addEventListener('click', onClose);
     }
 
