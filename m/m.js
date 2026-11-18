@@ -68,6 +68,46 @@
   // $1,990 / $39.90
   const money = n => `$${n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })}`;
   const budget = max => (max == null ? 'Any price' : `Up to ${money(+max)} a piece`);
+  // A find's price as its shop charges it. Shops outside the US (Butter Goods in AUD,
+  // Footdistrict in EUR, Parlez in GBP) charge US visitors in their own currency, so
+  // there's no honest USD figure to show for them. Order of preference:
+  //   1. price_amount + price_currency (ISO 4217), once the API sends them;
+  //   2. price_usd;
+  //   3. a local price typed into the title ("AUD $119", "€77", "£60"), which is how
+  //      finds from non-US shops were entered while items could only hold USD. That
+  //      price is taken out of the title so the card doesn't show it twice.
+  const fmt = (amount, currency) => {
+    try {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 }).format(amount);
+    } catch (_) { return null; }
+  };
+  const AMOUNT = '(\\d[\\d,]*(?:\\.\\d{1,2})?)';
+  const TITLE_PRICES = [
+    [new RegExp(`\\b(AUD|CAD|NZD|EUR|GBP|JPY|CHF|SEK|DKK|NOK|USD)\\s?[$€£¥]?\\s?${AMOUNT}`), m => [m[1], m[2]]],
+    [new RegExp(`(?<![A-Za-z])(AU|A|CA|C|NZ)\\$\\s?${AMOUNT}`), m => [{ AU: 'AUD', A: 'AUD', CA: 'CAD', C: 'CAD', NZ: 'NZD' }[m[1]], m[2]]],
+    [new RegExp(`([€£¥])\\s?${AMOUNT}`), m => [{ '€': 'EUR', '£': 'GBP', '¥': 'JPY' }[m[1]], m[2]]]
+  ];
+  // "(40% off; ; S/M)" -> "(40% off; S/M)", "(; 40% off" -> "(40% off", "()" -> ""
+  const tidy = s => s.replace(/\(\s*[;,]\s*/g, '(').replace(/\s*[;,]\s*\)/g, ')').replace(/;\s*;/g, ';')
+    .replace(/\(\s*\)/g, '').replace(/\s{2,}/g, ' ').trim();
+  function priceOf(item) {
+    const title = String(item.title || '');
+    const amount = item.price_amount != null ? +item.price_amount : NaN;
+    if (Number.isFinite(amount) && /^[A-Z]{3}$/.test(item.price_currency || '')) {
+      const text = fmt(amount, item.price_currency);
+      if (text) return { text, title };
+    }
+    if (item.price_usd != null && Number.isFinite(+item.price_usd)) return { text: money(+item.price_usd), title };
+    for (const [re, read] of TITLE_PRICES) {
+      const m = title.match(re);
+      if (!m) continue;
+      const [currency, raw] = read(m);
+      const n = parseFloat(raw.replace(/,/g, ''));
+      const text = Number.isFinite(n) ? fmt(n, currency) : null;
+      if (text) return { text, title: tidy(title.replace(m[0], '')) || title };
+    }
+    return { text: null, title };
+  }
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
   const shopHost = url => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (_) { return ''; } };
 
@@ -114,15 +154,16 @@
       el.addEventListener('error', blank, { once: true });
       imgBox.append(el);
     } else blank();
-    const price = item.price_usd != null ? h('span', { class: 'card-price' }, money(+item.price_usd)) : h('span');
+    const shown = priceOf(item);
+    const price = shown.text ? h('span', { class: 'card-price' }, shown.text) : h('span');
     const inner = [
       imgBox,
       h('div', { class: 'card-body' },
         item.brand ? h('span', { class: 'card-brand' }, item.brand) : null,
-        h('span', { class: 'card-title' }, item.title)),
+        h('span', { class: 'card-title' }, shown.title)),
       h('div', { class: 'card-foot' }, price, url ? h('span', { class: 'card-shop' }, `Shop${shopHost(url) ? ` · ${shopHost(url)}` : ''} ↗`) : null)
     ];
-    const label = [item.brand, item.title, item.price_usd != null ? money(+item.price_usd) : null].filter(Boolean).join(', ');
+    const label = [item.brand, shown.title, shown.text].filter(Boolean).join(', ');
     const el = url
       ? h('a', { class: 'card', href: url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${label} (opens the shop in a new tab)` }, inner)
       : h('div', { class: 'card' }, inner);
